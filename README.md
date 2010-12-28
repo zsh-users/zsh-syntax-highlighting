@@ -11,12 +11,26 @@ Download the script or clone this repository:
 
 Update your `~/.zshrc` so that the script is sourced:
 
-    source /path/to/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    source /path/to/zsh-syntax-highlighting/zsh-syntax-highlighting.plugin.zsh
 
 Re-open your terminal, or just reload it to take changes into account:
 
     source ~/.zshrc
 
+## Usage with oh-my-zsh
+
+Download the script or clone this repository:
+
+    cd ~/.oh-my-zsh/plugins/
+    git clone git://github.com/nicoulaj/zsh-syntax-highlighting.git
+
+Update your `~/.zshrc` so that the script is sourced:
+
+    plugins=(zsh-syntax-highlighting)
+
+Re-open your terminal, or just reload it to take changes into account:
+
+    source ~/.zshrc
 
 ## References
 
