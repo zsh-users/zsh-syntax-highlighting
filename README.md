@@ -1,6 +1,8 @@
 zsh-syntax-highlighting
 =======================
 
+Fork of https://github.com/nicoulaj/zsh-syntax-highlighting for separate files with defaults overrides.
+
 An attempt at providing [Fish shell](http://www.fishshell.org) like syntax highlighting for [Zsh](http://www.zsh.org).
 
 
@@ -11,32 +13,18 @@ An attempt at providing [Fish shell](http://www.fishshell.org) like syntax highl
 
 Download the script or clone this repository:
 
-    git clone git://github.com/nicoulaj/zsh-syntax-highlighting.git
+    git clone git://github.com/paradoxxxzero/zsh-syntax-highlighting.git
 
 Update your `~/.zshrc` so that the script is sourced:
 
-    source /path/to/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    for file in /path/to/zsh-syntax-highlighting/*.zsh; 
+    do
+        source $file
+    done
+
 
 Re-open your terminal, or just reload it to take changes into account:
 
-    source ~/.zshrc
-
-
-### With [oh-my-zsh](http://github.com/robbyrussell/oh-my-zsh)
-
-Download the script or clone this repository as a oh-my-zsh plugin:
-
-    cd ~/.oh-my-zsh/plugins/
-    git clone git://github.com/nicoulaj/zsh-syntax-highlighting.git
-    cd zsh-syntax-highlighting
-    ln -s zsh-syntax-highlighting.zsh zsh-syntax-highlighting.plugin.zsh
-
-Update your `~/.zshrc` so that the script is sourced:
-
-    plugins=(zsh-syntax-highlighting)
-
-Re-open your terminal, or just reload it to take changes into account:
-    
     source ~/.zshrc
 
 
