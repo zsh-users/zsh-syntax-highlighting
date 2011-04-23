@@ -32,8 +32,8 @@
 # A simple keyword highlighting extension for zsh-syntax-highlighting.
 
 # To use this, please do the following steps.
-# 1) Source this file after zsh-syntax-highlighting.zsh
-# % source zsh-syntax-highlighting.zsh
+# 1) Source this file after syntax-highlighting.zsh
+# % source syntax-highlighting.zsh
 # % source contrib/keyword.zsh
 # 2) Add keyword and color pairs to `ZSH_HIGHLIGHT_KEYWORD_KEYWORDS`.
 # % ZSH_HIGHLIGHT_KEYWORD_KEYWORDS+=('rm -rf *' 'fg=white,bold,bg=red')

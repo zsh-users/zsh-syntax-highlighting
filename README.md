@@ -10,7 +10,7 @@ zsh-syntax-highlighting ![Project status](http://stillmaintained.com/nicoulaj/zs
 
 Here is a one-liner to try it without installing or modifying anything:
 
-    wget --no-check-certificate --output-document=/tmp/zsh-syntax-highlighting.zsh https://github.com/nicoulaj/zsh-syntax-highlighting/raw/master/zsh-syntax-highlighting.zsh && . /tmp/zsh-syntax-highlighting.zsh
+    wget --no-check-certificate --output-document=/tmp/syntax-highlighting.zsh https://github.com/nicoulaj/zsh-syntax-highlighting/raw/master/syntax-highlighting.zsh && . /tmp/syntax-highlighting.zsh
 
 
 ## Install it
@@ -24,7 +24,7 @@ Here is a one-liner to try it without installing or modifying anything:
 
 * Source the script **at the end** of `~/.zshrc`:
 
-      source /path/to/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+      source /path/to/zsh-syntax-highlighting/syntax-highlighting.zsh
 
 * Source `~/.zshrc`  to take changes into account:
 
@@ -36,11 +36,11 @@ Here is a one-liner to try it without installing or modifying anything:
 * Download the script or clone this repository in [oh-my-zsh](http://github.com/robbyrussell/oh-my-zsh) plugins directory:
 
       cd ~/.oh-my-zsh/plugins/
-      git clone git://github.com/nicoulaj/zsh-syntax-highlighting.git
+      git clone git://github.com/nicoulaj/zsh-syntax-highlighting.git syntax-highlighting
 
 * Activate the plugin in `~/.zshrc` (in **last** position):
 
-      plugins=( [plugins...] zsh-syntax-highlighting)
+      plugins=( [plugins...] syntax-highlighting)
 
 * Source `~/.zshrc`  to take changes into account:
     

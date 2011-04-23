@@ -30,7 +30,7 @@
 
 
 # Load the main script.
-. $(dirname $0)/../zsh-syntax-highlighting.zsh
+. $(dirname $0)/../syntax-highlighting.zsh
 
 # Process each test data file in data/.
 for data_file in $(dirname $0)/data/*.zsh; do
