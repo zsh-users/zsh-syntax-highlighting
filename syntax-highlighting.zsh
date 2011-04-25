@@ -251,7 +251,7 @@ _zsh_highlight_bind-events() {
 
   # Resolve event names what have to be bound to.
   zmodload zsh/zleparameter 2>/dev/null || {
-    echo 'zsh-syntax-highlighting:zmodload error. exiting.' >&2
+    echo 'syntax-highlighting:zmodload error. exiting.' >&2
     return -1
   }
   local -a events; : ${(A)events::=${@:#(_*|orig-*|.run-help|.which-command)}}
