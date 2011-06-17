@@ -28,6 +28,17 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+# -------------------------------------------------------------------------------------------------
+# Workaround to overriding of preexec()
+# -------------------------------------------------------------------------------------------------
+
+# For some reason unidentified yet, someting goes wrong when sourcing this script twice
+# The second time prexec() gets overwritten by "_zhs_highlight". This is a miss-spelled
+# command which produces an error.
+#
+# The widget prexec() does not require modification anyway. So make a copy it here, which
+# will be restored at the end of this script.
+_zsh_highlight_old_preexec_definition=$functions[preexec]
 
 # -------------------------------------------------------------------------------------------------
 # Core highlighting update system
@@ -184,3 +195,6 @@ if [[ $#functions[zle-line-init] -eq 0 ]]; then
 fi
 
 zle -N zle-line-init
+
+# Restore preexec
+functions[preexec]="$_zsh_highlight_old_preexec_definition"
