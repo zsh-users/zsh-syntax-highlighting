@@ -137,6 +137,8 @@ for event in ${${(f)"$(zle -la)"}:#(_*|orig-*|.run-help|.which-command)}; do
     eval "zle -C orig-$event ${${${widgets[$event]}#*:}/:/ } ; $event() { builtin zle orig-$event && _zsh_highlight } ; zle -N $event"
   else
     case $event in
+      precmd|preexec|zle-line-init)
+        ;;
       accept-and-menu-complete)
         eval "$event() { builtin zle .$event && _zsh_highlight } ; zle -N $event"
         ;;
