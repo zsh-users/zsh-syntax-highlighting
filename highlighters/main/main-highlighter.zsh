@@ -139,9 +139,20 @@ _zsh_highlight_main_highlighter_check_path()
   local arg="$1"
   [[ -z ${(Q)arg} ]] && return 1
   [[ -e ${(Q)arg} ]] && return 0
+  [[ "${arg[1]-}" == \~ ]] && { _zsh_highlight_main_highlighter_check_path_tilde "${arg}" ; return $? }
   [[ ! -e ${(Q)arg:h} ]] && return 1
   [[ ${BUFFER[1]} != "-" && ${#BUFFER} == $end_pos && -n $(print ${(Q)arg}*(N)) ]] && return 0
   return 1
+}
+
+_zsh_highlight_main_highlighter_check_path_tilde() {
+  local head="${1[2,-1]%%/*}"
+  local tail="${1[((2+1+$#head)),-1]}"
+  local name=
+  eval "name=~$head/" 2>/dev/null || return 1
+  [[ -z "$name" ]] && return 1
+  [[ "$name" == "~$head/" ]] && return 1
+  _zsh_highlight_main_highlighter_check_path "${name}${tail}"; return $?
 }
 
 # Highlight special chars inside double-quoted strings
