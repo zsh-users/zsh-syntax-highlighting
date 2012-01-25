@@ -41,7 +41,22 @@ How to install
         plugins=( [plugins...] zsh-syntax-highlighting)
 
 * Source `~/.zshrc`  to take changes into account:
-    
+
+        source ~/.zshrc
+
+### With sorin-ionescu's simplified oh-my-zsh
+
+* Download the script or clone this repository in [sorin's oh-my-zsh](http://github.com/sorin-ionescu/oh-my-zsh) plugins directory:
+
+        cd ~/.oh-my-zsh/custom/plugins
+        git clone git://github.com/zsh-users/zsh-syntax-highlighting.git
+
+* Activate the plugin in `~/.zshrc` (in **last** position):
+
+        zstyle ':omz:load' plugin [plugins...] 'zsh-syntax-highlighting'
+
+* Source `~/.zshrc`  to take changes into account:
+
         source ~/.zshrc
 
 
