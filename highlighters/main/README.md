@@ -31,7 +31,8 @@ This highlighter defines the following styles:
 * `precommand` - precommands (i.e. exec, builtin, ...)
 * `commandseparator` - command separation tokens
 * `hashed-command` - hashed commands
-* `path` - paths
+* `path` - paths which exist
+* `partial-path` - partial paths (prefixes of existing files)
 * `globbing` - globbing expressions
 * `history-expansion` - history expansion expressions
 * `single-hyphen-option` - single hyphen options
