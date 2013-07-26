@@ -40,7 +40,8 @@
 : ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[hashed-command]:=fg=green}
-: ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
+: ${ZSH_HIGHLIGHT_STYLES[path]:=underline,bold}
+: ${ZSH_HIGHLIGHT_STYLES[partial-path]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[single-hyphen-option]:=none}
@@ -106,6 +107,8 @@ _zsh_highlight_main_highlighter()
                           new_expression=true
                         elif _zsh_highlight_main_highlighter_check_path; then
                           style=$ZSH_HIGHLIGHT_STYLES[path]
+                        elif _zsh_highlight_main_highlighter_check_partial_path; then
+                          style=$ZSH_HIGHLIGHT_STYLES[partial-path]
                         elif [[ $arg[0,1] = $histchars[0,1] ]]; then
                           style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
                         else
@@ -128,6 +131,8 @@ _zsh_highlight_main_highlighter()
         *"*"*)   $highlight_glob && style=$ZSH_HIGHLIGHT_STYLES[globbing] || style=$ZSH_HIGHLIGHT_STYLES[default];;
         *)       if _zsh_highlight_main_highlighter_check_path; then
                    style=$ZSH_HIGHLIGHT_STYLES[path]
+                 elif _zsh_highlight_main_highlighter_check_partial_path; then
+                   style=$ZSH_HIGHLIGHT_STYLES[partial-path]
                  elif [[ $arg[0,1] = $histchars[0,1] ]]; then
                    style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
                  elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
@@ -153,6 +158,16 @@ _zsh_highlight_main_highlighter_check_assign()
 
 # Check if the argument is a path.
 _zsh_highlight_main_highlighter_check_path()
+{
+  setopt localoptions nonomatch
+  local expanded_path; : ${expanded_path:=${(Q)~arg}}
+  [[ -z $expanded_path ]] && return 1
+  [[ -e $expanded_path ]] && return 0
+  return 1
+}
+
+# Check if the argument is a partial path.
+_zsh_highlight_main_highlighter_check_partial_path()
 {
   setopt localoptions nonomatch
   local expanded_path; : ${expanded_path:=${(Q)~arg}}
