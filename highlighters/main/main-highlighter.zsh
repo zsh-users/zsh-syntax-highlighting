@@ -93,11 +93,21 @@ _zsh_highlight_main_highlighter()
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
       style=$ZSH_HIGHLIGHT_STYLES[precommand]
      else
-      res=$(LC_ALL=C builtin type -w $arg 2>/dev/null)
+      # ~: use GLOB_SUBST to resolve "=foo.sh" (https://github.com/zsh-users/zsh-syntax-highlighting/issues/126)
+      if [[ $arg[1] == '=' ]]; then
+        local arg_resolved=$~arg
+      else
+        local arg_resolved=$arg
+      fi
+      res=$(LC_ALL=C builtin type -w $arg_resolved 2>/dev/null)
       case $res in
         *': reserved')  style=$ZSH_HIGHLIGHT_STYLES[reserved-word];;
         *': alias')     style=$ZSH_HIGHLIGHT_STYLES[alias]
-                        local aliased_command="${"$(alias $arg)"#*=}"
+                        local aliased_command="${"$(alias $arg_resolved)"#*=}"
+                        if [[ -z $aliased_command ]]; then
+                          # no alias found, check suffix aliases
+                          local aliased_command="${"$(alias -s ${arg_resolved:e})"#*=}"
+                        fi
                         [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS:#"$aliased_command"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS:#"$arg"} ]] && ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS+=($arg)
                         ;;
         *': builtin')   style=$ZSH_HIGHLIGHT_STYLES[builtin];;
