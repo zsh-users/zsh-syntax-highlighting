@@ -64,7 +64,7 @@ _zsh_highlight_main_highlighter_predicate()
 _zsh_highlight_main_highlighter()
 {
   emulate -L zsh 
-  setopt localoptions extendedglob bareglobqual
+  setopt localoptions extendedglob bareglobqual nonomatch
   local start_pos=0 end_pos highlight_glob=true new_expression=true arg style
   typeset -a ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR
   typeset -a ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
