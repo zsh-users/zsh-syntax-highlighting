@@ -45,6 +45,10 @@
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_approx]:=fg=yellow,underline}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
+: ${ZSH_HIGHLIGHT_STYLES[path_pathseparator]:=fg=cyan,underline}
+: ${ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]:=fg=cyan,underline}
+: ${ZSH_HIGHLIGHT_STYLES[path_approx_pathseparator]:=fg=cyan,underline}
+: ${ZSH_HIGHLIGHT_STYLES[globbing_pathseparator]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[single-hyphen-option]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[double-hyphen-option]:=none}
@@ -86,6 +90,7 @@ _zsh_highlight_main_highlighter()
   for arg in ${(z)BUFFER}; do
     local substr_color=0
     local style_override=""
+    local path_found=
     [[ $start_pos -eq 0 && $arg = 'noglob' ]] && highlight_glob=false
     ((start_pos+=${#BUFFER[$start_pos+1,-1]}-${#${BUFFER[$start_pos+1,-1]##[[:space:]]#}}))
     ((end_pos=$start_pos+${#arg}))
@@ -128,8 +133,8 @@ _zsh_highlight_main_highlighter()
                           style=$ZSH_HIGHLIGHT_STYLES[assign]
                           new_expression=true
                         elif _zsh_highlight_main_highlighter_check_path; then
-                          _zsh_highlight_main_highlighter_highlight_path_separators
                           style=$ZSH_HIGHLIGHT_STYLES[path]
+                          path_found=path
                         elif [[ $arg[0,1] = $histchars[0,1] ]]; then
                           style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
                         else
@@ -151,8 +156,8 @@ _zsh_highlight_main_highlighter()
         '`'*'`') style=$ZSH_HIGHLIGHT_STYLES[back-quoted-argument];;
         *"*"*)   $highlight_glob && style=$ZSH_HIGHLIGHT_STYLES[globbing] || style=$ZSH_HIGHLIGHT_STYLES[default];;
         *)       if _zsh_highlight_main_highlighter_check_path; then
-                   _zsh_highlight_main_highlighter_highlight_path_separators
                    style=$ZSH_HIGHLIGHT_STYLES[path]
+                   path_found=path
                  elif [[ $arg[0,1] = $histchars[0,1] ]]; then
                    style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
                  elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
@@ -166,6 +171,7 @@ _zsh_highlight_main_highlighter()
     # if a style_override was set (eg in _zsh_highlight_main_highlighter_check_path), use it
     [[ -n $style_override ]] && style=$ZSH_HIGHLIGHT_STYLES[$style_override]
     [[ $substr_color = 0 ]] && region_highlight+=("$start_pos $end_pos $style")
+    [[ -n $path_found ]] && _zsh_highlight_main_highlighter_highlight_path_separators
     [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS:#"$arg"} ]] && new_expression=true
     start_pos=$end_pos
   done
@@ -186,6 +192,18 @@ _zsh_highlight_main_highlighter_highlight_path_separators()
     local char="$BUFFER[pos+1]"
 
     if [[ "$char" == "/" ]]; then
+      region_highlight+=("$pos $((pos + 1)) $style")
+    fi
+  done
+}
+
+_zsh_highlight_main_highlighter_highlight_path_separators()
+{
+  local pos style
+  style=$ZSH_HIGHLIGHT_STYLES[${style_override:=${path_found}}_pathseparator]
+  [[ -z $style ]] && return 0
+  for (( pos = start_pos; $pos <= end_pos; pos++ )) ; do
+    if [[ $BUFFER[pos+1] == / ]]; then
       region_highlight+=("$pos $((pos + 1)) $style")
     fi
   done
