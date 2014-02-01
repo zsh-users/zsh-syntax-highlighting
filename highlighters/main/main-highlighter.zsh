@@ -41,7 +41,6 @@
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[hashed-command]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
-: ${ZSH_HIGHLIGHT_STYLES[path_separator]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_approx]:=fg=yellow,underline}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
@@ -182,19 +181,6 @@ _zsh_highlight_main_highlighter_check_assign()
 {
     setopt localoptions extended_glob
     [[ $arg == [[:alpha:]_][[:alnum:]_]#(|\[*\])=* ]]
-}
-
-_zsh_highlight_main_highlighter_highlight_path_separators()
-{
-  local pos style
-  style=$ZSH_HIGHLIGHT_STYLES[path_separator]
-  for (( pos = 0; $pos < ${#BUFFER}; pos++ )) ; do
-    local char="$BUFFER[pos+1]"
-
-    if [[ "$char" == "/" ]]; then
-      region_highlight+=("$pos $((pos + 1)) $style")
-    fi
-  done
 }
 
 _zsh_highlight_main_highlighter_highlight_path_separators()
