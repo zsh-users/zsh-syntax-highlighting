@@ -35,6 +35,7 @@
 
 # Array declaring active highlighters names.
 typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS
+typeset -gA ZSH_HIGHLIGHT_FILES
 
 # Update ZLE buffer syntax highlighting.
 #
