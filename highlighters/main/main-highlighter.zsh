@@ -191,7 +191,7 @@ _zsh_highlight_main_highlighter_check_path()
     [[ -e "$cdpath_dir/$expanded_path" ]] && return 0
   done
   [[ ! -e ${expanded_path:h} ]] && return 1
-  if [[ ${BUFFER[1]} != "-" && ${#BUFFER} == $end_pos ]]; then
+  if [[ ${BUFFER[1]} != "-" && ${#LBUFFER} == $end_pos ]]; then
     local -a tmp
     # got a path prefix?
     tmp=( ${expanded_path}*(N) )
