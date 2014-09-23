@@ -37,6 +37,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[builtin]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[function]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[command]:=fg=green}
+: ${ZSH_HIGHLIGHT_STYLES[command_prefix]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[hashed-command]:=fg=green}
@@ -126,6 +127,8 @@ _zsh_highlight_main_highlighter()
         *)              if _zsh_highlight_main_highlighter_check_assign; then
                           style=$ZSH_HIGHLIGHT_STYLES[assign]
                           new_expression=true
+                        elif _zsh_highlight_main_highlighter_check_command; then
+                          style=$ZSH_HIGHLIGHT_STYLES[command_prefix]
                         elif _zsh_highlight_main_highlighter_check_path; then
                           style=$ZSH_HIGHLIGHT_STYLES[path]
                         elif [[ $arg[0,1] = $histchars[0,1] ]]; then
@@ -237,4 +240,13 @@ _zsh_highlight_main_highlighter_highlight_string()
     esac
     region_highlight+=("$j $k $style")
   done
+}
+
+## Check if command with given prefix exists
+_zsh_highlight_main_highlighter_check_command()
+{
+  setopt localoptions nonomatch
+  local -a prefixed_command
+  for p in $path; do prefixed_command+=( $p/${arg}*(N) ); done
+  [[ ${BUFFER[1]} != "-" && ${#LBUFFER} == $end_pos && $#prefixed_command > 0 ]] && return 0 || return 1
 }
