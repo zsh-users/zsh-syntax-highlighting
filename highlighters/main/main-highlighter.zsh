@@ -73,7 +73,7 @@ _zsh_highlight_main_highlighter()
   region_highlight=()
 
   ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR=(
-    '|' '||' ';' '&' '&&'
+    '|' '||' ';' '&' '&&' '&|' '|&' '&!'
   )
   ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS=(
     'builtin' 'command' 'exec' 'nocorrect' 'noglob'
