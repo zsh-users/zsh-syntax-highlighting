@@ -4,6 +4,7 @@
   c) the same color as path
   d) use LS_COLORS
 
+- set different colors for each atom (dir/links) of path
 - separate lsstyle for files and prefix_file?
 
 - describe in README
