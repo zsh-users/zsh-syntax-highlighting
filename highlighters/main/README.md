@@ -34,7 +34,11 @@ This highlighter defines the following styles:
 * `path` - paths
 * `path_prefix` - path prefixes
 * `path_approx` - approximated paths
+* `path_pathseparator` - path separator
+* `path_prefix_pathseparator` - path prefixes' path separator
+* `path_approx_pathseparator` - approximated paths' path separator
 * `globbing` - globbing expressions
+* `globbing_pathseparator` - globs' path separator
 * `history-expansion` - history expansion expressions
 * `single-hyphen-option` - single hyphen options
 * `double-hyphen-option` - double hyphen options
