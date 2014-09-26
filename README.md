@@ -3,7 +3,7 @@ zsh-syntax-highlighting
 
 **[Fish shell](http://www.fishshell.com) like syntax highlighting for [Zsh](http://www.zsh.org).**
 
-![](https://https://github.com/jimmijj/zsh-syntax-highlighting/misc/screenshot.png)
+![](https://raw.githubusercontent.com/jimmijj/zsh-syntax-highlighting/master/misc/screenshot.png)
 
 *Requirements: zsh 4.3.17+.*
 
