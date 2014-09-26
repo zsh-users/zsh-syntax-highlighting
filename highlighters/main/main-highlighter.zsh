@@ -44,6 +44,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_approx]:=fg=yellow,underline}
+: ${ZSH_HIGHLIGHT_STYLES[file]:=}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[single-hyphen-option]:=none}
@@ -309,6 +310,8 @@ _zsh_highlight_main_highlighter_check_file()
     [[ -d $expanded_arg ]] && return 1
     [[ ${BUFFER[1]} != "-" && ${#LBUFFER} == $end_pos ]] && matched_file=(${expanded_arg}*(Noa^/[1]))
     [[ -e $expanded_arg || -e $matched_file ]] && lsstyle=none || return 1
+
+    [[ ! -z $ZSH_HIGHLIGHT_STYLES[file] ]] && lsstyle=$ZSH_HIGHLIGHT_STYLES[file] && return 0
 
     # [[ rs ]]
     # [[ -d $expanded_arg || -d $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[di] && return 0

@@ -70,8 +70,8 @@ By default files are colored in the same fashion as `ls` command, namely by comp
     # To disable higlighting for all files
     ZSH_HIGHLIGHT_STYLES[file]='none'
 
-    # To use $LS_COLORS use 'default', or just don't set ZSH_HIGHLIGHT_STYLES[file] at all
-    ZSH_HIGHLIGHT_STYLES[file]='default'
+    # To use LS_COLORS do not set this style at all
+    # ZSH_HIGHLIGHT_STYLES[file]
 
 It is also possible to change the color for one single file attribute/extenstion. To achieve this modify ZSH_HIGHLIGHT_FILES in ~/.zshrc:
 
@@ -84,4 +84,4 @@ It is also possible to change the color for one single file attribute/extenstion
     # To set color for files with pdf extenstion
     ZSH_HIGHLIGHT_FILES[*.pdf]='fg=34'
 
-Note that LS_COLORS uses ANSI color codes (not names as 'green') and so does ZSH_HIGHLIGHT_FILES by default, but ZSH_HIGHLIGHT_FILES[*.pdf]='fg=green' is possible too. However if you set color code by hand you must guarantee that your terminal is capable to display that color properly. In above examples 256 color palette is used. In case of doubt it is better to set ZSH_HIGHLIGHT_STYLES[file]='default' and change LS_COLORS via ~/.dircolors file. If ~/.dircolors files doesn't exist one can generae it by `dircolor` command.
+Note that LS_COLORS uses ANSI color codes (not names as 'green') and so does ZSH_HIGHLIGHT_FILES by default, but ZSH_HIGHLIGHT_FILES[*.pdf]='fg=green' is possible too. However if you set color code by hand you must guarantee that your terminal is capable to display that color properly. In above examples 256 color palette is used. In case of doubt it is better not to set ZSH_HIGHLIGHT_STYLES[file] and change LS_COLORS via ~/.dircolors file. If ~/.dircolors files doesn't exist one can generate it by `dircolor` command.
