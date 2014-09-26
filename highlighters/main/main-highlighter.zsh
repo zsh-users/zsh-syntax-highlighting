@@ -131,7 +131,7 @@ _zsh_highlight_main_highlighter()
                           style=$ZSH_HIGHLIGHT_STYLES[command_prefix]
                         elif _zsh_highlight_main_highlighter_check_path; then
                           style=$ZSH_HIGHLIGHT_STYLES[path]
-                        elif [[ $arg[0,1] = $histchars[0,1] ]]; then
+                        elif [[ $arg[0,1] == $histchars[0,1] || $arg[0,1] == $histchars[2,2] ]]; then
                           style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
                         else
                           style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
