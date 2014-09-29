@@ -35,7 +35,6 @@
 
 # Array declaring active highlighters names.
 typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS
-typeset -gA ZSH_HIGHLIGHT_FILES
 
 # Update ZLE buffer syntax highlighting.
 #
@@ -107,6 +106,7 @@ _zsh_highlight()
 
 # Array used by highlighters to declare user overridable styles.
 typeset -gA ZSH_HIGHLIGHT_STYLES
+typeset -gA ZSH_HIGHLIGHT_FILES
 
 # Whether the command line buffer has been modified or not.
 #
