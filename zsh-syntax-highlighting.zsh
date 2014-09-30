@@ -104,7 +104,7 @@ _zsh_highlight()
 # API/utility functions for highlighters
 # -------------------------------------------------------------------------------------------------
 
-# Array used by highlighters to declare user overridable styles.
+# Arrays used by highlighters to declare user overridable styles.
 typeset -gA ZSH_HIGHLIGHT_STYLES
 typeset -gA ZSH_HIGHLIGHT_FILES
 
@@ -140,7 +140,7 @@ _zsh_highlight_bind_widgets()
 
   # Override ZLE widgets to make them invoke _zsh_highlight.
   local cur_widget
-  for cur_widget in ${${(f)"$(builtin zle -la)"}:#(.*|_*|orig-*|run-help|which-command|beep|yank*)}; do
+  for cur_widget in ${${(f)"$(builtin zle -la)"}:#(.*|_*|orig-*|run-help|which-command|beep|yank*|auto-*|*-argument|argument-base|reset-prompt|split-undo|describe-key-briefly|what-cursor-position|set-local-history)}; do
     case $widgets[$cur_widget] in
 
       # Already rebound event: do nothing.
