@@ -134,6 +134,8 @@ _zsh_highlight_main_highlighter()
                           style=$ZSH_HIGHLIGHT_STYLES[path]
                         elif [[ $arg[0,1] == $histchars[0,1] || $arg[0,1] == $histchars[2,2] ]]; then
                           style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
+                        elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+			  style=$ZSH_HIGHLIGHT_STYLES[commandseparator]
                         else
                           style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
                         fi
