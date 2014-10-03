@@ -209,7 +209,7 @@ _zsh_highlight_main_highlighter_check_path()
     (( $#tmp > 0 )) && style_override=path_prefix && return 0
     # or maybe an approximate path?
     tmp=( (#a1)${expanded_path}*(N) )
-    (( $#tmp > 0 )) && style_override=path_approx && return 0
+    (( $#arg > 3 && $#tmp > 0 )) && style_override=path_approx && return 0
   fi
   return 1
 }
