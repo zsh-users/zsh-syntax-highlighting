@@ -171,7 +171,7 @@ _zsh_highlight_main_highlighter()
                         else
                           style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
                         fi
-			_zsh_highlight_main_highlighter_check_file && isfile=true
+                        _zsh_highlight_main_highlighter_check_file && isfile=true
                         ;;
       esac
      fi
@@ -290,6 +290,7 @@ _zsh_highlight_main_highlighter_check_command()
 {
   setopt localoptions nonomatch
   local -a prefixed_command
+  [[ $arg != $arg:t ]] && return 1  # don't match anything if explicit path is present
   for p in $path; do prefixed_command+=( $p/${arg}*(N) ); done
   [[ ${BUFFER[1]} != "-" && ${#LBUFFER} == $end_pos && $#prefixed_command > 0 ]] && return 0 || return 1
 }
