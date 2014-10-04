@@ -62,6 +62,31 @@ _zsh_highlight_main_highlighter_predicate()
   _zsh_highlight_buffer_modified
 }
 
+## In case we need to highlight in other circumstances then default from highlighter_predicate lets define a switcher
+_zsh_highlight_main_highlighter_predicate_switcher()
+{
+    case $1 in
+	'b') # buffer
+           _zsh_highlight_main_highlighter_predicate()
+	   {
+	       _zsh_highlight_buffer_modified
+	   };;
+	'c') # cursor
+	   _zsh_highlight_main_highlighter_predicate()
+	   {
+	       _zsh_highlight_cursor_moved
+	   };;
+	'bc') bccounter=0 # buffer and cursor
+	   _zsh_highlight_main_highlighter_predicate()
+	   {
+	       bccounter=$((bccounter+1))
+	       (( $bccounter > 1 )) && _zsh_highlight_main_highlighter_predicate_switcher b
+	       _zsh_highlight_cursor_moved || _zsh_highlight_buffer_modified
+	   };;
+	*);;
+    esac
+}
+
 # Main syntax highlighting function.
 _zsh_highlight_main_highlighter()
 {
@@ -213,7 +238,7 @@ _zsh_highlight_main_highlighter_check_path()
     local -a tmp
     # got a path prefix?
     tmp=( ${expanded_path}*(N) )
-    (( $#tmp > 0 )) && style_override=path_prefix && return 0
+    (( $#tmp > 0 )) && style_override=path_prefix && _zsh_highlight_main_highlighter_predicate_switcher bc && return 0
     # or maybe an approximate path?
     tmp=( (#a1)${expanded_path}*(N) )
     (( $#arg > 3 && $#tmp > 0 )) && style_override=path_approx && return 0
@@ -319,6 +344,7 @@ _zsh_highlight_main_highlighter_check_file()
     [[ -d $expanded_arg ]] && return 1
     [[ ${BUFFER[1]} != "-" && ${#LBUFFER} == $end_pos ]] && matched_file=(${expanded_arg}*(Noa^/[1]))
     [[ -e $expanded_arg || -e $matched_file ]] && lsstyle=none || return 1
+    [[ -e $matched_file ]] && _zsh_highlight_main_highlighter_predicate_switcher bc
 
     [[ ! -z $ZSH_HIGHLIGHT_STYLES[file] ]] && lsstyle=$ZSH_HIGHLIGHT_STYLES[file] && return 0
 
