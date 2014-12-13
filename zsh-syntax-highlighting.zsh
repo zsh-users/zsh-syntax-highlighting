@@ -33,6 +33,9 @@
 # Core highlighting update system
 # -------------------------------------------------------------------------------------------------
 
+# Load datetime Zsh module for measuring time delta between keystrokes
+zmodload zsh/datetime
+
 # Array declaring active highlighters names.
 typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS
 
@@ -53,6 +56,11 @@ _zsh_highlight()
 
   # Do not highlight if there are pending inputs (copy/paste).
   [[ $PENDING -gt 0 ]] && return $ret
+
+  # Do not highlight if the time delta from previous keystroke is less than 200 ms
+  [[ -z "$LAST_INVOKE_EPOCH" ]] && typeset -g LAST_INVOKE_EPOCH=$EPOCHREALTIME
+  [[ $(( $EPOCHREALTIME - $LAST_INVOKE_EPOCH )) -lt 0.2 ]] && return $ret
+  typeset -g LAST_INVOKE_EPOCH=$EPOCHREALTIME
 
   # Reset region highlight to build it from scratch
   region_highlight=();
