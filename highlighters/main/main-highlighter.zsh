@@ -40,6 +40,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[command_prefix]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
+: ${ZSH_HIGHLIGHT_STYLES[redirection]:=fg=magenta}
 : ${ZSH_HIGHLIGHT_STYLES[hashed-command]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix]:=underline}
@@ -94,12 +95,16 @@ _zsh_highlight_main_highlighter()
   setopt localoptions extendedglob bareglobqual
   local start_pos=0 end_pos highlight_glob=true new_expression=true arg style lsstyle start_file_pos end_file_pos sudo=false sudo_arg=false
   typeset -a ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR
+  typeset -a ZSH_HIGHLIGHT_TOKENS_REDIRECTION
   typeset -a ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
   typeset -a ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS
   region_highlight=()
 
   ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR=(
     '|' '||' ';' '&' '&&' '&|' '|&' '&!'
+  )
+  ZSH_HIGHLIGHT_TOKENS_REDIRECTION=(
+    '<' '<>' '>' '>|' '>!' '>>' '>>|' '>>!' '<<' '<<-' '<<<' '<&' '>&' '<& -' '>& -' '<& p' '>& p' '&>' '>&|' '>&!' '&>|' '&>!' '>>&' '&>>' '>>&|' '>>&!' '&>>|' '&>>!'
   )
   ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS=(
     'builtin' 'command' 'exec' 'nocorrect' 'noglob'
@@ -168,6 +173,8 @@ _zsh_highlight_main_highlighter()
                           style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
                         elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
 			  style=$ZSH_HIGHLIGHT_STYLES[commandseparator]
+                        elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_REDIRECTION:#"$arg"} ]]; then
+			    style=$ZSH_HIGHLIGHT_STYLES[redirection]
                         else
                           style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
                         fi
@@ -193,6 +200,8 @@ _zsh_highlight_main_highlighter()
                    style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
                  elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
                    style=$ZSH_HIGHLIGHT_STYLES[commandseparator]
+                 elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_REDIRECTION:#"$arg"} ]]; then
+                   style=$ZSH_HIGHLIGHT_STYLES[redirection]
                  else
                    style=$ZSH_HIGHLIGHT_STYLES[default]
                  fi
