@@ -32,6 +32,7 @@ This highlighter defines the following styles:
 * `command_prefix` - command prefixes
 * `precommand` - precommands (i.e. exec, builtin, ...)
 * `commandseparator` - command separation tokens
+* `redirection` - redirection operators
 * `hashed-command` - hashed commands
 * `path` - paths
 * `path_prefix` - path prefixes
