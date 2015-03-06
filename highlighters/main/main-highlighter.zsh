@@ -52,6 +52,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[double-quoted-argument]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]:=fg=cyan}
+: ${ZSH_HIGHLIGHT_STYLES[comment]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[assign]:=none}
 
 # Whether the highlighter should be called or not.
@@ -65,7 +66,7 @@ _zsh_highlight_main_highlighter()
 {
   emulate -L zsh
   setopt localoptions extendedglob bareglobqual
-  local start_pos=0 end_pos highlight_glob=true new_expression=true arg style sudo=false sudo_arg=false
+  local start_pos=0 end_pos highlight_glob=true new_expression=true arg style sudo=false sudo_arg=false style_override=""
   typeset -a ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR
   typeset -a ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
   typeset -a ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS
@@ -84,10 +85,18 @@ _zsh_highlight_main_highlighter()
 
   for arg in ${(z)BUFFER}; do
     local substr_color=0
-    local style_override=""
     [[ $start_pos -eq 0 && $arg = 'noglob' ]] && highlight_glob=false
     ((start_pos+=${#BUFFER[$start_pos+1,-1]}-${#${BUFFER[$start_pos+1,-1]##[[:space:]]#}}))
     ((end_pos=$start_pos+${#arg}))
+
+    if [[ -n $style_override ]]; then
+      style=$ZSH_HIGHLIGHT_STYLES[$style_override]
+      region_highlight+=("$start_pos $end_pos $style")
+      start_pos=$end_pos
+
+      continue
+    fi
+
     # Parse the sudo command line
     if $sudo; then
       case "$arg" in
@@ -104,6 +113,9 @@ _zsh_highlight_main_highlighter()
                      ;;
       esac
     fi
+
+    [[ -o interactive_comments && $arg =~ "#" ]] && new_expression=false
+
     if $new_expression; then
       new_expression=false
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
@@ -148,6 +160,24 @@ _zsh_highlight_main_highlighter()
                  ;;
         '`'*'`') style=$ZSH_HIGHLIGHT_STYLES[back-quoted-argument];;
         *"*"*)   $highlight_glob && style=$ZSH_HIGHLIGHT_STYLES[globbing] || style=$ZSH_HIGHLIGHT_STYLES[default];;
+
+        *"#"*)   if [[ -o interactive_comments ]]; then
+                   comment_start=$start_pos
+
+                   if [[ "$arg[0, 1]" != "#" ]]; then
+                     ((comment_start+=${#${arg[(ws:#:)0]}}))
+                   fi
+
+                   style=$ZSH_HIGHLIGHT_STYLES[comment]
+                   style_override="comment"
+
+                   region_highlight+=("$comment_start $end_pos $style")
+                   start_pos=$end_pos
+
+                   continue
+                 fi
+                 ;;
+
         *)       if _zsh_highlight_main_highlighter_check_path; then
                    style=$ZSH_HIGHLIGHT_STYLES[path]
                  elif [[ $arg[0,1] = $histchars[0,1] ]]; then
@@ -160,11 +190,13 @@ _zsh_highlight_main_highlighter()
                  ;;
       esac
     fi
+
     # if a style_override was set (eg in _zsh_highlight_main_highlighter_check_path), use it
     [[ -n $style_override ]] && style=$ZSH_HIGHLIGHT_STYLES[$style_override]
     [[ $substr_color = 0 ]] && region_highlight+=("$start_pos $end_pos $style")
     [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS:#"$arg"} ]] && new_expression=true
     start_pos=$end_pos
+    style_override=""
   done
 }
 
