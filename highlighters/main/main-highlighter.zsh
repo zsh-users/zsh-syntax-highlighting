@@ -53,6 +53,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[assign]:=none}
+: ${ZSH_HIGHLIGHT_STYLES[comment]:=fg=black,italic,bold}
 
 # Whether the highlighter should be called or not.
 _zsh_highlight_main_highlighter_predicate()
@@ -88,6 +89,14 @@ _zsh_highlight_main_highlighter()
     [[ $start_pos -eq 0 && $arg = 'noglob' ]] && highlight_glob=false
     ((start_pos+=${#BUFFER[$start_pos+1,-1]}-${#${BUFFER[$start_pos+1,-1]##[[:space:]]#}}))
     ((end_pos=$start_pos+${#arg}))
+
+    if _zsh_highlight_main_highlighter_check_comment; then
+      style=$ZSH_HIGHLIGHT_STYLES[comment]
+      end_pos=$#BUFFER
+      region_highlight+=("$start_pos $end_pos $style")
+      break
+    fi
+
     # Parse the sudo command line
     if $sudo; then
       case "$arg" in
@@ -166,6 +175,12 @@ _zsh_highlight_main_highlighter()
     [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS:#"$arg"} ]] && new_expression=true
     start_pos=$end_pos
   done
+}
+
+# Check if the argument is the beginning of a comment
+_zsh_highlight_main_highlighter_check_comment()
+{
+    [[ $arg == \#* ]]
 }
 
 # Check if the argument is variable assignment
