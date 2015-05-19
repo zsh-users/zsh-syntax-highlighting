@@ -228,7 +228,7 @@ _zsh_highlight_main_highlighter_highlight_string()
             fi
               (( varflag = 0 )) # End of variable
             ;;
-      ([^a-zA-Z0-9_]))
+      [^a-zA-Z0-9_])
             (( varflag = 0 )) # End of variable
             continue
             ;;
