@@ -90,6 +90,8 @@ _zsh_highlight()
       # Use value form cache if any cached
       eval "region_highlight+=(\"\${${cache_place}[@]}\")"
 
+      # Bring back region higlighting from zle_highlight array (was overwriten by region_highlight)
+      ((REGION_ACTIVE)) && region_highlight+=("$((CURSOR < MARK ? CURSOR : MARK)) $((CURSOR > MARK ? CURSOR : MARK)) ${${(M)zle_highlight[@]:#region*}#region:}")
     done
 
   } always {
