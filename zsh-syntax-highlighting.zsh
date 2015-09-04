@@ -90,6 +90,8 @@ _zsh_highlight()
       # Use value form cache if any cached
       eval "region_highlight+=(\"\${${cache_place}[@]}\")"
 
+      # Bring back region higlighting from zle_highlight array (was overwriten by region_highlight)
+      ((REGION_ACTIVE)) && region_highlight+=("$((CURSOR < MARK ? CURSOR : MARK)) $((CURSOR > MARK ? CURSOR : MARK)) ${${(M)zle_highlight[@]:#region*}#region:}")
     done
 
   } always {
@@ -104,8 +106,9 @@ _zsh_highlight()
 # API/utility functions for highlighters
 # -------------------------------------------------------------------------------------------------
 
-# Array used by highlighters to declare user overridable styles.
+# Arrays used by highlighters to declare user overridable styles.
 typeset -gA ZSH_HIGHLIGHT_STYLES
+typeset -gA ZSH_HIGHLIGHT_FILES
 
 # Whether the command line buffer has been modified or not.
 #
@@ -139,7 +142,7 @@ _zsh_highlight_bind_widgets()
 
   # Override ZLE widgets to make them invoke _zsh_highlight.
   local cur_widget
-  for cur_widget in ${${(f)"$(builtin zle -la)"}:#(.*|_*|orig-*|run-help|which-command|beep|yank*)}; do
+  for cur_widget in ${${(f)"$(builtin zle -la)"}:#(.*|_*|orig-*|run-help|beep|auto-*|*-argument|argument-base|clear-screen|describe-key-briefly|kill-buffer|overwrite-mode|reset-prompt|set-local-history|split-undo|undefined-key|what-cursor-position|where-is)}; do
     case $widgets[$cur_widget] in
 
       # Already rebound event: do nothing.

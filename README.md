@@ -3,6 +3,8 @@ zsh-syntax-highlighting
 
 **[Fish shell](http://www.fishshell.com) like syntax highlighting for [Zsh](http://www.zsh.org).**
 
+![](misc/screenshot.png)
+
 *Requirements: zsh 4.3.17+.*
 
 

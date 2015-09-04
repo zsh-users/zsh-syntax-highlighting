@@ -37,12 +37,15 @@
 : ${ZSH_HIGHLIGHT_STYLES[builtin]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[function]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[command]:=fg=green}
+: ${ZSH_HIGHLIGHT_STYLES[command_prefix]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
+: ${ZSH_HIGHLIGHT_STYLES[redirection]:=fg=magenta}
 : ${ZSH_HIGHLIGHT_STYLES[hashed-command]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_approx]:=fg=yellow,underline}
+: ${ZSH_HIGHLIGHT_STYLES[file]:=}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[single-hyphen-option]:=none}
@@ -60,19 +63,48 @@ _zsh_highlight_main_highlighter_predicate()
   _zsh_highlight_buffer_modified
 }
 
+## In case we need to highlight in other circumstances then default from highlighter_predicate lets define a switcher
+_zsh_highlight_main_highlighter_predicate_switcher()
+{
+    case $1 in
+	'b') # buffer
+           _zsh_highlight_main_highlighter_predicate()
+	   {
+	       _zsh_highlight_buffer_modified
+	   };;
+	'c') # cursor
+	   _zsh_highlight_main_highlighter_predicate()
+	   {
+	       _zsh_highlight_cursor_moved
+	   };;
+	'bc') bccounter=0 # buffer and cursor
+	   _zsh_highlight_main_highlighter_predicate()
+	   {
+	       bccounter=$((bccounter+1))
+	       (( $bccounter > 1 )) && _zsh_highlight_main_highlighter_predicate_switcher b
+	       _zsh_highlight_cursor_moved || _zsh_highlight_buffer_modified
+	   };;
+	*);;
+    esac
+}
+
 # Main syntax highlighting function.
 _zsh_highlight_main_highlighter()
 {
   emulate -L zsh
   setopt localoptions extendedglob bareglobqual
-  local start_pos=0 end_pos highlight_glob=true new_expression=true arg style sudo=false sudo_arg=false
+  local start_pos=0 end_pos highlight_glob=true new_expression=true arg style lsstyle start_file_pos end_file_pos sudo=false sudo_arg=false
   typeset -a ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR
+  typeset -a ZSH_HIGHLIGHT_TOKENS_REDIRECTION
   typeset -a ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
   typeset -a ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS
   region_highlight=()
 
   ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR=(
-    '|' '||' ';' '&' '&&'
+    '|' '||' ';' '&' '&&' '&|' '|&' '&!'
+  )
+  ZSH_HIGHLIGHT_TOKENS_REDIRECTION=(
+    '<' '<>' '>' '>|' '>!' '>>' '>>|' '>>!' '<<' '<<-' '<<<' '<&' '>&' '<& -' '>& -' '<& p' '>& p' '&>' '>&|' '>&!' '&>|' '&>!' '>>&' '&>>' '>>&|' '>>&!' '&>>|' '&>>!'
   )
   ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS=(
     'builtin' 'command' 'exec' 'nocorrect' 'noglob'
@@ -82,12 +114,19 @@ _zsh_highlight_main_highlighter()
     $ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR $ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
   )
 
+  splitbuf1=(${(z)BUFFER})
+  splitbuf2=(${(z)BUFFER//$'\n'/ \$\'\\\\n\' }) # ugly hack, but I have no other idea
+  local argnum=0
   for arg in ${(z)BUFFER}; do
-    local substr_color=0
+    argnum=$((argnum+1))
+    if [[ $splitbuf1[$argnum] != $splitbuf2[$argnum] ]] && new_expression=true && continue
+
+    local substr_color=0 isfile=false
     local style_override=""
     [[ $start_pos -eq 0 && $arg = 'noglob' ]] && highlight_glob=false
     ((start_pos+=${#BUFFER[$start_pos+1,-1]}-${#${BUFFER[$start_pos+1,-1]##[[:space:]]#}}))
     ((end_pos=$start_pos+${#arg}))
+
     # Parse the sudo command line
     if $sudo; then
       case "$arg" in
@@ -126,13 +165,20 @@ _zsh_highlight_main_highlighter()
         *)              if _zsh_highlight_main_highlighter_check_assign; then
                           style=$ZSH_HIGHLIGHT_STYLES[assign]
                           new_expression=true
+                        elif _zsh_highlight_main_highlighter_check_command; then
+                          style=$ZSH_HIGHLIGHT_STYLES[command_prefix]
                         elif _zsh_highlight_main_highlighter_check_path; then
                           style=$ZSH_HIGHLIGHT_STYLES[path]
                         elif [[ $arg[0,1] == $histchars[0,1] || $arg[0,1] == $histchars[2,2] ]]; then
                           style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
+                        elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+			  style=$ZSH_HIGHLIGHT_STYLES[commandseparator]
+                        elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_REDIRECTION:#"$arg"} ]]; then
+			    style=$ZSH_HIGHLIGHT_STYLES[redirection]
                         else
                           style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
                         fi
+                        _zsh_highlight_main_highlighter_check_file && isfile=true
                         ;;
       esac
      fi
@@ -154,17 +200,26 @@ _zsh_highlight_main_highlighter()
                    style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
                  elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
                    style=$ZSH_HIGHLIGHT_STYLES[commandseparator]
+                 elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_REDIRECTION:#"$arg"} ]]; then
+                   style=$ZSH_HIGHLIGHT_STYLES[redirection]
                  else
                    style=$ZSH_HIGHLIGHT_STYLES[default]
                  fi
+		 _zsh_highlight_main_highlighter_check_file && isfile=true
                  ;;
       esac
     fi
     # if a style_override was set (eg in _zsh_highlight_main_highlighter_check_path), use it
     [[ -n $style_override ]] && style=$ZSH_HIGHLIGHT_STYLES[$style_override]
+    if [[ $isfile == true ]]; then
+	start_file_pos=$((start_pos+${#arg}-${#arg:t}))
+	end_file_pos=$end_pos
+	end_pos=$((end_pos-${#arg:t}))
+	region_highlight+=("$start_file_pos $end_file_pos $lsstyle")
+    fi
     [[ $substr_color = 0 ]] && region_highlight+=("$start_pos $end_pos $style")
     [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_FOLLOWED_BY_COMMANDS:#"$arg"} ]] && new_expression=true
-    start_pos=$end_pos
+    [[ $isfile == true ]] && start_pos=$end_file_pos || start_pos=$end_pos
   done
 }
 
@@ -188,14 +243,14 @@ _zsh_highlight_main_highlighter_check_path()
     [[ -e "$cdpath_dir/$expanded_path" ]] && return 0
   done
   [[ ! -e ${expanded_path:h} ]] && return 1
-  if [[ ${BUFFER[1]} != "-" && ${#BUFFER} == $end_pos ]]; then
+  if [[ ${BUFFER[1]} != "-" && ${#LBUFFER} == $end_pos ]]; then
     local -a tmp
     # got a path prefix?
     tmp=( ${expanded_path}*(N) )
-    (( $#tmp > 0 )) && style_override=path_prefix && return 0
+    (( $#tmp > 0 )) && style_override=path_prefix && _zsh_highlight_main_highlighter_predicate_switcher bc && return 0
     # or maybe an approximate path?
     tmp=( (#a1)${expanded_path}*(N) )
-    (( $#tmp > 0 )) && style_override=path_approx && return 0
+    (( $#arg > 3 && $#tmp > 0 )) && style_override=path_approx && return 0
   fi
   return 1
 }
@@ -238,3 +293,95 @@ _zsh_highlight_main_highlighter_highlight_string()
     region_highlight+=("$j $k $style")
   done
 }
+
+## Check if command with given prefix exists
+_zsh_highlight_main_highlighter_check_command()
+{
+  setopt localoptions nonomatch
+  local -a prefixed_command
+  [[ $arg != $arg:t ]] && return 1  # don't match anything if explicit path is present
+  for p in $path; do prefixed_command+=( $p/${arg}*(N) ); done
+  [[ ${BUFFER[1]} != "-" && ${#LBUFFER} == $end_pos && $#prefixed_command > 0 ]] && return 0 || return 1
+}
+
+## Fill table with colors and file types from $LS_COLORS
+_zsh_highlight_files_highlighter_fill_table_of_types()
+{
+  local group type code ncolors=$(echotc Co)
+  local -a attrib
+
+  for group in ${(s.:.)LS_COLORS}; do
+    type=${group%=*}
+    code=${group#*=}
+    attrib=()
+    takeattrib ${(s.;.)code}
+    ZSH_HIGHLIGHT_FILES+=($type ${(j.,.)attrib})
+  done
+}
+
+## Take attributes from unfolded $LS_COLORS code
+takeattrib()
+{
+    while [ "$#" -gt 0 ]; do
+	[[ $1 == 38 && $2 == 5 ]] && {attrib+=("fg=$3"); shift 3; continue}
+	[[ $1 == 48 && $2 == 5 ]] && {attrib+=("bg=$3"); shift 3; continue}
+	case $1 in
+	    00|0) attrib+=("none"); shift;;
+            01|1) attrib+=("bold" ); shift;;
+            02|2) attrib+=("faint"); shift;;
+            03|3) attrib+=("italic"); shift;;
+            04|4) attrib+=("underscore"); shift;;
+            05|5) attrib+=("blink"); shift;;
+            07|7) attrib+=("standout"); shift;;
+            08|8) attrib+=("concealed"); shift;;
+            3[0-7]) attrib+=("fg=$(($1-30))"); shift;;
+            4[0-7]) attrib+=("bg=$(($1-40))"); shift;;
+            9[0-7]) [[ $ncolors == 256 ]] && attrib+=("fg=$(($1-82))") || attrib+=("fg=$(($1-90))" "bold"); shift;;
+            10[0-7]) [[ $ncolors == 256 ]] && attrib+=("bg=$(($1-92))") || attrib+=("bg=$(($1-100))" "bold"); shift;;
+            *) shift;;
+        esac
+    done
+}
+
+## Check if the argument is a file, if yes change the style accordingly
+_zsh_highlight_main_highlighter_check_file()
+{
+    setopt localoptions nonomatch
+    local expanded_arg matched_file
+
+    expanded_arg=${(Q)~arg}
+    [[ -z $expanded_arg ]] && return 1
+    [[ -d $expanded_arg ]] && return 1
+    [[ ${BUFFER[1]} != "-" && ${#LBUFFER} == $end_pos ]] && matched_file=(${expanded_arg}*(Noa^/[1]))
+    [[ -e $expanded_arg || -e $matched_file ]] && lsstyle=none || return 1
+    [[ -e $matched_file ]] && _zsh_highlight_main_highlighter_predicate_switcher bc
+
+    [[ ! -z $ZSH_HIGHLIGHT_STYLES[file] ]] && lsstyle=$ZSH_HIGHLIGHT_STYLES[file] && return 0
+
+    # [[ rs ]]
+    # [[ -d $expanded_arg || -d $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[di] && return 0
+    [[ -h $expanded_arg || -h $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[ln] && return 0
+    # [[ mh ]]
+    [[ -p $expanded_arg || -p $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[pi] && return 0
+    [[ -S $expanded_arg || -S $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[so] && return 0
+    # [[ do ]]
+    [[ -b $expanded_arg || -b $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[bd] && return 0
+    [[ -c $expanded_arg || -c $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[cd] && return 0
+    # [[ or ]]
+    # [[ mi ]]
+    [[ -u $expanded_arg || -u $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[su] && return 0
+    [[ -g $expanded_arg || -g $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[sg] && return 0
+    # [[ ca ]]
+    # [[ tw ]]
+    # [[ ow ]]
+    [[ -k $expanded_arg || -k $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[st] && return 0
+    [[ -x $expanded_arg || -x $matched_file ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[ex] && return 0
+
+    [[ -e $expanded_arg ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[*.$expanded_arg:e] && return 0
+    [[ -n $matched_file:e ]] && lsstyle=$ZSH_HIGHLIGHT_FILES[*.$matched_file:e] && return 0
+
+    return 0
+}
+
+## Fill table only once, at the initialization process
+_zsh_highlight_files_highlighter_fill_table_of_types
