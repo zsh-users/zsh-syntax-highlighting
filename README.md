@@ -1,7 +1,7 @@
 zsh-syntax-highlighting
 =======================
 
-Syntax highlighting for [Zsh](http://www.zsh.org).**
+Enhanced highlighting of the [Zsh](http://www.zsh.org) command-line, including syntax, paths, files, selected regions, searched patterns and much more.
 
 ![](misc/screenshot.png)
 

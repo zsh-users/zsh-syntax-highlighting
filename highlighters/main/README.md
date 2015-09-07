@@ -47,6 +47,10 @@ This highlighter defines the following styles:
 * `dollar-double-quoted-argument` -  dollar double quoted arguments
 * `back-double-quoted-argument` -  back double quoted arguments
 * `assign` - variable assignments
+* `isearch` - matched string in history-incremental-search* widgets
+* `region` - selected region (between the point and the mark)
+* `special` - unprintable characters
+* `suffix` - suffix characters used in the completion system
 * `default` - parts of the buffer that do not match anything
 
 To override one of those styles, change its entry in `ZSH_HIGHLIGHT_STYLES`, for example in `~/.zshrc`:

@@ -93,6 +93,9 @@ _zsh_highlight()
 	    
 	done
 	
+	# Set zle_highlight according to user definition on this package level
+	zle_highlight=(default:$ZSH_HIGHLIGHT_STYLES[default] isearch:$ZSH_HIGHLIGHT_STYLES[isearch] region:$ZSH_HIGHLIGHT_STYLES[region] special:$ZSH_HIGHLIGHT_STYLES[special] suffix:$ZSH_HIGHLIGHT_STYLES[suffix])
+
 	# Bring back region higlighting from zle_highlight array (was overwriten by region_highlight)
 	((REGION_ACTIVE)) && region_highlight+=("$((CURSOR < MARK ? CURSOR : MARK)) $((CURSOR > MARK ? CURSOR : MARK)) ${${(M)zle_highlight[@]:#region*}#region:}")
 	
