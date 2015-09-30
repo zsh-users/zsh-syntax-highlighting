@@ -49,6 +49,11 @@ if true; then
   fi
 fi
 
+integer zsh_highlight_use_redrawhook
+if zle -la .match-bracket; then
+  (( zsh_highlight_use_redrawhook=1 ))
+fi
+
 # -------------------------------------------------------------------------------------------------
 # Core highlighting update system
 # -------------------------------------------------------------------------------------------------
@@ -356,6 +361,11 @@ _zsh_highlight_bind_widgets()
     esac
   done
 }
+
+if (( $zsh_highlight_use_redrawhook )); then
+  _zsh_highlight_bind_widgets(){}
+  zle -N zle-line-pre-redraw _zsh_highlight
+fi
 
 # Load highlighters from directory.
 #
