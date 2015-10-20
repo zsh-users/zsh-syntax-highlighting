@@ -1,3 +1,6 @@
+# Changes in HEAD
+
+
 # Changes in 0.8.0-alpha1-pre-redrawhook
 
 ## Notice about an improbable-but-not-impossible forward incompatibility
