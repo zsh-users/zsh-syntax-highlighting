@@ -41,7 +41,9 @@
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[hashed-command]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
+: ${ZSH_HIGHLIGHT_STYLES[path_pathseparator]:=${ZSH_HIGHLIGHT_STYLES[path]}}
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix]:=underline}
+: ${ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]:=${ZSH_HIGHLIGHT_STYLES[path_prefix]}}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[single-hyphen-option]:=none}
@@ -517,7 +519,10 @@ _zsh_highlight_main_highlighter()
     fi
     # if a style_override was set (eg in _zsh_highlight_main_highlighter_check_path), use it
     [[ -n $style_override ]] && style=$style_override
-    (( already_added )) || _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
+    if ! (( already_added )); then
+      _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
+      [[ $style == path || $style == path_prefix ]] && _zsh_highlight_main_highlighter_highlight_path_separators
+    fi
     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
       next_word=':start:'
       highlight_glob=true
@@ -544,6 +549,18 @@ _zsh_highlight_main_highlighter_check_assign()
 {
     setopt localoptions extended_glob
     [[ $arg == [[:alpha:]_][[:alnum:]_]#(|\[*\])(|[+])=* ]]
+}
+
+_zsh_highlight_main_highlighter_highlight_path_separators()
+{
+  local pos style_pathsep
+  style_pathsep=${style}_pathseparator
+  [[ -z "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" || "$ZSH_HIGHLIGHT_STYLES[$style]" == "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" ]] && return 0
+  for (( pos = start_pos; $pos <= end_pos; pos++ )) ; do
+    if [[ $BUFFER[pos] == / ]]; then
+      _zsh_highlight_main_add_region_highlight $((pos - 1)) $pos $style_pathsep
+    fi
+  done
 }
 
 # Check if $arg is a path.
