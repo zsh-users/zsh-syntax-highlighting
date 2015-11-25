@@ -28,9 +28,6 @@
 # -------------------------------------------------------------------------------------------------
 
 
-# Define default styles.
-: ${ZSH_HIGHLIGHT_STYLES[root]:=standout}
-
 # Whether the root highlighter should be called or not.
 _zsh_highlight_highlighter_root_predicate()
 {

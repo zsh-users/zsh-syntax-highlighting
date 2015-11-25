@@ -399,6 +399,24 @@ _zsh_highlight_load_highlighters()
 }
 
 
+# Load theme
+# $1 should be a theme defined in themes/ or an absolute path
+_zsh_highlight_load_theme()
+{
+  local theme=$1
+  shift 1
+  if [[ ${theme[1]} == / ]]; then
+    source $theme
+  elif [[ $theme == */* ]]; then
+    print -r -- >&2 "zsh-syntax-highlighting: failed on invalid theme name: ${(qq)theme}"
+    return 1
+  else
+    for theme in ${ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR:h}/themes/$theme(N) $ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR/$^ZSH_HIGHLIGHT_HIGHLIGHTERS/$theme(N); do
+      source $theme
+    done
+  fi
+}
+
 # -------------------------------------------------------------------------------------------------
 # Setup
 # -------------------------------------------------------------------------------------------------
@@ -410,7 +428,7 @@ _zsh_highlight_bind_widgets || {
 }
 
 # Resolve highlighters directory location.
-_zsh_highlight_load_highlighters "${ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR:-${${0:A}:h}/highlighters}" || {
+_zsh_highlight_load_highlighters "${ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR:=${${0:A}:h}/highlighters}" || {
   print -r -- >&2 'zsh-syntax-highlighting: failed loading highlighters, exiting.'
   return 1
 }
@@ -431,6 +449,9 @@ zmodload zsh/parameter 2>/dev/null || true
 
 # Initialize the array of active highlighters if needed.
 [[ $#ZSH_HIGHLIGHT_HIGHLIGHTERS -eq 0 ]] && ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
+
+# Load the theme.
+_zsh_highlight_load_theme "${ZSH_HIGHLIGHT_THEME-default}"
 
 # Restore the aliases we unned
 eval "$zsh_highlight__aliases"
