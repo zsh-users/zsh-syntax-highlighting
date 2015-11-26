@@ -3,12 +3,12 @@ zsh-syntax-highlighting / highlighters
 
 Syntax highlighting is done by pluggable highlighters:
 
-* `main` - the base highlighter, and the only one active by default.
-* `brackets` - matches brackets and parenthesis.
-* `pattern` - matches user-defined patterns.
-* `cursor` - matches the cursor position.
-* `root` - triggered if the current user is root.
-* `line` - applied to the whole command line
+* `main` - the base highlighter, and the only one [active by default](highlighters/main.md).
+* `brackets` - [matches brackets](highlighters/brackets.md) and parenthesis.
+* `pattern` - matches [user-defined patterns](highlighters/pattern.md).
+* `cursor` - matches [the cursor](highlighters/cursor.md) position.
+* `root` - triggered [if the current user is root](highlighters/root.md).
+* `line` - applied to [the whole command line](highlighters/line.md).
 
 
 How to activate highlighters
