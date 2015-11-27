@@ -26,6 +26,7 @@ This highlighter defines the following styles:
 * `precommand` - precommand modifiers (e.g., `noglob`, `builtin`)
 * `commandseparator` - command separation tokens (`;`, `&&`)
 * `hashed-command` - hashed commands
+* `command-being-typed` - prefix of a command/function/alias that isn't one itself (e.g., `sourc`, `ifconfi`)
 * `path` - existing filenames
 * `path_prefix` - prefixes of existing filenames
 * `globbing` - globbing expressions (`*.txt`)

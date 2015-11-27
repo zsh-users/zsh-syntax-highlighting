@@ -27,8 +27,10 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER='azertyuiop'
+# Do not append to the BUFFER; the second instance tests an "at end of BUFFER" feature.
+BUFFER='azertyuiop; azertyuiop'
 
 expected_region_highlight=(
   "1  10  $ZSH_HIGHLIGHT_STYLES[unknown-token]" # azertyuiop
+  "13 22  $ZSH_HIGHLIGHT_STYLES[command-being-typed]" # azertyuiop, at end of buffer
 )
