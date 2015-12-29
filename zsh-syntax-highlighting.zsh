@@ -262,14 +262,22 @@ _zsh_highlight_bind_widgets()
   local -U widgets_to_bind
   widgets_to_bind=(${${(k)widgets}:#(.*|run-help|which-command|beep|set-local-history|yank)})
 
-  # Always wrap special zle-line-finish widget. This is needed to decide if the
-  # current line ends and special highlighting logic needs to be applied.
-  # E.g. remove cursor imprint, don't highlight partial paths, ...
-  widgets_to_bind+=(zle-line-finish)
+  # Use zle-line-pre-redraw if available. Otherwise try binding widgets as fallback.
+  autoload -Uz is-at-least
+  if is-at-least 5.2; then
+    widgets_to_bind=(zle-line-pre-redraw)
+  else
+    widgets_to_bind=(${${(f)"$(builtin zle -la)"}:#(.*|orig-*|run-help|which-command|beep|set-local-history|yank)})
 
-  # Always wrap special zle-isearch-update widget to be notified of updates in isearch.
-  # This is needed because we need to disable highlighting in that case.
-  widgets_to_bind+=(zle-isearch-update)
+    # Always wrap special zle-line-finish widget. This is needed to decide if the
+    # current line ends and special highlighting logic needs to be applied.
+    # E.g. remove cursor imprint, don't highlight partial paths, ...
+    widgets_to_bind+=(zle-line-finish)
+
+    # Always wrap special zle-isearch-update widget to be notified of updates in isearch.
+    # This is needed because we need to disable highlighting in that case.
+    widgets_to_bind+=(zle-isearch-update)
+  fi
 
   local cur_widget
   for cur_widget in $widgets_to_bind; do
