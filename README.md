@@ -1,12 +1,13 @@
 zsh-syntax-highlighting
 =======================
 
+<red>**THIS PROJECT IS NO LONGER MAINTAINED.
+YOU MAY WANT TO TEST ITS SUCCESSOR: [chromatic-zsh](https://github.com/jimmijj/chromatic-zsh).**
+
 Enhanced highlighting of the [Zsh](http://www.zsh.org) command-line, including syntax, paths, files, selected regions, searched patterns and much more.
 
 ![](misc/screenshot.png)
 
-**THIS PROJECT IS NO LONGER MAINTAINED.
-YOU MAY WANT TO TEST ITS SUCCESSOR: [chromatic-zsh](https://github.com/jimmijj/chromatic-zsh).**
 
 How to install
 --------------
