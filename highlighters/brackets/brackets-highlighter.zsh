@@ -76,7 +76,9 @@ _zsh_highlight_brackets_highlighter()
   # Now highlight all found brackets
   for pos in ${(k)levelpos}; do
     if (( $+matching[$pos] )); then
-      style=bracket-level-$(( (levelpos[$pos] - 1) % bracket_color_size + 1 ))
+      if (( bracket_color_size )); then
+        style=bracket-level-$(( (levelpos[$pos] - 1) % bracket_color_size + 1 ))
+      fi
     else
       style=bracket-error
     fi
