@@ -114,7 +114,7 @@ _zsh_highlight()
 
     # Re-apply zle_highlight settings
     () {
-      if (( REGION_ACTIVE )) ; then
+      if (( MARK > 0 )) || (( REGION_ACTIVE )) ; then
         # zle_highlight[region] defaults to 'standout' if unspecified
         local region="${${zle_highlight[(r)region:*]#region:}:-standout}"
         integer start end
