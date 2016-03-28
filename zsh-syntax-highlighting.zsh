@@ -322,6 +322,7 @@ _zsh_highlight_preexec_hook()
 {
   typeset -g _ZSH_HIGHLIGHT_PRIOR_BUFFER=
   typeset -gi _ZSH_HIGHLIGHT_PRIOR_CURSOR=
+  _zsh_highlight_command_type_cache=()
 }
 autoload -U add-zsh-hook
 add-zsh-hook preexec _zsh_highlight_preexec_hook 2>/dev/null || {
@@ -333,3 +334,6 @@ zmodload zsh/parameter 2>/dev/null || true
 
 # Initialize the array of active highlighters if needed.
 [[ $#ZSH_HIGHLIGHT_HIGHLIGHTERS -eq 0 ]] && ZSH_HIGHLIGHT_HIGHLIGHTERS=(main) || true
+
+# Initialize command type cache
+typeset -A _zsh_highlight_command_type_cache
