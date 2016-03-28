@@ -60,8 +60,8 @@
 # Whether the highlighter should be called or not.
 _zsh_highlight_main_highlighter_predicate()
 {
-  # accept-* may trigger removal of path_prefix highlighting
-  [[ $WIDGET == accept-* ]] ||
+  # widgets which accept lines may trigger removal of path_prefix highlighting
+  _zsh_highlight_is_accept_line_type_widget ||
     _zsh_highlight_buffer_modified
 }
 
@@ -486,7 +486,7 @@ _zsh_highlight_main_highlighter_check_path()
 
   # If this word ends the buffer, check if it's the prefix of a valid path.
   if [[ ${BUFFER[1]} != "-" && ${#BUFFER} == $end_pos ]] &&
-     [[ $WIDGET != accept-* ]]; then
+     ! _zsh_highlight_is_accept_line_type_widget; then
     local -a tmp
     tmp=( ${expanded_path}*(N) )
     (( $#tmp > 0 )) && style_override=path_prefix && return 0

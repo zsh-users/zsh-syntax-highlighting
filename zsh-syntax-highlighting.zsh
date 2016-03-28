@@ -190,6 +190,14 @@ _zsh_highlight_cursor_moved()
   [[ -n $CURSOR ]] && [[ -n ${_ZSH_HIGHLIGHT_PRIOR_CURSOR-} ]] && (($_ZSH_HIGHLIGHT_PRIOR_CURSOR != $CURSOR))
 }
 
+# Whether the current widget is an accept-line type widget.
+#
+# Returns 0 if the the current widget is an accept-line type widget.
+_zsh_highlight_is_accept_line_type_widget()
+{
+  [[ $WIDGET == accept-* ]] || [[ $WIDGET == zsh-isearch-exit ]]
+}
+
 
 # -------------------------------------------------------------------------------------------------
 # Setup functions
