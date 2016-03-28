@@ -93,6 +93,19 @@ _zsh_highlight_main__type() {
   LC_ALL=C builtin type -w -- $1 2>/dev/null
 }
 
+# Resolve alias.
+#
+# Takes a single argument.
+#
+# The result will be stored in REPLY.
+_zsh_highlight_main__resolve_alias() {
+  if zmodload -e zsh/parameter; then
+    REPLY=${aliases[$arg]}
+  else
+    REPLY="${"$(alias -- $arg)"#*=}"
+  fi
+}
+
 # Main syntax highlighting function.
 _zsh_highlight_main_highlighter()
 {
@@ -344,8 +357,9 @@ _zsh_highlight_main_highlighter()
                             style=unknown-token
                           else
                             style=alias
-                            local aliased_command="${"$(alias -- $arg)"#*=}"
-                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$aliased_command"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]] && ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg)
+                            _zsh_highlight_main__resolve_alias $arg
+                            local alias_target="$REPLY"
+                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$alias_target"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]] && ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg)
                           fi
                         }
                         ;;
