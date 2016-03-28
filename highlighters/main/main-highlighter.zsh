@@ -80,17 +80,39 @@ _zsh_highlight_main_add_region_highlight() {
   _zsh_highlight_add_highlight $start $end "$@"
 }
 
-# Wrapper around 'type -w'.
+# Get the type of a command.
 #
-# Takes a single argument and outputs the output of 'type -w $1'.
+# Uses the zsh/parameter module if available to avoid forks, and a
+# wrapper around 'type -w' as fallback.
 #
-# NOTE: This runs 'setopt', but that should be safe since it'll only ever be
-# called inside a $(...) subshell, so the effects will be local.
+# Takes a single argument.
+#
+# The result will be stored in REPLY.
 _zsh_highlight_main__type() {
   if (( $#options_to_set )); then
     setopt localoptions $options_to_set;
   fi
-  LC_ALL=C builtin type -w -- $1 2>/dev/null
+  unset REPLY
+  if zmodload -e zsh/parameter; then
+    if (( $+aliases[(e)$1] )); then
+      REPLY=alias
+    elif (( $+saliases[(e)${1##*.}] )); then
+      REPLY='suffix alias'
+    elif (( $reswords[(Ie)$1] )); then
+      REPLY=reserved
+    elif (( $+functions[(e)$1] )); then
+      REPLY=function
+    elif (( $+builtins[(e)$1] )); then
+      REPLY=builtin
+    elif (( $+commands[(e)$1] )); then
+      REPLY=command
+    elif ! builtin type -w -- $1 >/dev/null 2>&1; then
+      REPLY=none
+    fi
+  fi
+  if ! (( $+REPLY )); then
+    REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null)#*: }"
+  fi
 }
 
 # Check whether the first argument is a redirection operator token.
@@ -329,7 +351,8 @@ _zsh_highlight_main_highlighter()
      else
       _zsh_highlight_main_highlighter_expand_path $arg
       local expanded_arg="$REPLY"
-      local res="$(_zsh_highlight_main__type ${expanded_arg})"
+      _zsh_highlight_main__type ${expanded_arg}
+      local res="$REPLY"
       () {
         # Special-case: command word is '$foo', like that, without braces or anything.
         #
@@ -339,17 +362,16 @@ _zsh_highlight_main_highlighter()
         # parameters that refer to commands, functions, and builtins.
         local -a match mbegin mend
         local MATCH; integer MBEGIN MEND
-        if [[ $res == *': none' ]] && (( ${+parameters} )) &&
+        if [[ $res == none ]] && (( ${+parameters} )) &&
            [[ ${arg[1]} == \$ ]] && [[ ${arg:1} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]]; then
-          res="$(_zsh_highlight_main__type ${(P)MATCH})"
+          _zsh_highlight_main__type ${(P)MATCH}
+          res=$REPLY
         fi
       }
       case $res in
-        *': reserved')  style=reserved-word;;
-        *': suffix alias')
-                        style=suffix-alias
-                        ;;
-        *': alias')     () {
+        reserved)       style=reserved-word;;
+        'suffix alias') style=suffix-alias;;
+        alias)          () {
                           integer insane_alias
                           case $arg in 
                             # Issue #263: aliases with '=' on their LHS.
@@ -373,11 +395,11 @@ _zsh_highlight_main_highlighter()
                           fi
                         }
                         ;;
-        *': builtin')   style=builtin;;
-        *': function')  style=function;;
-        *': command')   style=command;;
-        *': hashed')    style=hashed-command;;
-        *)              if _zsh_highlight_main_highlighter_check_assign; then
+        builtin)        style=builtin;;
+        function)       style=function;;
+        command)        style=command;;
+        hashed)         style=hashed-command;;
+        none)           if _zsh_highlight_main_highlighter_check_assign; then
                           style=assign
                           if [[ $arg[-1] == '(' ]]; then
                             in_array_assignment=true
@@ -430,6 +452,9 @@ _zsh_highlight_main_highlighter()
                             style=unknown-token
                           fi
                         fi
+                        ;;
+        *)              _zsh_highlight_main_add_region_highlight commandtypefromthefuture-$res
+                        already_added=1
                         ;;
       esac
      fi
