@@ -40,5 +40,5 @@ _zsh_highlight_root_highlighter_predicate()
 # root highlighting function.
 _zsh_highlight_root_highlighter()
 {
-  if [[ $(command id -u) -eq 0 ]] { region_highlight+=("0 $#BUFFER $ZSH_HIGHLIGHT_STYLES[root]") }
+  if (( EUID == 0 )) { region_highlight+=("0 $#BUFFER $ZSH_HIGHLIGHT_STYLES[root]") }
 }
