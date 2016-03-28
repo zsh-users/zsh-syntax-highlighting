@@ -89,6 +89,12 @@ _zsh_highlight_main_add_region_highlight() {
 #
 # The result will be stored in REPLY.
 _zsh_highlight_main__type() {
+  if (( $+_zsh_highlight_main__command_type_cache )); then
+    REPLY=$_zsh_highlight_main__command_type_cache[(e)$1]
+    if [[ -n "$REPLY" ]]; then
+      return
+    fi
+  fi
   if (( $#options_to_set )); then
     setopt localoptions $options_to_set;
   fi
@@ -112,6 +118,9 @@ _zsh_highlight_main__type() {
   fi
   if ! (( $+REPLY )); then
     REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null)#*: }"
+  fi
+  if (( $+_zsh_highlight_main__command_type_cache )); then
+    _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
   fi
 }
 
@@ -662,3 +671,21 @@ _zsh_highlight_main_highlighter_expand_path()
   unset REPLY
   : ${REPLY:=${(Q)~1}}
 }
+
+# -------------------------------------------------------------------------------------------------
+# Main highlighter initialization
+# -------------------------------------------------------------------------------------------------
+
+_zsh_highlight_main__precmd_hook() {
+  _zsh_highlight_main__command_type_cache=()
+}
+
+autoload -U add-zsh-hook
+if add-zsh-hook precmd _zsh_highlight_main__precmd_hook 2>/dev/null; then
+  # Initialize command type cache
+  typeset -gA _zsh_highlight_main__command_type_cache
+else
+  echo 'zsh-syntax-highlighting: Failed to load add-zsh-hook. Some speed optimizations will not be used.' >&2
+  # Make sure the cache is unset
+  unset _zsh_highlight_main__command_type_cache
+fi
