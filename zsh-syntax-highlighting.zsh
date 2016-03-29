@@ -237,6 +237,12 @@ _zsh_highlight_bind_widgets()
   # Override ZLE widgets to make them invoke _zsh_highlight.
   local -U widgets_to_bind
   widgets_to_bind=(${${(k)widgets}:#(.*|orig-*|run-help|which-command|beep|set-local-history|yank)})
+
+  # Always wrap special zle-line-finish widget. This is needed to decide if the
+  # current line ends and special highlighting logic needs to be applied.
+  # E.g. remove cursor imprint, don't highlight partial paths, ...
+  widgets_to_bind+=(zle-line-finish)
+
   local cur_widget
   for cur_widget in $widgets_to_bind; do
     case $widgets[$cur_widget] in
