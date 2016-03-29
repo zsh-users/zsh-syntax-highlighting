@@ -58,6 +58,13 @@ _zsh_highlight()
   # Store the previous command return code to restore it whatever happens.
   local ret=$?
 
+  # Remove all highlighting in isearch, so that only the underlining done by zsh itself remains.
+  # For details see FAQ entry 'Why does syntax highlighting not work while searching history?'.
+  if [[ $WIDGET == zle-isearch-update ]]; then
+    region_highlight=()
+    return $ret
+  fi
+
   setopt localoptions warncreateglobal
   setopt localoptions noksharrays
   local REPLY # don't leak $REPLY into global scope
@@ -257,6 +264,10 @@ _zsh_highlight_bind_widgets()
   # current line ends and special highlighting logic needs to be applied.
   # E.g. remove cursor imprint, don't highlight partial paths, ...
   widgets_to_bind+=(zle-line-finish)
+
+  # Always wrap special zle-isearch-update widget to be notified of updates in isearch.
+  # This is needed because we need to disable highlighting in that case.
+  widgets_to_bind+=(zle-isearch-update)
 
   local cur_widget
   for cur_widget in $widgets_to_bind; do
