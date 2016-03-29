@@ -235,8 +235,10 @@ _zsh_highlight_bind_widgets()
   }
 
   # Override ZLE widgets to make them invoke _zsh_highlight.
+  local -U widgets_to_bind
+  widgets_to_bind=(${${(k)widgets}:#(.*|orig-*|run-help|which-command|beep|set-local-history|yank)})
   local cur_widget
-  for cur_widget in ${${(k)widgets}:#(.*|orig-*|run-help|which-command|beep|set-local-history|yank)}; do
+  for cur_widget in $widgets_to_bind; do
     case $widgets[$cur_widget] in
 
       # Already rebound event: do nothing.
@@ -261,6 +263,10 @@ _zsh_highlight_bind_widgets()
       # Builtin widget: override and make it call the builtin ".widget".
       builtin) eval "_zsh_highlight_widget_${(q)cur_widget}() { _zsh_highlight_call_widget .${(q)cur_widget} -- \"\$@\" }"
                zle -N $cur_widget _zsh_highlight_widget_$cur_widget;;
+
+      # Special zle-* hook that is currently not bound at all: Bind to z-sy-h driectly.
+      '') eval "_zsh_highlight_widget_${(q)cur_widget}() { :; _zsh_highlight }"
+          zle -N $cur_widget _zsh_highlight_widget_$cur_widget;;
 
       # Default: unhandled case.
       *) echo "zsh-syntax-highlighting: unhandled ZLE widget '$cur_widget'" >&2 ;;
