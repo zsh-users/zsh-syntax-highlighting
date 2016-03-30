@@ -40,6 +40,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[hashed-command]:=fg=green}
+: ${ZSH_HIGHLIGHT_STYLES[command-being-typed]:=fg=yellow,underline}
 : ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
@@ -380,6 +381,8 @@ _zsh_highlight_main_highlighter()
                         else
                           if _zsh_highlight_main_highlighter_check_path; then
                             style=$ZSH_HIGHLIGHT_STYLES[path]
+                          elif (( ${#BUFFER} == $end_pos )); then
+                            style=$ZSH_HIGHLIGHT_STYLES[command-being-typed]
                           else
                             style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
                           fi
