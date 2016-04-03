@@ -196,9 +196,10 @@ _zsh_highlight_cursor_moved()
   [[ -n $CURSOR ]] && [[ -n ${_ZSH_HIGHLIGHT_PRIOR_CURSOR-} ]] && (($_ZSH_HIGHLIGHT_PRIOR_CURSOR != $CURSOR))
 }
 
-# Add a highlight defined by ZSH_HIGHLIGHT_STYLES
+# Add a highlight defined by ZSH_HIGHLIGHT_STYLES.
 #
-# Should be used by all highlighters aside from 'pattern' (cf. ZSH_HIGHLIGHT_PATTERN)
+# Should be used by all highlighters aside from 'pattern' (cf. ZSH_HIGHLIGHT_PATTERN).
+# Overwritten in tests/test-highlighting.zsh when testing.
 _zsh_highlight_add_highlight()
 {
   local -i start end

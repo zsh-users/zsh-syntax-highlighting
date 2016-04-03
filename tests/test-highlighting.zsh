@@ -50,6 +50,12 @@
 # Load the main script.
 . ${0:h:h}/zsh-syntax-highlighting.zsh
 
+# Overwrite _zsh_highlight_add_highlight so we get the key itself instead of the style
+_zsh_highlight_add_highlight()
+{
+  region_highlight+=("$1 $2 $3")
+}
+
 # Activate the highlighter.
 ZSH_HIGHLIGHT_HIGHLIGHTERS=($1)
 
@@ -104,8 +110,8 @@ run_test_internal() {
     [[ $highlight_zone[3] == NONE ]] && highlight_zone[3]=
     [[ -n "$highlight_zone[4]" ]] && todo=" # TODO $highlight_zone[4]"
     for j in {$highlight_zone[1]..$highlight_zone[2]}; do
-      if [[ "$observed_result[$j]" != "$ZSH_HIGHLIGHT_STYLES[$highlight_zone[3]]" ]]; then
-        echo "not ok $i ${(qqq)BUFFER[$highlight_zone[1],$highlight_zone[2]]} [$highlight_zone[1],$highlight_zone[2]]: expected ${(qqq)ZSH_HIGHLIGHT_STYLES[$highlight_zone[3]]}, observed ${(qqq)observed_result[$j]}.$todo"
+      if [[ "$observed_result[$j]" != "$highlight_zone[3]" ]]; then
+        echo "not ok $i ${(qqq)BUFFER[$highlight_zone[1],$highlight_zone[2]]} [$highlight_zone[1],$highlight_zone[2]]: expected $highlight_zone[3], observed ${(qqq)observed_result[$j]}.$todo"
         continue 2
       fi
     done
