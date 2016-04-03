@@ -32,5 +32,5 @@ BUFFER='A=1; echo hello world'
 
 expected_region_highlight=(
   "4 4 ${(q-)ZSH_HIGHLIGHT_STYLES[commandseparator]}" # ;
-  "6 9 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # echo
+  "6 9 ${(q-)ZSH_HIGHLIGHT_STYLES[builtin]}" # echo
 )

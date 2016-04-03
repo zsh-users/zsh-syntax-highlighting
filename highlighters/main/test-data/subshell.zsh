@@ -32,7 +32,7 @@ BUFFER='tar cf - * | (cd /target; tar xfp -) | { cat }'
 expected_region_highlight=(
   "1 3 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # tar
   "14 14 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # (
-  "15 16 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # cd
+  "15 16 ${(q-)ZSH_HIGHLIGHT_STYLES[builtin]}" # cd
   "27 29 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # tar
   "36 36 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # )
   "40 40 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # {

@@ -32,15 +32,15 @@ BUFFER='ps aux | grep java | sort | uniq | tail | head'
 expected_region_highlight=(
   "1  2  ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # ps
   "4  6  ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # aux
-  "8  8  ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # |
+  "8  8  ${(q-)ZSH_HIGHLIGHT_STYLES[commandseparator]}" # |
   "10 13 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # grep
   "15 18 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # java
-  "20 20 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # |
+  "20 20 ${(q-)ZSH_HIGHLIGHT_STYLES[commandseparator]}" # |
   "22 25 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # sort
-  "27 27 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # |
+  "27 27 ${(q-)ZSH_HIGHLIGHT_STYLES[commandseparator]}" # |
   "29 32 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # uniq
-  "34 34 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # |
+  "34 34 ${(q-)ZSH_HIGHLIGHT_STYLES[commandseparator]}" # |
   "36 39 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # tail
-  "41 41 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # |
+  "41 41 ${(q-)ZSH_HIGHLIGHT_STYLES[commandseparator]}" # |
   "43 46 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # head
 )
