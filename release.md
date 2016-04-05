@@ -1,5 +1,7 @@
 # Release procedure (for developers):
 
+- For minor (A.B.0) releases:
+  - Check whether the release uses any not-yet-released zsh features
 - Check open issues and outstanding pull requests
 - Confirm `make test` passes
   - check with multiple zsh versions
