@@ -48,10 +48,11 @@ _zsh_highlight_brackets_highlighter()
 {
   local level=0 pos
   local -A levelpos lastoflevel matching typepos
+  integer buflen=${#BUFFER}
   region_highlight=()
 
   # Find all brackets and remember which one is matching
-  for (( pos = 0; $pos < ${#BUFFER}; pos++ )) ; do
+  for (( pos = 0; pos < buflen; pos++ )) ; do
     local char="$BUFFER[pos+1]"
     case $char in
       ["([{"])
@@ -68,9 +69,9 @@ _zsh_highlight_brackets_highlighter()
       ['"'\'])
         # Skip everything inside quotes
         local quotetype=$char
-        while (( $pos < ${#BUFFER} )) ; do
+        while (( pos < buflen )) ; do
           (( pos++ ))
-          [[ $BUFFER[$pos+1] == $quotetype ]] && break
+          [[ $BUFFER[pos+1] == $quotetype ]] && break
         done
         ;;
     esac
