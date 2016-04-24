@@ -148,14 +148,14 @@ _zsh_highlight_apply_zle_highlight() {
   integer first="$3" second="$4"
 
   # read the relevant entry from zle_highlight
-  local region="${zle_highlight[(r)$entry:*]}"
+  local region="${zle_highlight[(r)${entry}:*]}"
 
   if [[ -z "$region" ]]; then
     # entry not specified at all, use default value
     region=$default
   else
     # strip prefix
-    region="${region#$entry:}"
+    region="${region#${entry}:}"
 
     # no highlighting when set to the empty string or to 'none'
     if [[ -z "$region" ]] || [[ "$region" == none ]]; then
