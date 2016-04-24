@@ -30,7 +30,7 @@
 BUFFER='echo {x})'
 
 expected_region_highlight=(
-  "6  6  ${(q-)ZSH_HIGHLIGHT_STYLES[bracket-level-1]}" # {
-  "8  8  ${(q-)ZSH_HIGHLIGHT_STYLES[bracket-level-1]}" # }
-  "9  9 ${(q-)ZSH_HIGHLIGHT_STYLES[bracket-error]}" # )
+  "6  6  bracket-level-1" # {
+  "8  8  bracket-level-1" # }
+  "9  9 bracket-error" # )
 )

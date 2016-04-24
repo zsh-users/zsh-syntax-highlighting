@@ -30,5 +30,5 @@
 BUFFER='azertyuiop'
 
 expected_region_highlight=(
-  "1  10  ${(q-)ZSH_HIGHLIGHT_STYLES[unknown-token]}" # azertyuiop
+  "1  10  unknown-token" # azertyuiop
 )

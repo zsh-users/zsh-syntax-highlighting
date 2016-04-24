@@ -32,6 +32,6 @@ hash -d D=/usr/bin
 BUFFER='~D/env foo'
 
 expected_region_highlight=(
-  "1 6  ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # ~D/env [= /usr/bin/env]}
-  "8 10 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # foo
+  "1 6  command" # ~D/env [= /usr/bin/env
+  "8 10 default" # foo
 )

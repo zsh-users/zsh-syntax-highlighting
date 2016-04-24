@@ -31,21 +31,21 @@ ZSH_HIGHLIGHT_STYLES[alias]=$unused_highlight
 BUFFER='while if echo Hello; then ls /; else ls; fi; do stat "x"; done; repeat 10 ls'
 
 expected_region_highlight+=(
-  "1 5 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # while
-  "7 8 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # if
-  "10 13 ${(q-)ZSH_HIGHLIGHT_STYLES[builtin]}" # echo
-  "15 19 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # Hello
-  "22 25 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # then
-  "27 28 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # ls
-  "30 30 ${(q-)ZSH_HIGHLIGHT_STYLES[path]}" # /
-  "31 31 ${(q-)ZSH_HIGHLIGHT_STYLES[commandseparator]}" # ;
-  "33 36 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # else
-  "38 39 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # ls
-  "42 43 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # fi
-  "46 47 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # do
-  "49 52 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # stat
-  "54 56 ${(q-)ZSH_HIGHLIGHT_STYLES[double-quoted-argument]}" # "x"
-  "59 62 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # done
-  "65 70 ${(q-)ZSH_HIGHLIGHT_STYLES[reserved-word]}" # repeat
-  "75 76 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # ls
+  "1 5 reserved-word" # while
+  "7 8 reserved-word" # if
+  "10 13 builtin" # echo
+  "15 19 default" # Hello
+  "22 25 reserved-word" # then
+  "27 28 command" # ls
+  "30 30 path" # /
+  "31 31 commandseparator" # ;
+  "33 36 reserved-word" # else
+  "38 39 command" # ls
+  "42 43 reserved-word" # fi
+  "46 47 reserved-word" # do
+  "49 52 command" # stat
+  "54 56 double-quoted-argument" # "x"
+  "59 62 reserved-word" # done
+  "65 70 reserved-word" # repeat
+  "75 76 command" # ls
 )

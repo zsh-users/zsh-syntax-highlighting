@@ -32,7 +32,7 @@ unsetopt interactive_comments
 BUFFER='# echo foo'
 
 expected_region_highlight=(
-  "1 1 ${(q-)ZSH_HIGHLIGHT_STYLES[unknown-token]}" # #
-  "3 6 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # " echo foo"
-  "8 10 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # " echo foo"
+  "1 1 unknown-token" # #
+  "3 6 default" # " echo foo"
+  "8 10 default" # " echo foo"
 )

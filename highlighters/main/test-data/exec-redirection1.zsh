@@ -31,9 +31,9 @@ ZSH_HIGHLIGHT_STYLES[redirection]=$unused_highlight
 BUFFER='exec {foo}>&/tmp ls'
 
 expected_region_highlight=(
-  "1 4 ${(q-)ZSH_HIGHLIGHT_STYLES[precommand]}" # exec
-  # TODO: "6 10 ${(q-)ZSH_HIGHLIGHT_STYLES[redirection]} 'issue #238'" # {foo}
-  "11 12 ${(q-)ZSH_HIGHLIGHT_STYLES[redirection]}" # >&
-  "13 16 ${(q-)ZSH_HIGHLIGHT_STYLES[path]}" # /tmp
-  "18 19 ${(q-)ZSH_HIGHLIGHT_STYLES[command]} 'issue #238'" # ls
+  "1 4 precommand" # exec
+  # TODO: "6 10 redirection 'issue #238'" # {foo}
+  "11 12 redirection" # >&
+  "13 16 path" # /tmp
+  "18 19 command 'issue #238'" # ls
 )

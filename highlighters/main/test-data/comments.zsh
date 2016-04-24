@@ -32,7 +32,7 @@ setopt interactive_comments
 BUFFER='echo "foo #bar" #baz # quux'
 
 expected_region_highlight=(
-  "1 4 ${(q-)ZSH_HIGHLIGHT_STYLES[builtin]}" # echo
-  "6 15 ${(q-)ZSH_HIGHLIGHT_STYLES[double-quoted-argument]}" # "foo #bar"
-  "17 27 ${(q-)ZSH_HIGHLIGHT_STYLES[comment]}" # #baz # quux
+  "1 4 builtin" # echo
+  "6 15 double-quoted-argument" # "foo #bar"
+  "17 27 comment" # #baz # quux
 )

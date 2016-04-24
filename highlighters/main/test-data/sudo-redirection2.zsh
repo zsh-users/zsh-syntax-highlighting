@@ -31,10 +31,10 @@ ZSH_HIGHLIGHT_STYLES[redirection]=$unused_highlight
 BUFFER='sudo >/tmp -u otheruser ls'
 
 expected_region_highlight=(
-  "1 4 ${(q-)ZSH_HIGHLIGHT_STYLES[precommand]}" # sudo
-  "6 6 ${(q-)ZSH_HIGHLIGHT_STYLES[redirection]}" # >
-  "7 10 ${(q-)ZSH_HIGHLIGHT_STYLES[path]}" # /tmp
-  "12 13 ${(q-)ZSH_HIGHLIGHT_STYLES[single-hyphen-option]}" # -u
-  "15 23 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}" # otheruser
-  "25 26 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # ls
+  "1 4 precommand" # sudo
+  "6 6 redirection" # >
+  "7 10 path" # /tmp
+  "12 13 single-hyphen-option" # -u
+  "15 23 default" # otheruser
+  "25 26 command" # ls
 )

@@ -31,7 +31,7 @@ HOME="/nonexistent"
 BUFFER='ls ~'
 
 expected_region_highlight=(
-  "1 2 ${(q-)ZSH_HIGHLIGHT_STYLES[command]}" # ls
-  "4 4 ${(q-)ZSH_HIGHLIGHT_STYLES[default]}"    # ~
+  "1 2 command" # ls
+  "4 4 default"    # ~
 )
 
