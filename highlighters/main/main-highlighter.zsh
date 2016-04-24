@@ -68,7 +68,7 @@ _zsh_highlight_main_highlighter_predicate()
 # Helper to deal with tokens crossing line boundaries.
 _zsh_highlight_main_add_region_highlight() {
   integer start=$1 end=$2
-  local style=$3
+  local style=$ZSH_HIGHLIGHT_STYLES[$3]
 
   # The calculation was relative to $PREBUFFER$BUFFER, but region_highlight is
   # relative to $BUFFER.
@@ -245,9 +245,9 @@ _zsh_highlight_main_highlighter()
 
     if [[ -n ${interactive_comments+'set'} && $arg[1] == $histchars[3] ]]; then
       if [[ $this_word == *(':regular:'|':start:')* ]]; then
-        style=$ZSH_HIGHLIGHT_STYLES[comment]
+        style=comment
       else
-        style=$ZSH_HIGHLIGHT_STYLES[unknown-token] # prematurely terminated
+        style=unknown-token # prematurely terminated
       fi
       _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
       already_added=1
@@ -275,9 +275,9 @@ _zsh_highlight_main_highlighter()
 
     if [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
-      style=$ZSH_HIGHLIGHT_STYLES[precommand]
+      style=precommand
      elif [[ "$arg" = "sudo" ]]; then
-      style=$ZSH_HIGHLIGHT_STYLES[precommand]
+      style=precommand
       next_word=${next_word//:regular:/}
       next_word+=':sudo_opt:'
       next_word+=':start:'
@@ -300,9 +300,9 @@ _zsh_highlight_main_highlighter()
         fi
       }
       case $res in
-        *': reserved')  style=$ZSH_HIGHLIGHT_STYLES[reserved-word];;
+        *': reserved')  style=reserved-word;;
         *': suffix alias')
-                        style=$ZSH_HIGHLIGHT_STYLES[suffix-alias]
+                        style=suffix-alias
                         ;;
         *': alias')     () {
                           integer insane_alias
@@ -319,20 +319,20 @@ _zsh_highlight_main_highlighter()
                             (*) :;;
                           esac
                           if (( insane_alias )); then
-                            style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
+                            style=unknown-token
                           else
-                            style=$ZSH_HIGHLIGHT_STYLES[alias]
+                            style=alias
                             local aliased_command="${"$(alias -- $arg)"#*=}"
                             [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$aliased_command"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]] && ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg)
                           fi
                         }
                         ;;
-        *': builtin')   style=$ZSH_HIGHLIGHT_STYLES[builtin];;
-        *': function')  style=$ZSH_HIGHLIGHT_STYLES[function];;
-        *': command')   style=$ZSH_HIGHLIGHT_STYLES[command];;
-        *': hashed')    style=$ZSH_HIGHLIGHT_STYLES[hashed-command];;
+        *': builtin')   style=builtin;;
+        *': function')  style=function;;
+        *': command')   style=command;;
+        *': hashed')    style=hashed-command;;
         *)              if _zsh_highlight_main_highlighter_check_assign; then
-                          style=$ZSH_HIGHLIGHT_STYLES[assign]
+                          style=assign
                           if [[ $arg[-1] == '(' ]]; then
                             in_array_assignment=true
                           else
@@ -341,20 +341,20 @@ _zsh_highlight_main_highlighter()
                             next_word+=':start:'
                           fi
                         elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
-                          style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
+                          style=history-expansion
                         elif [[ $arg[0,1] == $histchars[2,2] ]]; then
-                          style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
+                          style=history-expansion
                         elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
                           if [[ $this_word == *':regular:'* ]]; then
                             # This highlights empty commands (semicolon follows nothing) as an error.
                             # Zsh accepts them, though.
-                            style=$ZSH_HIGHLIGHT_STYLES[commandseparator]
+                            style=commandseparator
                           else
-                            style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
+                            style=unknown-token
                           fi
                         elif [[ $arg == (<0-9>|)(\<|\>)* ]]; then
                           # A '<' or '>', possibly followed by a digit
-                          style=$ZSH_HIGHLIGHT_STYLES[redirection]
+                          style=redirection
                           (( in_redirection=2 ))
                         elif [[ $arg[1,2] == '((' ]]; then
                           # Arithmetic evaluation.
@@ -366,7 +366,7 @@ _zsh_highlight_main_highlighter()
                           #
                           # We highlight just the opening parentheses, as a reserved word; this
                           # is how [[ ... ]] is highlighted, too.
-                          style=$ZSH_HIGHLIGHT_STYLES[reserved-word]
+                          style=reserved-word
                           _zsh_highlight_main_add_region_highlight $start_pos $((start_pos + 2)) $style
                           already_added=1
                           if [[ $arg[-2,-1] == '))' ]]; then
@@ -376,12 +376,12 @@ _zsh_highlight_main_highlighter()
                         elif [[ $arg == '()' || $arg == $'\x28' ]]; then
                           # anonymous function
                           # subshell
-                          style=$ZSH_HIGHLIGHT_STYLES[reserved-word]
+                          style=reserved-word
                         else
                           if _zsh_highlight_main_highlighter_check_path; then
-                            style=$ZSH_HIGHLIGHT_STYLES[path]
+                            style=path
                           else
-                            style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
+                            style=unknown-token
                           fi
                         fi
                         ;;
@@ -391,52 +391,52 @@ _zsh_highlight_main_highlighter()
       case $arg in
         $'\x29') # subshell or end of array assignment
                  if $in_array_assignment; then
-                   style=$ZSH_HIGHLIGHT_STYLES[assign]
+                   style=assign
                    in_array_assignment=false
                  else
-                   style=$ZSH_HIGHLIGHT_STYLES[reserved-word]
+                   style=reserved-word
                  fi;;
-        $'\x7d') style=$ZSH_HIGHLIGHT_STYLES[reserved-word];; # block
-        '--'*)   style=$ZSH_HIGHLIGHT_STYLES[double-hyphen-option];;
-        '-'*)    style=$ZSH_HIGHLIGHT_STYLES[single-hyphen-option];;
-        "'"*)    style=$ZSH_HIGHLIGHT_STYLES[single-quoted-argument];;
-        '"'*)    style=$ZSH_HIGHLIGHT_STYLES[double-quoted-argument]
+        $'\x7d') style=reserved-word;; # block
+        '--'*)   style=double-hyphen-option;;
+        '-'*)    style=single-hyphen-option;;
+        "'"*)    style=single-quoted-argument;;
+        '"'*)    style=double-quoted-argument
                  _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
                  _zsh_highlight_main_highlighter_highlight_string
                  already_added=1
                  ;;
-        \$\'*)   style=$ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]
+        \$\'*)   style=dollar-quoted-argument
                  _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
                  _zsh_highlight_main_highlighter_highlight_dollar_string
                  already_added=1
                  ;;
-        '`'*)    style=$ZSH_HIGHLIGHT_STYLES[back-quoted-argument];;
+        '`'*)    style=back-quoted-argument;;
         [*?]*|*[^\\][*?]*)
-                 $highlight_glob && style=$ZSH_HIGHLIGHT_STYLES[globbing] || style=$ZSH_HIGHLIGHT_STYLES[default];;
+                 $highlight_glob && style=globbing || style=default;;
         *)       if false; then
                  elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
-                   style=$ZSH_HIGHLIGHT_STYLES[history-expansion]
+                   style=history-expansion
                  elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
                    if [[ $this_word == *':regular:'* ]]; then
-                     style=$ZSH_HIGHLIGHT_STYLES[commandseparator]
+                     style=commandseparator
                    else
-                     style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
+                     style=unknown-token
                    fi
                  elif [[ $arg == (<0-9>|)(\<|\>)* ]]; then
-                   style=$ZSH_HIGHLIGHT_STYLES[redirection]
+                   style=redirection
                    (( in_redirection=2 ))
                  else
                    if _zsh_highlight_main_highlighter_check_path; then
-                     style=$ZSH_HIGHLIGHT_STYLES[path]
+                     style=path
                    else
-                     style=$ZSH_HIGHLIGHT_STYLES[default]
+                     style=default
                    fi
                  fi
                  ;;
       esac
     fi
     # if a style_override was set (eg in _zsh_highlight_main_highlighter_check_path), use it
-    [[ -n $style_override ]] && style=$ZSH_HIGHLIGHT_STYLES[$style_override]
+    [[ -n $style_override ]] && style=$style_override
     (( already_added )) || _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
       next_word=':start:'
@@ -508,7 +508,7 @@ _zsh_highlight_main_highlighter_highlight_string()
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
-      '$' ) style=$ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]
+      '$' ) style=dollar-double-quoted-argument
             # Look for an alphanumeric parameter name.
             if [[ ${arg:$i} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+) ]] ; then
               (( k += $#MATCH )) # highlight the parameter name
@@ -520,7 +520,7 @@ _zsh_highlight_main_highlighter_highlight_string()
               continue
             fi
             ;;
-      "\\") style=$ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]
+      "\\") style=back-double-quoted-argument
             if [[ \\\`\"\$ == *$arg[$i+1]* ]]; then
               (( k += 1 )) # Color following char too.
               (( i += 1 )) # Skip parsing the escaped char.
@@ -549,7 +549,7 @@ _zsh_highlight_main_highlighter_highlight_dollar_string()
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
-      "\\") style=$ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]
+      "\\") style=back-dollar-quoted-argument
             for (( c = i + 1 ; c <= end_pos - start_pos ; c += 1 )); do
               [[ "$arg[$c]" != ([0-9xXuUa-fA-F]) ]] && break
             done
@@ -565,7 +565,7 @@ _zsh_highlight_main_highlighter_highlight_dollar_string()
             else
               if (( $#arg > $i+1 )) && [[ $arg[$i+1] == [xXuU] ]]; then
                 # \x not followed by hex digits is probably an error
-                style=$ZSH_HIGHLIGHT_STYLES[unknown-token]
+                style=unknown-token
               fi
               (( k += 1 )) # Color following char too.
               (( i += 1 )) # Skip parsing the escaped char.
