@@ -47,8 +47,8 @@ _zsh_highlight_brackets_highlighter_predicate()
 _zsh_highlight_brackets_highlighter()
 {
   local char quotetype style
-  local -i bracket_color_size=${#ZSH_HIGHLIGHT_STYLES[(I)bracket-level-*]} buflen=${#BUFFER} level=0 pos
-  local -A levelpos lastoflevel matching typepos
+  local -i bracket_color_size=${#ZSH_HIGHLIGHT_STYLES[(I)bracket-level-*]} buflen=${#BUFFER} level=0 matchingpos pos
+  local -A levelpos lastoflevel matching
 
   # Find all brackets and remember which one is matching
   for (( pos = 1; pos <= buflen; pos++ )) ; do
@@ -57,13 +57,14 @@ _zsh_highlight_brackets_highlighter()
       ["([{"])
         levelpos[$pos]=$((++level))
         lastoflevel[$level]=$pos
-        _zsh_highlight_brackets_highlighter_brackettype "$char"
         ;;
       [")]}"])
-        matching[$lastoflevel[$level]]=$pos
-        matching[$pos]=$lastoflevel[$level]
+        matchingpos=$lastoflevel[$level]
         levelpos[$pos]=$((level--))
-        _zsh_highlight_brackets_highlighter_brackettype "$char"
+	if _zsh_highlight_brackets_match $matchingpos $pos; then
+          matching[$matchingpos]=$pos
+          matching[$pos]=$matchingpos
+        fi
         ;;
       ['"'\'])
         # Skip everything inside quotes
@@ -78,7 +79,7 @@ _zsh_highlight_brackets_highlighter()
 
   # Now highlight all found brackets
   for pos in ${(k)levelpos}; do
-    if [[ -n $matching[$pos] ]] && [[ $typepos[$pos] == $typepos[$matching[$pos]] ]]; then
+    if (( $+matching[$pos] )); then
       style=bracket-level-$(( (levelpos[$pos] - 1) % bracket_color_size + 1 ))
     else
       style=bracket-error
@@ -95,12 +96,12 @@ _zsh_highlight_brackets_highlighter()
 }
 
 # Helper function to differentiate type 
-_zsh_highlight_brackets_highlighter_brackettype()
+_zsh_highlight_brackets_match()
 {
-  case $1 in
-    ["()"]) typepos[$pos]=round;;
-    ["[]"]) typepos[$pos]=bracket;;
-    ["{}"]) typepos[$pos]=curly;;
-    *) ;;
+  case $BUFFER[$1] in
+    \() [[ $BUFFER[$2] == \) ]];;
+    \[) [[ $BUFFER[$2] == \] ]];;
+    \{) [[ $BUFFER[$2] == \} ]];;
+    *) false;;
   esac
 }
