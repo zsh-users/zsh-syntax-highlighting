@@ -51,8 +51,8 @@ _zsh_highlight_brackets_highlighter()
   local -A levelpos lastoflevel matching typepos
 
   # Find all brackets and remember which one is matching
-  for (( pos = 0; pos < buflen; pos++ )) ; do
-    char="$BUFFER[pos+1]"
+  for (( pos = 1; pos <= buflen; pos++ )) ; do
+    char=$BUFFER[pos]
     case $char in
       ["([{"])
         levelpos[$pos]=$((++level))
@@ -83,7 +83,7 @@ _zsh_highlight_brackets_highlighter()
     else
       style=bracket-error
     fi
-    _zsh_highlight_add_highlight $pos $((pos + 1)) $style
+    _zsh_highlight_add_highlight $((pos - 1)) $pos $style
   done
 
   # If cursor is on a bracket, then highlight corresponding bracket, if any
