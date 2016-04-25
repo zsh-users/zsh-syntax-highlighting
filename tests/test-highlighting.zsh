@@ -153,6 +153,7 @@ fi
 
 # Process each test data file in test data directory.
 integer something_failed=0
+ZSH_HIGHLIGHT_STYLES=()
 for data_file in ${0:h:h}/highlighters/$1/test-data/*.zsh; do
   run_test "$data_file" | tee >($results_filter | ${0:A:h}/tap-colorizer.zsh) | grep -v '^not ok.*# TODO' | grep -Eq '^not ok|^ok.*# TODO' && (( something_failed=1 ))
   (( $pipestatus[1] )) && exit 2
