@@ -28,7 +28,6 @@
 # -------------------------------------------------------------------------------------------------
 
 # Similar to double-quoted2.zsh
-ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]=$unused_highlight
 # This test checks that the '1' gets highlighted correctly.  Do not append to the BUFFER.
 BUFFER=": \$'\xa1"
 

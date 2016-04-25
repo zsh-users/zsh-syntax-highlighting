@@ -27,7 +27,6 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-ZSH_HIGHLIGHT_STYLES[function]=$unused_highlight
 cd() {
   builtin cd "$@"
 }
@@ -35,8 +34,6 @@ ls() {
   command ls "$@"
 }
 BUFFER='cd;ls'
-
-# Use $unused_highlight to see that function highlighting has precedence over command and builtin
 
 expected_region_highlight=(
   "1 2 function" # cd

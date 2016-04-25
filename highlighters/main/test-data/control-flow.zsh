@@ -27,7 +27,6 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-ZSH_HIGHLIGHT_STYLES[alias]=$unused_highlight
 BUFFER='while if echo Hello; then ls /; else ls; fi; do stat "x"; done; repeat 10 ls'
 
 expected_region_highlight+=(

@@ -27,7 +27,6 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]=$unused_highlight
 BUFFER=": \$'*' 'foo'"
 
 expected_region_highlight=(

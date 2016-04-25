@@ -27,7 +27,6 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-ZSH_HIGHLIGHT_STYLES[reserved-word]=$unused_highlight
 BUFFER='repeat "1" do done'
 
 expected_region_highlight=(

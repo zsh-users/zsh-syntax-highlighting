@@ -27,7 +27,6 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-ZSH_HIGHLIGHT_STYLES[commandseparator]=$unused_highlight
 BUFFER='A=1; echo hello world'
 
 expected_region_highlight=(

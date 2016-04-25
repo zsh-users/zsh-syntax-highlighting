@@ -27,7 +27,6 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-ZSH_HIGHLIGHT_STYLES[default]=$unused_highlight
 BUFFER='!foo bar !baz ! ; !'
 
 expected_region_highlight=(

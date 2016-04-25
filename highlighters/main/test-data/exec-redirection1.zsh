@@ -27,7 +27,6 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-ZSH_HIGHLIGHT_STYLES[redirection]=$unused_highlight
 BUFFER='exec {foo}>&/tmp ls'
 
 expected_region_highlight=(

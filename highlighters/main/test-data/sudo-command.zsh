@@ -27,7 +27,6 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-ZSH_HIGHLIGHT_STYLES[single-hyphen-option]=$unused_highlight
 # Tests three codepaths:
 # * -i  (no argument)
 # * -C3 (pasted argument)

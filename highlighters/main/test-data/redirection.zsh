@@ -28,7 +28,6 @@
 # -------------------------------------------------------------------------------------------------
 
 # Redirection before and after the command word are implemented differently; test both.
-ZSH_HIGHLIGHT_STYLES[redirection]=$unused_highlight
 BUFFER='<<<foo echo >>&!bar'
 
 expected_region_highlight=(
