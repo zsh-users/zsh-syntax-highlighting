@@ -196,6 +196,23 @@ _zsh_highlight_cursor_moved()
   [[ -n $CURSOR ]] && [[ -n ${_ZSH_HIGHLIGHT_PRIOR_CURSOR-} ]] && (($_ZSH_HIGHLIGHT_PRIOR_CURSOR != $CURSOR))
 }
 
+# Add a highlight defined by ZSH_HIGHLIGHT_STYLES
+#
+# Should be used by all highlighters aside from 'pattern' (cf. ZSH_HIGHLIGHT_PATTERN)
+_zsh_highlight_add_highlight()
+{
+  local -i start end
+  local highlight
+  start=$1
+  end=$2
+  shift 2
+  for highlight; do
+    if (( $+ZSH_HIGHLIGHT_STYLES[$highlight] )); then
+      region_highlight+=("$start $end $ZSH_HIGHLIGHT_STYLES[$highlight]")
+      break
+    fi
+  done
+}
 
 # -------------------------------------------------------------------------------------------------
 # Setup functions

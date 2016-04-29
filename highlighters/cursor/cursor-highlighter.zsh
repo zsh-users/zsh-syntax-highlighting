@@ -44,5 +44,5 @@ _zsh_highlight_cursor_highlighter()
 {
   [[ $WIDGET == accept-* ]] && return
   
-  region_highlight+=("$CURSOR $(( $CURSOR + 1 )) $ZSH_HIGHLIGHT_STYLES[cursor]")
+  _zsh_highlight_add_highlight $CURSOR $(( $CURSOR + 1 )) cursor
 }

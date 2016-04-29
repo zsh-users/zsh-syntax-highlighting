@@ -83,10 +83,10 @@ _zsh_highlight_brackets_highlighter()
       local bracket_color_size=${#ZSH_HIGHLIGHT_STYLES[(I)bracket-level-*]}
       local bracket_color_level=bracket-level-$(( (levelpos[$pos] - 1) % bracket_color_size + 1 ))
       local style=$bracket_color_level
-      region_highlight+=("$pos $((pos + 1)) $ZSH_HIGHLIGHT_STYLES[$style]")
+      _zsh_highlight_add_highlight $pos $((pos + 1)) $style
     else
       local style=bracket-error
-      region_highlight+=("$pos $((pos + 1)) $ZSH_HIGHLIGHT_STYLES[$style]")
+      _zsh_highlight_add_highlight $pos $((pos + 1)) $style
     fi
   done
 
@@ -95,7 +95,7 @@ _zsh_highlight_brackets_highlighter()
   if [[ -n $levelpos[$pos] ]] && [[ -n $matching[$pos] ]]; then
     local otherpos=$matching[$pos]
     local style=cursor-matchingbracket
-    region_highlight+=("$otherpos $((otherpos + 1)) $ZSH_HIGHLIGHT_STYLES[$style]")
+    _zsh_highlight_add_highlight $otherpos $((otherpos + 1)) $style
   fi
 }
 

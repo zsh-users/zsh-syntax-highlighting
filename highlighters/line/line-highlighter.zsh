@@ -40,5 +40,5 @@ _zsh_highlight_line_highlighter_predicate()
 # root highlighting function.
 _zsh_highlight_line_highlighter()
 {
-  region_highlight+=("0 $#BUFFER $ZSH_HIGHLIGHT_STYLES[line]")
+  _zsh_highlight_add_highlight 0 $#BUFFER line
 }

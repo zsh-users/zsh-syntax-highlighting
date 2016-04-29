@@ -68,7 +68,7 @@ _zsh_highlight_main_highlighter_predicate()
 # Helper to deal with tokens crossing line boundaries.
 _zsh_highlight_main_add_region_highlight() {
   integer start=$1 end=$2
-  local style=$ZSH_HIGHLIGHT_STYLES[$3]
+  local style=$3
 
   # The calculation was relative to $PREBUFFER$BUFFER, but region_highlight is
   # relative to $BUFFER.
@@ -77,7 +77,7 @@ _zsh_highlight_main_add_region_highlight() {
 
   (( end < 0 )) && return # having end<0 would be a bug
   (( start < 0 )) && start=0 # having start<0 is normal with e.g. multiline strings
-  region_highlight+=("$start $end $style")
+  _zsh_highlight_add_highlight $start $end $style
 }
 
 # Wrapper around 'type -w'.
@@ -126,7 +126,6 @@ _zsh_highlight_main_highlighter()
   local -a options_to_set # used in callees
   local buf="$PREBUFFER$BUFFER"
   integer len="${#buf}"
-  region_highlight=()
 
   if (( path_dirs_was_set )); then
     options_to_set+=( PATH_DIRS )
