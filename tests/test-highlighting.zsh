@@ -101,6 +101,7 @@ run_test_internal() {
   for ((i=1; i<=${#expected_region_highlight}; i++)); do
     local todo=
     highlight_zone=${(z)expected_region_highlight[$i]}
+    [[ $highlight_zone[3] == NONE ]] && highlight_zone[3]=
     [[ -n "$highlight_zone[4]" ]] && todo=" # TODO $highlight_zone[4]"
     for j in {$highlight_zone[1]..$highlight_zone[2]}; do
       if [[ "$observed_result[$j]" != "$ZSH_HIGHLIGHT_STYLES[$highlight_zone[3]]" ]]; then
