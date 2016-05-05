@@ -108,16 +108,18 @@ run_test_internal() {
     local -a highlight_zone; highlight_zone=( ${(z)expected_region_highlight[$i]} )
     local todo=
     integer start=$highlight_zone[1] end=$highlight_zone[2]
+    # Escape # as ♯ since the former is illegal in the 'description' part of TAP output
+    local desc="[$start,$end] ${(qqq)BUFFER[$start,$end]//'#'/♯}"
     [[ $highlight_zone[3] == NONE ]] && highlight_zone[3]=
     [[ -n "$highlight_zone[4]" ]] && todo=" # TODO $highlight_zone[4]"
     for j in {$start..$end}; do
       if [[ "$observed_result[$j]" != "$highlight_zone[3]" ]]; then
-        # Escape # as ♯ since the former is illegal in the 'description' part of TAP output
-        echo "not ok $i ${(qqq)BUFFER[$start,$end]//'#'/♯} [$start,$end]: expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]}.$todo"
+        echo "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]}.$todo"
         continue 2
       fi
     done
-    echo "ok $i$todo"
+    echo "ok $i - $desc${todo:+' - '}$todo"
+    unset desc
     unset start end
     unset todo
     unset highlight_zone
