@@ -81,3 +81,5 @@ To create your own `myhighlighter` highlighter:
 * Activate your highlighter in `~/.zshrc`:
 
         ZSH_HIGHLIGHT_HIGHLIGHTERS+=(myhighlighter)
+
+* [Write tests](../tests/README.md).
