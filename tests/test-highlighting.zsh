@@ -109,7 +109,7 @@ run_test_internal() {
     local todo=
     integer start=$highlight_zone[1] end=$highlight_zone[2]
     # Escape # as ♯ since the former is illegal in the 'description' part of TAP output
-    local desc="[$start,$end] ${(qqq)BUFFER[$start,$end]//'#'/♯}"
+    local desc="[$start,$end] «${BUFFER[$start,$end]//'#'/♯}»"
     [[ $highlight_zone[3] == NONE ]] && highlight_zone[3]=
     [[ -n "$highlight_zone[4]" ]] && todo=" # TODO $highlight_zone[4]"
     for j in {$start..$end}; do
