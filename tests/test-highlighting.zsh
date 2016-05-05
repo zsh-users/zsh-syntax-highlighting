@@ -114,11 +114,11 @@ run_test_internal() {
     [[ -n "$highlight_zone[4]" ]] && todo=" # TODO $highlight_zone[4]"
     for j in {$start..$end}; do
       if [[ "$observed_result[$j]" != "$highlight_zone[3]" ]]; then
-        echo "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]}.$todo"
+        print -r -- "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]}.$todo"
         continue 2
       fi
     done
-    echo "ok $i - $desc${todo:+' - '}$todo"
+    print -r -- "ok $i - $desc${todo:+' - '}$todo"
     unset desc
     unset start end
     unset todo
