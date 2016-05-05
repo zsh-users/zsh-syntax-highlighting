@@ -46,7 +46,7 @@ _zsh_highlight_brackets_highlighter_predicate()
 # Brackets highlighting function.
 _zsh_highlight_brackets_highlighter()
 {
-  local char quotetype style
+  local char style
   local -i bracket_color_size=${#ZSH_HIGHLIGHT_STYLES[(I)bracket-level-*]} buflen=${#BUFFER} level=0 matchingpos pos
   local -A levelpos lastoflevel matching
 
@@ -68,11 +68,7 @@ _zsh_highlight_brackets_highlighter()
         ;;
       ['"'\'])
         # Skip everything inside quotes
-        quotetype=$char
-        while (( pos < buflen )) ; do
-          (( pos++ ))
-          [[ $BUFFER[pos+1] == $quotetype ]] && break
-        done
+	pos=$BUFFER[(ib:pos+1:)$char]
         ;;
     esac
   done
