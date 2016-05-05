@@ -13,8 +13,8 @@ How to install
 [AUR-package]: https://aur.archlinux.org/packages/zsh-syntax-highlighting-git
 [debian-package]: https://packages.debian.org/zsh-syntax-highlighting
 [gentoo-overlay]: http://gpo.zugaina.org/app-shells/zsh-syntax-highlighting
-[ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
 [brew-package]: https://github.com/Homebrew/homebrew/blob/master/Library/Formula/zsh-syntax-highlighting.rb
+[ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
 
 
 ### In your ~/.zshrc
@@ -33,12 +33,23 @@ Simply clone this repository and source the script:
   Note the `source` command must be **at the end** of `~/.zshrc`.
 
 
-### With oh-my-zsh
+### With a plugin manager
 
-Oh-my-zsh is a zsh configuration framework.  It lives at
-<http://github.com/robbyrussell/oh-my-zsh>.
+Note that `zsh-syntax-highlighting` must be the last plugin sourced.
 
-To install zsh-syntax-highlighting under oh-my-zsh:
+The zsh-syntax-highlighting authors recommend manual installation over the use
+of a framework or plugin manager.
+
+This list is incomplete as there are too many [frameworks / plugin managers]
+(https://github.com/unixorn/awesome-zsh-plugins#frameworks) to list them all
+here.
+
+#### [Antigen](https://github.com/zsh-users/antigen)
+
+Add `antigen bundle zsh-users/zsh-syntax-highlighting` as the last bundle in
+your `.zshrc`.
+
+#### [Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
 
 1. Clone this repository in oh-my-zsh's plugins directory:
 
@@ -52,13 +63,29 @@ To install zsh-syntax-highlighting under oh-my-zsh:
 
         source ~/.zshrc
 
-Note that `zsh-syntax-highlighting` must be the last plugin sourced,
-so make it the last element of the `$plugins` array.
+#### [Prezto](https://github.com/sorin-ionescu/prezto)
+
+Zsh-syntax-highlighting is included with Prezto. See the [Prezto documentation]
+(https://github.com/sorin-ionescu/prezto/tree/master/modules/syntax-highlighting)
+to enable and configure highlighters.
+
+#### [zgen](https://github.com/tarjoilija/zgen)
+
+Add `zgen load zsh-users/zsh-syntax-highlighting` to the end of your `.zshrc`.
+
+#### [zplug](https://github.com/zplug/zplug)
+
+Add `zplug "zsh-users/zsh-syntax-highlighting", nice:10` to your `.zshrc`.
+
+#### [zplugin](https://github.com/psprint/zplugin)
+
+Add `zplugin load zsh-users/zsh-syntax-highlighting` to the end of your
+`.zshrc`.
 
 
 ### System-wide installation
 
-Either of the above methods is suitable for a single-user installation,
+Any of the above methods is suitable for a single-user installation,
 which requires no special privileges.  If, however, you desire to install
 zsh-syntax-highlighting system-wide, you may do so by running
 
@@ -69,6 +96,3 @@ and directing your users to add
     source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 to their `.zshrc`s.
-
-
-
