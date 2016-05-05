@@ -62,7 +62,6 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=($1)
 # Runs a highlighting test
 # $1: data file
 run_test_internal() {
-  local -a highlight_zone
 
   local tests_tempdir="$1"; shift
   local srcdir="$PWD"
@@ -87,7 +86,7 @@ run_test_internal() {
   # observed highlighting.
   local -A observed_result
   for ((i=1; i<=${#region_highlight}; i++)); do
-    highlight_zone=${(z)region_highlight[$i]}
+    local -a highlight_zone; highlight_zone=( ${(z)region_highlight[$i]} )
     integer start=$highlight_zone[1] end=$highlight_zone[2]
     if (( start < end )) # region_highlight ranges are half-open
     then
@@ -99,13 +98,15 @@ run_test_internal() {
     else
       # noop range; ignore.
     fi
+    unset start end
+    unset highlight_zone
   done
 
   # Then we compare the observed result with the expected one.
   echo "1..${#expected_region_highlight}"
   for ((i=1; i<=${#expected_region_highlight}; i++)); do
+    local -a highlight_zone; highlight_zone=( ${(z)expected_region_highlight[$i]} )
     local todo=
-    highlight_zone=${(z)expected_region_highlight[$i]}
     [[ $highlight_zone[3] == NONE ]] && highlight_zone[3]=
     [[ -n "$highlight_zone[4]" ]] && todo=" # TODO $highlight_zone[4]"
     for j in {$highlight_zone[1]..$highlight_zone[2]}; do
@@ -116,6 +117,8 @@ run_test_internal() {
       fi
     done
     echo "ok $i$todo"
+    unset todo
+    unset highlight_zone
   done
 }
 
