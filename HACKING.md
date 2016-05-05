@@ -44,6 +44,23 @@ tests must set the `bracket-level-#` keys themselves.  For example:
       "10 10 bracket-level-1" # )
     )
 
+Testing the `pattern` highlighter
+---------------------------------
+
+Because the `pattern` highlighter modifies `region_highlight` directly instead
+of using `_zsh_highlight_add_highlight`, the test harness cannot get the
+`ZSH_HIGHLIGHT_STYLES` keys.  Therefore, when writing tests, use the style
+itself as third word (cf. the [documentation for `expected_region_highlight`]
+(docs/highlighters.md)).  For example:
+
+    ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
+
+    BUFFER='rm -rf /'
+
+    expected_region_highlight=(
+      "1 8 fg=white,bold,bg=red" # rm -rf /
+    )
+
 IRC channel
 -----------
 
