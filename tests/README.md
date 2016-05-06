@@ -25,8 +25,19 @@ interprets the indexes differently.
 aliases, functions, etc., it defines will be visible to the tested code (that
 computes `$region_highlight`), but will not affect subsequent tests.  The
 current working directory of tests is set to a newly-created empty directory,
-which is automatically cleaned up after the test exits.
+which is automatically cleaned up after the test exits. For example:
 
+    setopt PATH_DIRS
+    mkdir -p foo/bar
+    touch foo/bar/testing-issue-228
+    chmod  +x foo/bar/testing-issue-228
+    path+=( "$PWD"/foo )
+
+    BUFFER='bar/testing-issue-228'
+
+    expected_region_highlight=(
+      "1 21 command" # bar/testing-issue-228
+    )
 
 Highlighting test
 -----------------
