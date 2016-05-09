@@ -68,13 +68,14 @@ To create your own `myhighlighter` highlighter:
   `_zsh_highlight_add_highlight` with the start and end of the region to
   be highlighted and the `ZSH_HIGHLIGHT_STYLES` key to use. Define the default
   style for that key in the highlighter script outside of any function with
-  `: ${ZSH_HIGHLIGHT_STYLES[key]:=value}`. For example:
+  `: ${ZSH_HIGHLIGHT_STYLES[key]:=value}`, being sure to prefix
+  the key with your highlighter name. For example:
 
-        : ${ZSH_HIGHLIGHT_STYLES[aurora]:=fg=green}
+        : ${ZSH_HIGHLIGHT_STYLES[myhighlighter-aurora]:=fg=green}
 
         _zsh_highlight_myhighlighter_highlighter() {
           # Colorize the whole buffer with the 'aurora' style
-          _zsh_highlight_add_highlight 0 $#BUFFER aurora
+          _zsh_highlight_add_highlight 0 $#BUFFER myhighlighter-aurora
         }
 
 * Activate your highlighter in `~/.zshrc`:
