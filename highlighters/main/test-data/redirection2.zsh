@@ -32,5 +32,5 @@ BUFFER='ls >(wc) | nl'
 expected_region_highlight=(
   "1 2 command" # ls
   "10 10 commandseparator" # |
-  "12 13 command 'issue #302'" # nl
+  "12 13 command" # nl
 )

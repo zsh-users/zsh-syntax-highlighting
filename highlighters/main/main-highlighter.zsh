@@ -96,7 +96,11 @@ _zsh_highlight_main__type() {
 # Check whether the first argument is a redirection operator token.
 # Report result via the exit code.
 _zsh_highlight_main__is_redirection() {
-  [[ $1 == (<0-9>|)(\<|\>)* ]]
+  # A redirection operator token:
+  # - starts with an optional single-digit number;
+  # - then, has a '<' or '>' character;
+  # - is not a process substitution [<(...) or >(...)].
+  [[ $1 == (<0-9>|)(\<|\>)* ]] && [[ $1 != (\<|\>)$'\x28'* ]]
 }
 
 # Main syntax highlighting function.
