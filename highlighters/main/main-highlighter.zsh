@@ -93,6 +93,12 @@ _zsh_highlight_main__type() {
   LC_ALL=C builtin type -w -- $1 2>/dev/null
 }
 
+# Check whether the first argument is a redirection operator token.
+# Report result via the exit code.
+_zsh_highlight_main__is_redirection() {
+  [[ $1 == (<0-9>|)(\<|\>)* ]]
+}
+
 # Main syntax highlighting function.
 _zsh_highlight_main_highlighter()
 {
@@ -351,7 +357,7 @@ _zsh_highlight_main_highlighter()
                           else
                             style=unknown-token
                           fi
-                        elif [[ $arg == (<0-9>|)(\<|\>)* ]]; then
+                        elif _zsh_highlight_main__is_redirection $arg; then
                           # A '<' or '>', possibly followed by a digit
                           style=redirection
                           (( in_redirection=2 ))
@@ -421,7 +427,7 @@ _zsh_highlight_main_highlighter()
                    else
                      style=unknown-token
                    fi
-                 elif [[ $arg == (<0-9>|)(\<|\>)* ]]; then
+                 elif _zsh_highlight_main__is_redirection $arg; then
                    style=redirection
                    (( in_redirection=2 ))
                  else
