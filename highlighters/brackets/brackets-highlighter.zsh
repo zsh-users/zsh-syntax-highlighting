@@ -86,10 +86,10 @@ _zsh_highlight_brackets_highlighter()
   done
 
   # If cursor is on a bracket, then highlight corresponding bracket, if any
-  pos=$CURSOR
+  pos=$((CURSOR + 1))
   if [[ -n $levelpos[$pos] ]] && [[ -n $matching[$pos] ]]; then
     local -i otherpos=$matching[$pos]
-    _zsh_highlight_add_highlight $otherpos $((otherpos + 1)) cursor-matchingbracket
+    _zsh_highlight_add_highlight $((otherpos - 1)) $otherpos cursor-matchingbracket
   fi
 }
 
