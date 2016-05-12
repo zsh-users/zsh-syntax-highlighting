@@ -254,7 +254,16 @@ _zsh_highlight_main_highlighter()
     # end_pos was advanced by $offset (via start_pos)
     # and by $#arg. Note the `start_pos=$end_pos`
     # below.
-    proc_buf="${proc_buf[offset + $#arg + 1,-1]}"
+    #
+    # As for the [,len]. We could use [,len-start_pos+offset]
+    # here, but to make it easier on eyes, we use len and
+    # rely on the fact that Zsh simply handles that. The
+    # length of proc_buf is len-start_pos+offset because
+    # we're chopping it to match current start_pos, so its
+    # length matches the previous value of start_pos.
+    #
+    # Why [,-1] is slower than [,length] isn't clear.
+    proc_buf="${proc_buf[offset + $#arg + 1,len]}"
 
     if [[ -n ${interactive_comments+'set'} && $arg[1] == $histchars[3] ]]; then
       if [[ $this_word == *(':regular:'|':start:')* ]]; then
