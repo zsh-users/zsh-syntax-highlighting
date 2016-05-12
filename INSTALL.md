@@ -22,7 +22,7 @@ How to install
 Simply clone this repository and source the script:
 
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
-        echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
+        echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
 
   Then, enable syntax highlighting in the current interactive shell:
 
