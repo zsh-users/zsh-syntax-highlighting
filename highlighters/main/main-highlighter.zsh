@@ -199,6 +199,8 @@ _zsh_highlight_main_highlighter()
   #
   local this_word=':start:' next_word
   integer in_redirection
+  # Processing buffer
+  local proc_buf="$buf"
   for arg in ${interactive_comments-${(z)buf}} \
              ${interactive_comments+${(zZ+c+)buf}}; do
     if (( in_redirection )); then
@@ -234,13 +236,25 @@ _zsh_highlight_main_highlighter()
       # indistinguishable from 'echo foo echo bar' (one command with three
       # words for arguments).
       local needle=$'[;\n]'
-      integer offset=${${buf[start_pos+1,len]}[(i)$needle]}
-      (( start_pos += offset - 1 ))
+      integer offset=$(( ${proc_buf[(i)$needle]} - 1 ))
+      (( start_pos += offset ))
       (( end_pos = start_pos + $#arg ))
     else
-      ((start_pos+=(len-start_pos)-${#${${buf[start_pos+1,len]}##([[:space:]]|\\[[:space:]])#}}))
+      integer offset=$(((len-start_pos)-${#${proc_buf##([[:space:]]|\\[[:space:]])#}}))
+      ((start_pos+=offset))
       ((end_pos=$start_pos+${#arg}))
     fi
+
+    # Above `if` computes new start_pos and end_pos.
+    # Here we compute new proc_buf. We advance it
+    # (chop off characters from the beginning)
+    # beyond what end_pos points to, by skipping
+    # as many characters as end_pos was advanced.
+    #
+    # end_pos was advanced by $offset (via start_pos)
+    # and by $#arg. Note the `start_pos=$end_pos`
+    # below.
+    proc_buf="${proc_buf[offset + $#arg + 1,-1]}"
 
     if [[ -n ${interactive_comments+'set'} && $arg[1] == $histchars[3] ]]; then
       if [[ $this_word == *(':regular:'|':start:')* ]]; then
