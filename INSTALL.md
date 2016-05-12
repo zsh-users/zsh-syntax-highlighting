@@ -23,7 +23,10 @@ Simply clone this repository and source the script:
 
         git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
         echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
-        source ~/.zshrc
+
+  Then, enable syntax highlighting in the current interactive shell:
+
+        source ./zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
   If `git` is not installed, download and extract a snapshot of the latest
   development tree from:
