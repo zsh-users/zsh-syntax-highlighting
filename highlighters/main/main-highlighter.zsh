@@ -88,7 +88,7 @@ _zsh_highlight_main_add_region_highlight() {
 # called inside a $(...) subshell, so the effects will be local.
 _zsh_highlight_main__type() {
   if (( $#options_to_set )); then
-    setopt $options_to_set;
+    setopt localoptions $options_to_set;
   fi
   LC_ALL=C builtin type -w -- $1 2>/dev/null
 }
