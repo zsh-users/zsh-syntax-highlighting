@@ -69,13 +69,13 @@ To create your own `myhighlighter` highlighter:
   be highlighted and the `ZSH_HIGHLIGHT_STYLES` key to use. Define the default
   style for that key in the highlighter script outside of any function with
   `: ${ZSH_HIGHLIGHT_STYLES[key]:=value}`, being sure to prefix
-  the key with your highlighter name. For example:
+  the key with your highlighter name and a colon. For example:
 
-        : ${ZSH_HIGHLIGHT_STYLES[myhighlighter-aurora]:=fg=green}
+        : ${ZSH_HIGHLIGHT_STYLES[myhighlighter:aurora]:=fg=green}
 
         _zsh_highlight_myhighlighter_highlighter() {
           # Colorize the whole buffer with the 'aurora' style
-          _zsh_highlight_add_highlight 0 $#BUFFER myhighlighter-aurora
+          _zsh_highlight_add_highlight 0 $#BUFFER myhighlighter:aurora
         }
 
 * Activate your highlighter in `~/.zshrc`:
