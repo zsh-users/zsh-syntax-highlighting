@@ -497,8 +497,11 @@ _zsh_highlight_main_highlighter()
       # The redirection mechanism assumes $this_word describes the word
       # following the redirection.  Make it so.
       #
+      # That word can be a command word with shortloops (`repeat 2 ls`)
+      # or a command separator (`repeat 2; ls` or `repeat 2; do ls; done`).
+      #
       # The repeat-count word will be handled like a redirection target.
-      this_word=':start:'
+      this_word=':start::regular:'
     fi
     start_pos=$end_pos
     (( in_redirection == 0 )) && this_word=$next_word

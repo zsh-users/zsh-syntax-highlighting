@@ -32,7 +32,7 @@ BUFFER='repeat 42; do ls; done'
 expected_region_highlight+=(
   "1 6 reserved-word" # repeat
   "8 9 default" # 42
-  "10 10 commandseparator 'issue #290'" # ;
+  "10 10 commandseparator" # ;
   "12 13 reserved-word" # do
   "15 16 command" # ls
   "17 17 commandseparator" # ;
