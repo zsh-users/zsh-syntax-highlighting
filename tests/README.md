@@ -7,7 +7,8 @@ The tests harness expects the highlighter directory to contain a `test-data`
 directory with test data files.
 See the [main highlighter](../highlighters/main/test-data) for examples.
 
-Each test should define the array parameter `$expected_region_highlight`.
+Each test should define the string `$BUFFER` that is to be highlighted and the
+array parameter `$expected_region_highlight`.
 The value of that parameter is a list of strings of the form  `"$i $j $style"`.
 or `"$i $j $style $todo"`.
 Each string specifies the highlighting that `$BUFFER[$i,$j]` should have;
