@@ -140,7 +140,17 @@ run_test() {
   {
     # Use a subshell to isolate tests from each other.
     # (So tests can alter global shell state using 'cd', 'hash', etc)
-    (run_test_internal "$__tests_tempdir" "$@")
+    {
+      # These braces are so multios don't come into play.
+      { (run_test_internal "$__tests_tempdir" "$@") 3>&1 >&2 2>&3 } | grep \^
+      local ret=$pipestatus[1] stderr=$pipestatus[2]
+      if (( ! stderr )); then
+        # stdout will become stderr
+        echo "Bail out! output on stderr"; return 1
+      else
+        return $ret
+      fi
+    } 3>&1 >&2 2>&3
   } always {
     rm -rf -- "$__tests_tempdir"
   }
