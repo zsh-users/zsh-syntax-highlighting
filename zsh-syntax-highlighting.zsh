@@ -328,5 +328,8 @@ add-zsh-hook preexec _zsh_highlight_preexec_hook 2>/dev/null || {
     echo 'zsh-syntax-highlighting: failed loading add-zsh-hook.' >&2
   }
 
+# Load zsh/parameter module if available
+zmodload zsh/parameter 2>/dev/null || true
+
 # Initialize the array of active highlighters if needed.
 [[ $#ZSH_HIGHLIGHT_HIGHLIGHTERS -eq 0 ]] && ZSH_HIGHLIGHT_HIGHLIGHTERS=(main) || true
