@@ -89,6 +89,10 @@ _zsh_highlight_main_add_region_highlight() {
 #
 # The result will be stored in REPLY.
 _zsh_highlight_main__type() {
+  REPLY=$_zsh_highlight_command_type_cache[(e)$1]
+  if [[ -n "$REPLY" ]]; then
+    return
+  fi
   if (( $#options_to_set )); then
     setopt localoptions $options_to_set;
   fi
@@ -113,6 +117,7 @@ _zsh_highlight_main__type() {
   if ! (( $+REPLY )); then
     REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null)#*: }"
   fi
+  _zsh_highlight_command_type_cache[(e)$1]=$REPLY
 }
 
 # Check whether the first argument is a redirection operator token.
