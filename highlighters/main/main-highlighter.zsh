@@ -271,7 +271,6 @@ _zsh_highlight_main_highlighter()
     # which add the entry early so escape sequences within the string override
     # the string's color.
     integer already_added=0
-    local style_override=""
     if [[ $this_word == *':start:'* ]]; then
       in_array_assignment=false
       if [[ $arg == 'noglob' ]]; then
@@ -456,7 +455,7 @@ _zsh_highlight_main_highlighter()
                           style=reserved-word
                         else
                           if _zsh_highlight_main_highlighter_check_path; then
-                            style=path
+                            style=$REPLY
                           else
                             style=unknown-token
                           fi
@@ -507,7 +506,7 @@ _zsh_highlight_main_highlighter()
                    (( in_redirection=2 ))
                  else
                    if _zsh_highlight_main_highlighter_check_path; then
-                     style=path
+                     style=$REPLY
                    else
                      style=default
                    fi
@@ -515,8 +514,6 @@ _zsh_highlight_main_highlighter()
                  ;;
       esac
     fi
-    # if a style_override was set (eg in _zsh_highlight_main_highlighter_check_path), use it
-    [[ -n $style_override ]] && style=$style_override
     (( already_added )) || _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
       next_word=':start:'
@@ -547,10 +544,14 @@ _zsh_highlight_main_highlighter_check_assign()
 }
 
 # Check if $arg is a path.
+# If yes, return 0 and in $REPLY the style to use.
+# Else, return non-zero (and the contents of $REPLY is undefined).
 _zsh_highlight_main_highlighter_check_path()
 {
   _zsh_highlight_main_highlighter_expand_path $arg;
   local expanded_path="$REPLY"
+
+  REPLY=path
 
   [[ -z $expanded_path ]] && return 1
   [[ -e $expanded_path ]] && return 0
@@ -569,7 +570,7 @@ _zsh_highlight_main_highlighter_check_path()
      [[ $WIDGET != accept-* ]]; then
     local -a tmp
     tmp=( ${expanded_path}*(N) )
-    (( $#tmp > 0 )) && style_override=path_prefix && return 0
+    (( $#tmp > 0 )) && REPLY=path_prefix && return 0
   fi
 
   # It's not a path.
