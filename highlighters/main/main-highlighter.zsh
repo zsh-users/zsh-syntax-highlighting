@@ -580,7 +580,7 @@ _zsh_highlight_main_highlighter_check_path()
   done
 
   # If dirname($arg) doesn't exist, neither does $arg.
-  [[ ! -e ${expanded_path:h} ]] && return 1
+  [[ ! -d ${expanded_path:h} ]] && return 1
 
   # If this word ends the buffer, check if it's the prefix of a valid path.
   if [[ ${BUFFER[1]} != "-" && ${#BUFFER} == $end_pos ]] &&
