@@ -545,7 +545,8 @@ _zsh_highlight_main_highlighter()
 _zsh_highlight_main_highlighter_check_assign()
 {
     setopt localoptions extended_glob
-    [[ $arg == [[:alpha:]_][[:alnum:]_]#(|\[*\])(|[+])=* ]]
+    [[ $arg == [[:alpha:]_][[:alnum:]_]#(|\[*\])(|[+])=* ]] ||
+      [[ $arg == [0-9]##(|[+])=* ]]
 }
 
 _zsh_highlight_main_highlighter_highlight_path_separators()
