@@ -112,14 +112,14 @@ run_test_internal() {
     local desc="[$start,$end] «${BUFFER[$start,$end]//'#'/♯}»"
     # Match the emptiness of observed_result if no highlighting is expected
     [[ $highlight_zone[3] == NONE ]] && highlight_zone[3]=
-    [[ -n "$highlight_zone[4]" ]] && todo=" # TODO $highlight_zone[4]"
+    [[ -n "$highlight_zone[4]" ]] && todo="# TODO $highlight_zone[4]"
     for j in {$start..$end}; do
       if [[ "$observed_result[$j]" != "$highlight_zone[3]" ]]; then
-        print -r -- "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]}.$todo"
+        print -r -- "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]}. $todo"
         continue 2
       fi
     done
-    print -r -- "ok $i - $desc${todo:+' - '}$todo"
+    print -r -- "ok $i - $desc${todo:+ - }$todo"
     unset desc
     unset start end
     unset todo
