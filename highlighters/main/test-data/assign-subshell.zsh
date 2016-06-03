@@ -32,5 +32,5 @@ BUFFER='(A=1)'
 expected_region_highlight=(
   "1 1 reserved-word" # (
   "2 4 assign" # A=1
-  "5 5 reserved-word 'issue #231'" # )
+  "5 5 reserved-word" # )
 )

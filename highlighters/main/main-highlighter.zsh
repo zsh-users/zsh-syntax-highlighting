@@ -273,6 +273,7 @@ _zsh_highlight_main_highlighter()
     # which add the entry early so escape sequences within the string override
     # the string's color.
     integer already_added=0
+    style=unknown-token
     if [[ $this_word == *':start:'* ]]; then
       in_array_assignment=false
       if [[ $arg == 'noglob' ]]; then
@@ -468,12 +469,16 @@ _zsh_highlight_main_highlighter()
                         ;;
       esac
      fi
-    else # $arg is a non-command word
+   fi
+   if (( ! already_added )) && [[ $style == unknown-token ]] && # not handled by the 'command word' codepath
+      { (( in_redirection )) || [[ $this_word == *':regular:'* ]] || [[ $this_word == *':sudo_opt:'* ]] || [[ $this_word == *':sudo_arg:'* ]] }
+   then # $arg is a non-command word
       case $arg in
         $'\x29') # subshell or end of array assignment
                  if $in_array_assignment; then
                    style=assign
                    in_array_assignment=false
+                   next_word+=':start:'
                  else
                    style=reserved-word
                  fi;;

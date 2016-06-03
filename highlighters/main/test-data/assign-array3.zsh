@@ -32,5 +32,5 @@ BUFFER='A=(hello world) b=42'
 expected_region_highlight=(
   "1 3 assign" # A=(
   "15 15 assign" # )
-  "17 20 assign 'issue #330'" # b=42
+  "17 20 assign" # b=42
 )
