@@ -61,6 +61,13 @@ itself as third word (cf. the [documentation for `expected_region_highlight`]
       "1 8 fg=white,bold,bg=red" # rm -rf /
     )
 
+Miscellany
+----------
+
+If you work on the driver (`zsh-syntax-highlighting.zsh`), you may find the following zstyle useful:
+
+    zstyle ':completion:*:*:*:*:globbed-files' ignored-patterns {'*/',}zsh-syntax-highlighting.plugin.zsh
+
 IRC channel
 -----------
 
