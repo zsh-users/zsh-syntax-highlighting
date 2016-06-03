@@ -41,7 +41,7 @@ if [[ -o function_argzero ]]; then
 else
   # $0 is unreliable, so the call to _zsh_highlight_load_highlighters will fail.
   # TODO: If 'zmodload zsh/parameter' is available, ${funcsourcetrace[1]%:*} might serve as a substitute?
-  # TODO: also check POSIX_ARGZERO, but not it's not available in older zsh
+  # TODO: also check POSIX_ARGZERO, but note it's not available in older zsh
   echo "zsh-syntax-highlighting: error: not compatible with NO_FUNCTION_ARGZERO" >&2
   return 1
 fi
@@ -136,7 +136,7 @@ _zsh_highlight()
   }
 }
 
-# Apply highlighting based on entries in the zle_highligh array.
+# Apply highlighting based on entries in the zle_highlight array.
 # This function takes four arguments:
 # 1. The exact entry (no patterns) in the zle_highlight array:
 #    region, paste, isearch, or suffix
