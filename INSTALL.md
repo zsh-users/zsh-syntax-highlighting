@@ -60,7 +60,7 @@ your `.zshrc`.
 
 2. Activate the plugin in `~/.zshrc`:
 
-        plugins=( [plugins...] zsh-syntax-highlighting)
+        sed -i "s/\(plugins=(.*\))/\1 zsh-syntax-highlighting)/" ~/.zshrc
 
 3. Source `~/.zshrc`  to take changes into account:
 
