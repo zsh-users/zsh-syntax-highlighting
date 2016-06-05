@@ -32,5 +32,5 @@ BUFFER='A=(hello world) ls'
 expected_region_highlight=(
   "1 3 assign" # A=(
   "15 15 assign" # )
-  "17 18 command 'issue #330'" # ls
+  "17 18 command" # ls
 )
