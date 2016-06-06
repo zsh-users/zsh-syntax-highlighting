@@ -1,8 +1,9 @@
-zsh-syntax-highlighting
-=======================
+Fork of zsh-syntax-highlighting
+===============================
 
-<red>**THIS PROJECT IS NO LONGER MAINTAINED.
-YOU MAY WANT TO TEST ITS SUCCESSOR: [chromatic-zsh](https://github.com/jimmijj/chromatic-zsh).**
+**THIS FORK IS NO LONGER MAINTAINED.
+YOU MAY WANT TO TEST ITS SUCCESSOR: [chromatic-zsh](https://github.com/jimmijj/chromatic-zsh)
+YOU MAY WANT TO TEST THE PARENT PROJECT: [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)**
 
 Enhanced highlighting of the [Zsh](http://www.zsh.org) command-line, including syntax, paths, files, selected regions, searched patterns and much more.
 
