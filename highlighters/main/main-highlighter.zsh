@@ -374,7 +374,9 @@ _zsh_highlight_main_highlighter()
         local -a match mbegin mend
         local MATCH; integer MBEGIN MEND
         if [[ $res == none ]] && (( ${+parameters} )) &&
-           [[ ${arg[1]} == \$ ]] && [[ ${arg:1} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]]; then
+           [[ ${arg[1]} == \$ ]] && [[ ${arg:1} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
+           (( ${+parameters[${MATCH}]} ))
+           then
           _zsh_highlight_main__type ${(P)MATCH}
           res=$REPLY
         fi
