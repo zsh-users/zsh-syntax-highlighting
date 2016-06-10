@@ -28,7 +28,9 @@
 # -------------------------------------------------------------------------------------------------
 
 
-if [[ -o function_argzero ]]; then
+# Set $0 to the expected value, regardless of functionargzero.
+0=${(%):-%N}
+if true; then
   # $0 is reliable
   ZSH_HIGHLIGHT_VERSION=$(<"${0:A:h}"/.version)
   ZSH_HIGHLIGHT_REVISION=$(<"${0:A:h}"/.revision-hash)
@@ -38,12 +40,6 @@ if [[ -o function_argzero ]]; then
     # the valid value (via `git rev-parse HEAD`, as Makefile does) might be costly, so:
     ZSH_HIGHLIGHT_REVISION=HEAD
   fi
-else
-  # $0 is unreliable, so the call to _zsh_highlight_load_highlighters will fail.
-  # TODO: If 'zmodload zsh/parameter' is available, ${funcsourcetrace[1]%:*} might serve as a substitute?
-  # TODO: also check POSIX_ARGZERO, but note it's not available in older zsh
-  echo "zsh-syntax-highlighting: error: not compatible with NO_FUNCTION_ARGZERO" >&2
-  return 1
 fi
 
 # -------------------------------------------------------------------------------------------------
