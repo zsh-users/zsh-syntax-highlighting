@@ -27,7 +27,9 @@ This highlighter defines the following styles:
 * `commandseparator` - command separation tokens (`;`, `&&`)
 * `hashed-command` - hashed commands
 * `path` - existing filenames
+* `path_pathseparator` - path separators in filenames (`/`); if unset, `path` is used (default)
 * `path_prefix` - prefixes of existing filenames
+* `path_prefix_pathseparator` - path separators in prefixes of existing filenames (`/`); if unset, `path_prefix` is used (default)
 * `globbing` - globbing expressions (`*.txt`)
 * `history-expansion` - history expansion expressions (`!foo` and `^foo^bar`)
 * `single-hyphen-option` - single hyphen options (`-o`)
