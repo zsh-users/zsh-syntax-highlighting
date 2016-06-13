@@ -237,6 +237,12 @@ _zsh_highlight_bind_widgets()
   # Override ZLE widgets to make them invoke _zsh_highlight.
   local cur_widget
   for cur_widget in ${${(f)"$(builtin zle -la)"}:#(.*|orig-*|run-help|which-command|beep|set-local-history|yank)}; do
+
+    # Most probably that widgets are already bound, but got rebount by another plugin like autosuggest.
+    if type _zsh_highlight_widget_$cur_widget 2>&1 >/dev/null; then
+      continue;
+    fi
+
     case $widgets[$cur_widget] in
 
       # Already rebound event: do nothing.
