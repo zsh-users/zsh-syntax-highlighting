@@ -43,7 +43,9 @@ if true; then
 fi
 
 integer zsh_highlight_use_redrawhook
-if zle -la .match-bracket; then
+if autoload -U +X -- add-zle-hook-widget 2>/dev/null;
+   [[ "${${(@f)"$(which -- add-zle-hook-widget)"}[2]}" != $'\t'$histchars[3]' undefined' ]];
+then
   (( zsh_highlight_use_redrawhook=1 ))
 fi
 
@@ -275,7 +277,7 @@ _zsh_highlight_bind_widgets()
 
 if (( $zsh_highlight_use_redrawhook )); then
   _zsh_highlight_bind_widgets(){}
-  zle -N zle-line-pre-redraw _zsh_highlight
+  add-zle-hook-widget zle-line-pre-redraw _zsh_highlight
 fi
 
 # Load highlighters from directory.
