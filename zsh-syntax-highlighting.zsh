@@ -111,7 +111,22 @@ _zsh_highlight()
     # Re-apply zle_highlight settings
 
     # region
-    (( REGION_ACTIVE )) && _zsh_highlight_apply_zle_highlight region standout "$MARK" "$CURSOR"
+    if (( REGION_ACTIVE == 1 )); then
+      _zsh_highlight_apply_zle_highlight region standout "$MARK" "$CURSOR"
+    elif (( REGION_ACTIVE == 2 )); then
+      () {
+        local needle=$'\n'
+        integer min max
+        if (( MARK > CURSOR )) ; then
+          min=$CURSOR max=$MARK
+        else
+          min=$MARK max=$CURSOR
+        fi
+        (( min = ${${BUFFER[1,$min]}[(I)$needle]} ))
+        (( max += ${${BUFFER:($max-1)}[(i)$needle]} - 1 ))
+        _zsh_highlight_apply_zle_highlight region standout "$min" "$max"
+      }
+    fi
 
     # yank / paste (zsh-5.1.1 and newer)
     (( $+YANK_ACTIVE )) && (( YANK_ACTIVE )) && _zsh_highlight_apply_zle_highlight paste standout "$YANK_START" "$YANK_END"
