@@ -78,6 +78,8 @@ To create your own `acme` highlighter:
           _zsh_highlight_add_highlight 0 $#BUFFER acme:aurora
         }
 
+* Name your own functions and global variables `_zsh_highlight_acme_*`.
+
 * Activate your highlighter in `~/.zshrc`:
 
         ZSH_HIGHLIGHT_HIGHLIGHTERS+=(acme)
