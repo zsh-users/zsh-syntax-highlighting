@@ -52,7 +52,7 @@ How to implement a new highlighter
 To create your own `acme` highlighter:
 
 * Create your script at
-    `highlighters/${acme}/${acme}-highlighter.zsh`.
+    `highlighters/acme/acme-highlighter.zsh`.
 
 * Implement the `_zsh_highlight_acme_highlighter_predicate` function.
   This function must return 0 when the highlighter needs to be called and
