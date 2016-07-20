@@ -32,5 +32,5 @@ BUFFER=': broken-symlink'
 CURSOR=5 # to make path_prefix ineligible
 
 expected_region_highlight=(
-  "3 16 path 'issue #342'" # broken-symlink
+  "3 16 path" # broken-symlink
 )
