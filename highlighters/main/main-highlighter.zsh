@@ -693,7 +693,7 @@ _zsh_highlight_main_highlighter_highlight_dollar_string()
 # Does not perform filename generation (globbing).
 _zsh_highlight_main_highlighter_expand_path()
 {
-  (( $# == 1 )) || echo "zsh-syntax-highlighting: BUG: _zsh_highlight_main_highlighter_expand_path: called without argument" >&2
+  (( $# == 1 )) || print -r -- >&2 "zsh-syntax-highlighting: BUG: _zsh_highlight_main_highlighter_expand_path: called without argument"
 
   # The $~1 syntax normally performs filename generation, but not when it's on the right-hand side of ${x:=y}.
   setopt localoptions nonomatch
@@ -714,7 +714,7 @@ if add-zsh-hook precmd _zsh_highlight_main__precmd_hook 2>/dev/null; then
   # Initialize command type cache
   typeset -gA _zsh_highlight_main__command_type_cache
 else
-  echo 'zsh-syntax-highlighting: Failed to load add-zsh-hook. Some speed optimizations will not be used.' >&2
+  print -r -- >&2 'zsh-syntax-highlighting: Failed to load add-zsh-hook. Some speed optimizations will not be used.'
   # Make sure the cache is unset
   unset _zsh_highlight_main__command_type_cache
 fi

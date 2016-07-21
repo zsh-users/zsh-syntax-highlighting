@@ -245,7 +245,7 @@ _zsh_highlight_bind_widgets()
 
   # Load ZSH module zsh/zleparameter, needed to override user defined widgets.
   zmodload zsh/zleparameter 2>/dev/null || {
-    echo 'zsh-syntax-highlighting: failed loading zsh/zleparameter.' >&2
+    print -r -- >&2 'zsh-syntax-highlighting: failed loading zsh/zleparameter.'
     return 1
   }
 
@@ -278,7 +278,7 @@ _zsh_highlight_bind_widgets()
                zle -N $cur_widget _zsh_highlight_widget_$cur_widget;;
 
       # Default: unhandled case.
-      *) echo "zsh-syntax-highlighting: unhandled ZLE widget '$cur_widget'" >&2 ;;
+      *) print -r -- >&2 "zsh-syntax-highlighting: unhandled ZLE widget '$cur_widget'" ;;
     esac
   done
 }
@@ -293,7 +293,7 @@ _zsh_highlight_load_highlighters()
 
   # Check the directory exists.
   [[ -d "$1" ]] || {
-    echo "zsh-syntax-highlighting: highlighters directory '$1' not found." >&2
+    print -r -- >&2 "zsh-syntax-highlighting: highlighters directory '$1' not found."
     return 1
   }
 
@@ -305,7 +305,7 @@ _zsh_highlight_load_highlighters()
       . "$highlighter_dir/${highlighter}-highlighter.zsh"
       type "_zsh_highlight_${highlighter}_highlighter" &> /dev/null &&
       type "_zsh_highlight_${highlighter}_highlighter_predicate" &> /dev/null || {
-        echo "zsh-syntax-highlighting: '${highlighter}' highlighter should define both required functions '_zsh_highlight_${highlighter}_highlighter' and '_zsh_highlight_${highlighter}_highlighter_predicate' in '${highlighter_dir}/${highlighter}-highlighter.zsh'." >&2
+        print -r -- >&2 "zsh-syntax-highlighting: '${highlighter}' highlighter should define both required functions '_zsh_highlight_${highlighter}_highlighter' and '_zsh_highlight_${highlighter}_highlighter_predicate' in '${highlighter_dir}/${highlighter}-highlighter.zsh'."
       }
     }
   done
@@ -318,13 +318,13 @@ _zsh_highlight_load_highlighters()
 
 # Try binding widgets.
 _zsh_highlight_bind_widgets || {
-  echo 'zsh-syntax-highlighting: failed binding ZLE widgets, exiting.' >&2
+  print -r -- >&2 'zsh-syntax-highlighting: failed binding ZLE widgets, exiting.'
   return 1
 }
 
 # Resolve highlighters directory location.
 _zsh_highlight_load_highlighters "${ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR:-${${0:A}:h}/highlighters}" || {
-  echo 'zsh-syntax-highlighting: failed loading highlighters, exiting.' >&2
+  print -r -- >&@ 'zsh-syntax-highlighting: failed loading highlighters, exiting.'
   return 1
 }
 
@@ -336,7 +336,7 @@ _zsh_highlight_preexec_hook()
 }
 autoload -U add-zsh-hook
 add-zsh-hook preexec _zsh_highlight_preexec_hook 2>/dev/null || {
-    echo 'zsh-syntax-highlighting: failed loading add-zsh-hook.' >&2
+    print -r -- >&2 'zsh-syntax-highlighting: failed loading add-zsh-hook.'
   }
 
 # Load zsh/parameter module if available
