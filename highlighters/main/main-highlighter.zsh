@@ -60,7 +60,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[comment]:=fg=black,bold}
 
 # Whether the highlighter should be called or not.
-_zsh_highlight_main_highlighter_predicate()
+_zsh_highlight_highlighter_main_predicate()
 {
   # accept-* may trigger removal of path_prefix highlighting
   [[ $WIDGET == accept-* ]] ||
@@ -150,7 +150,7 @@ _zsh_highlight_main__resolve_alias() {
 }
 
 # Main syntax highlighting function.
-_zsh_highlight_main_highlighter()
+_zsh_highlight_highlighter_main_paint()
 {
   ## Before we even 'emulate -L', we must test a few options that would reset.
   if [[ -o interactive_comments ]]; then
@@ -166,7 +166,7 @@ _zsh_highlight_main_highlighter()
 
   # At the PS3 prompt and in vared, highlight nothing.
   #
-  # (We can't check this in _zsh_highlight_main_highlighter_predicate because
+  # (We can't check this in _zsh_highlight_highlighter_main_predicate because
   # if the predicate returns false, the previous value of region_highlight
   # would be reused.)
   if [[ $CONTEXT == (select|vared) ]]; then
