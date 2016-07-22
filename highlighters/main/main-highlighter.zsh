@@ -582,6 +582,7 @@ _zsh_highlight_main_highlighter_check_path()
   REPLY=path
 
   [[ -z $expanded_path ]] && return 1
+  [[ -L $expanded_path ]] && return 0
   [[ -e $expanded_path ]] && return 0
 
   # Search the path in CDPATH
