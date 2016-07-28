@@ -233,6 +233,16 @@ _zsh_highlight_highlighter_main_paint()
   # ":" for 'then'
   local braces_stack
 
+  # $flags_with_argument is a set of letters, corresponding to the option letters
+  # that would be followed by a colon in a getopts specification.
+  local flags_with_argument
+  # $precommand_options maps precommand name to value of $flags_with_argument
+  # for that precommand.
+  local -A precommand_options
+  precommand_options=(
+    'sudo' Cgprtu
+  )
+
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
     local right_brace_is_recognised_everywhere=false
   else
@@ -497,7 +507,8 @@ _zsh_highlight_highlighter_main_paint()
       if [[ $this_word == *':sudo_opt:'* ]]; then
         case "$arg" in
           # Flag that requires an argument
-          '-'[Cgprtu]) this_word=${this_word//:start:/};
+          '-'[$flags_with_argument])
+                       this_word=${this_word//:start:/};
                        next_word=':sudo_arg:';;
           # This prevents misbehavior with sudo -u -otherargument
           '-'*)        this_word=${this_word//:start:/};
@@ -519,8 +530,9 @@ _zsh_highlight_highlighter_main_paint()
    elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
       style=precommand
-     elif [[ "$arg" = "sudo" ]] && { _zsh_highlight_main__type sudo; [[ -n $REPLY && $REPLY != "none" ]] }; then
+     elif (( ${+precommand_options[$arg]} )) && { _zsh_highlight_main__type $arg; [[ -n $REPLY && $REPLY != "none" ]] }; then
       style=precommand
+      flags_with_argument=${precommand_options[$arg]}
       next_word=${next_word//:regular:/}
       next_word+=':sudo_opt:'
       next_word+=':start:'
