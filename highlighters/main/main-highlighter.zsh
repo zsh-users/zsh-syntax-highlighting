@@ -299,7 +299,7 @@ _zsh_highlight_highlighter_main_paint()
 _zsh_highlight_main_highlighter_highlight_list()
 {
   integer start_pos=0 end_pos buf_offset=$1 has_end=$3
-  local buf=$4 highlight_glob=true arg style
+  local buf=$4 highlight_glob=true arg arg_raw style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   integer len=$#buf
   local -a match mbegin mend list_highlights
@@ -362,6 +362,9 @@ _zsh_highlight_main_highlighter_highlight_list()
     args=(${(z)buf})
   fi
   for arg in $args; do
+    # Save an unmunged copy of the current word.
+    arg_raw="$arg"
+
     # Initialize $next_word.
     if (( in_redirection )); then
       (( --in_redirection ))
@@ -472,6 +475,30 @@ _zsh_highlight_main_highlighter_highlight_list()
       fi
     fi
 
+    # Expand aliases.
+    # TODO: this should be done iteratively, e.g., 'alias x=y y=z z=w\n x'
+    #       And then the entire 'alias' branch of the 'case' statement should
+    #       be done here.
+    () {
+      # TODO: path expansion should happen _after_ alias expansion
+      _zsh_highlight_main_highlighter_expand_path $arg
+      local expanded_arg="$REPLY"
+      _zsh_highlight_main__type ${expanded_arg}
+    }
+    local res="$REPLY"
+    if [[ $res == "alias" ]]; then
+      _zsh_highlight_main__resolve_alias $arg
+      () {
+        # Use a temporary array to ensure the subscript is interpreted as
+        # an array subscript, not as a scalar subscript
+        local -a reply
+        # TODO: the ${interactive_comments+set} path needs to skip comments; see test-data/alias-comment1.zsh
+        reply=( ${interactive_comments-${(z)REPLY}}
+                ${interactive_comments+${(zZ+c+)REPLY}} )
+        arg=$reply[1]
+      }
+    fi
+
     # Special-case the first word after 'sudo'.
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]] && [[ $arg != -* ]]; then
@@ -512,10 +539,6 @@ _zsh_highlight_main_highlighter_highlight_list()
       next_word+=':sudo_opt:'
       next_word+=':start:'
      else
-      _zsh_highlight_main_highlighter_expand_path $arg
-      local expanded_arg="$REPLY"
-      _zsh_highlight_main__type ${expanded_arg}
-      local res="$REPLY"
       () {
         # Special-case: command word is '$foo', like that, without braces or anything.
         #
@@ -588,8 +611,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                         ;;
         'suffix alias') style=suffix-alias;;
         alias)          () {
+                          # Make sure to use $arg_raw here, rather than $arg.
                           integer insane_alias
-                          case $arg in
+                          case $arg_raw in
                             # Issue #263: aliases with '=' on their LHS.
                             #
                             # There are three cases:
@@ -603,12 +627,13 @@ _zsh_highlight_main_highlighter_highlight_list()
                           esac
                           if (( insane_alias )); then
                             style=unknown-token
+                          # Calling 'type' again; since __type memoizes the answer, this call is just a hash lookup.
+                          elif _zsh_highlight_main__type "$arg"; [[ $REPLY == 'none' ]]; then
+                            style=unknown-token
                           else
                             # The common case.
                             style=alias
-                            _zsh_highlight_main__resolve_alias $arg
-                            local alias_target="$REPLY"
-                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$alias_target"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]] && ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg)
+                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg_raw"} ]] && ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg_raw)
                           fi
                         }
                         ;;
