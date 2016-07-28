@@ -545,17 +545,20 @@ _zsh_highlight_main_highlighter_highlight_list()
     # Parse the sudo command line
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]]; then
-        case "$arg" in
+        if [[ -n $flags_with_argument ]] &&
+           [[ $arg == '-'[$flags_with_argument] ]]; then
           # Flag that requires an argument
-          '-'[$flags_with_argument])
-                       this_word=${this_word//:start:/};
-                       next_word=':sudo_arg:';;
+          this_word=${this_word//:start:/}
+          next_word=':sudo_arg:'
+        elif [[ $arg == '-'* ]]; then
+          # Flag that requires no argument, or unknown flag.
           # This prevents misbehavior with sudo -u -otherargument
-          '-'*)        this_word=${this_word//:start:/};
-                       next_word+=':start:';
-                       next_word+=':sudo_opt:';;
-          *)           ;;
-        esac
+          this_word=${this_word//:start:/}
+          next_word+=':start:'
+          next_word+=':sudo_opt:'
+        else
+          #
+        fi
       elif [[ $this_word == *':sudo_arg:'* ]]; then
         next_word+=':sudo_opt:'
         next_word+=':start:'
