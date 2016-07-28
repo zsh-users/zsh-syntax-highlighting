@@ -329,8 +329,9 @@ _zsh_highlight_main_highlighter_highlight_list()
   #
   # The states are:
   # - :start:      Command word
-  # - :sudo_opt:   A leading-dash option to sudo (such as "-u" or "-i")
-  # - :sudo_arg:   The argument to a sudo leading-dash option that takes one,
+  # - :sudo_opt:   A leading-dash option to a precommand, whether it takes an
+  #                argument or not.  (Example: sudo's "-u" or "-i".)
+  # - :sudo_arg:   The argument to a precommand's leading-dash option,
   #                when given as a separate word; i.e., "foo" in "-u foo" (two
   #                words) but not in "-ufoo" (one word).
   # - :regular:    "Not a command word", and command delimiters are permitted.
