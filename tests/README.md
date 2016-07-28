@@ -39,6 +39,25 @@ which is automatically cleaned up after the test exits. For example:
       "1 21 command" # bar/testing-issue-228
     )
 
+
+Writing new tests
+-----------------
+
+An experimental tool is available to generate test files:
+
+    zsh -f tests/generate.zsh 'ls -x' \
+      | sed s/YYYY/$(date +%Y)/ \
+      > highlighters/main/test-data/foo.zsh
+    git add -N $_
+
+This generates a test file based on the current highlighting of the given `$BUFFER`
+(in this case, `ls -x`).
+
+_This tool is experimental._  Its interface may change.  In particular it may
+grow ways to set `$PREBUFFER` and/or `$ZSH_HIGHLIGHT_HIGHLIGHTERS` or to
+inject free-form code into the generated file.
+
+
 Highlighting test
 -----------------
 
