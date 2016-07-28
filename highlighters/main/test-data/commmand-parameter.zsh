@@ -29,6 +29,8 @@
 
 local x=/usr/bin/env
 local y=sudo
+sudo(){}
+
 BUFFER='$x "argument"; $y'
 
 expected_region_highlight=(
@@ -36,5 +38,5 @@ expected_region_highlight=(
   "4 13 default" # "argument"
   "4 13 double-quoted-argument" # "argument"
   "14 14 commandseparator" # ;
-  "16 17 precommand 'parameter expansion precedes precommand recognition'" # $y (sudo)
+  "16 17 precommand" # $y (sudo)
 )

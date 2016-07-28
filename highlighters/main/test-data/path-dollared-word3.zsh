@@ -29,10 +29,12 @@
 
 # «/usr» at this point would be highlighted as path_prefix; so should
 # a parameter that expands to an equivalent string be highlighted.
+#
+# More complicated parameter substitutions aren't eval'd; issue #328.
 BUFFER='$PWD; ${PWD}'
 
 expected_region_highlight=(
-  "1 4 unknown-token" # $PWD - not eval'd; issue #328
+  "1 4 path" # $PWD
   "5 5 commandseparator" # ;
   "7 12 unknown-token" # ${PWD}
 )

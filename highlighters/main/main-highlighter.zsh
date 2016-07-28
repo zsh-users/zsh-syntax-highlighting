@@ -499,6 +499,26 @@ _zsh_highlight_main_highlighter_highlight_list()
       }
     fi
 
+    # Expand parameters.
+    #
+    # ### For now, expand just '$foo', like that, without braces or anything.
+    () {
+      # That's not entirely correct --- if the parameter's value happens to be a reserved
+      # word, the parameter expansion will be highlighted as a reserved word --- but that
+      # incorrectness is outweighed by the usability improvement of permitting the use of
+      # parameters that refer to commands, functions, and builtins.
+      local -a match mbegin mend
+      local MATCH; integer MBEGIN MEND
+      if [[ $res == none ]] && (( ${+parameters} )) &&
+         [[ ${arg[1]} == \$ ]] && [[ ${arg:1} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
+         (( ${+parameters[(e)${MATCH}]} )) && [[ ${parameters[(e)$MATCH]} != *special* ]]
+         then
+        arg=${(P)MATCH}
+        _zsh_highlight_main__type "$arg"
+        res=$REPLY
+      fi
+    }
+
     # Special-case the first word after 'sudo'.
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]] && [[ $arg != -* ]]; then
@@ -539,23 +559,6 @@ _zsh_highlight_main_highlighter_highlight_list()
       next_word+=':sudo_opt:'
       next_word+=':start:'
      else
-      () {
-        # Special-case: command word is '$foo', like that, without braces or anything.
-        #
-        # That's not entirely correct --- if the parameter's value happens to be a reserved
-        # word, the parameter expansion will be highlighted as a reserved word --- but that
-        # incorrectness is outweighed by the usability improvement of permitting the use of
-        # parameters that refer to commands, functions, and builtins.
-        local -a match mbegin mend
-        local MATCH; integer MBEGIN MEND
-        if [[ $res == none ]] && (( ${+parameters} )) &&
-           [[ ${arg[1]} == \$ ]] && [[ ${arg:1} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
-           (( ${+parameters[(e)${MATCH}]} )) && [[ ${parameters[(e)$MATCH]} != *special* ]]
-           then
-          _zsh_highlight_main__type ${(P)MATCH}
-          res=$REPLY
-        fi
-      }
       case $res in
         reserved)       # reserved word
                         style=reserved-word
