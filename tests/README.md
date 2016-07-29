@@ -45,17 +45,13 @@ Writing new tests
 
 An experimental tool is available to generate test files:
 
-    zsh -f tests/generate.zsh 'ls -x' \
-      | sed s/YYYY/$(date +%Y)/ \
-      > highlighters/main/test-data/foo.zsh
-    git add -N $_
+    zsh -f tests/generate.zsh 'ls -x' acme newfile
 
-This generates a test file based on the current highlighting of the given `$BUFFER`
-(in this case, `ls -x`).
+This generates a `highlighters/acme/test-data/newfile.zsh` test file based on
+the current highlighting of the given `$BUFFER` (in this case, `ls -x`).
 
 _This tool is experimental._  Its interface may change.  In particular it may
-grow ways to set `$PREBUFFER` and/or `$ZSH_HIGHLIGHT_HIGHLIGHTERS` or to
-inject free-form code into the generated file.
+grow ways to set `$PREBUFFER` to inject free-form code into the generated file.
 
 
 Highlighting test

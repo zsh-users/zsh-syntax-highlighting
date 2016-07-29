@@ -31,13 +31,17 @@
 emulate -LR zsh
 
 # Argument parsing.
-if (( $# != 1 )) || [[ $1 == -* ]]; then
-  print -r -- >&2 "$0: usage: $0 BUFFER"
+if (( $# != 3 )) || [[ $1 == -* ]]; then
+  print -r -- >&2 "$0: usage: $0 BUFFER HIGHLIGHTER BASENAME"
   print -r -- >&2 ""
-  print -r -- >&2 "This tool generates a test file, suitable for highlighters/*/test-data/."
+  print -r -- >&2 "Generate highlighters/HIGHILGHTER/test-data/BASENAME.zsh based on the"
+  print -r -- >&2 "current highlighting of BUFFER."
   exit 1
 fi
 buffer=$1
+ZSH_HIGHLIGHT_HIGHLIGHTERS=( $2 )
+exec >${0:A:h:h}/highlighters/$2/test-data/$3.zsh
+git add -N ${0:A:h:h}/highlighters/$2/test-data/$3.zsh
 
 # Load the main script.
 . ${0:A:h:h}/zsh-syntax-highlighting.zsh
