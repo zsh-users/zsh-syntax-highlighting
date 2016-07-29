@@ -365,9 +365,20 @@ _zsh_highlight_bind_widgets()
 }
 
 if (( $zsh_highlight_use_redrawhook )); then
+  _zsh_highlight__zle-line-finish() {
+    # Reset $WIDGET since the 'main' highlighter depends on it.
+    #
+    # A nested function is required to hide zle parameters; see
+    # "User-defined widgets" in zshall.
+    () {
+      local -h +r WIDGET=zle-line-finish
+      _zsh_highlight "$@"
+    }
+  }
   _zsh_highlight_bind_widgets(){}
   if [[ -o zle ]]; then
     add-zle-hook-widget zle-line-pre-redraw _zsh_highlight
+    add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
   fi
 fi
 
