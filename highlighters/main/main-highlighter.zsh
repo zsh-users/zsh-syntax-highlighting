@@ -62,9 +62,8 @@
 # Whether the highlighter should be called or not.
 _zsh_highlight_main_highlighter_predicate()
 {
-  # accept-* may trigger removal of path_prefix highlighting
-  [[ $WIDGET == accept-* ]] ||
-    _zsh_highlight_buffer_modified
+  # may need to remove path_prefix highlighting when the line ends
+  [[ $WIDGET == zle-line-finish ]] || _zsh_highlight_buffer_modified
 }
 
 # Helper to deal with tokens crossing line boundaries.
@@ -596,7 +595,7 @@ _zsh_highlight_main_highlighter_check_path()
 
   # If this word ends the buffer, check if it's the prefix of a valid path.
   if [[ ${BUFFER[1]} != "-" && ${#BUFFER} == $end_pos ]] &&
-     [[ $WIDGET != accept-* ]]; then
+     [[ $WIDGET != zle-line-finish ]]; then
     local -a tmp
     tmp=( ${expanded_path}*(N) )
     (( $#tmp > 0 )) && REPLY=path_prefix && return 0

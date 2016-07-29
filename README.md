@@ -32,6 +32,24 @@ custom widgets have been created (i.e., after all `zle -N` calls and after
 running `compinit`).  Widgets created later will work, but will not update the
 syntax highlighting.
 
+### Why does syntax highlighting not work while searching history?
+
+_This problem is fixed in zsh 5.3 and newer._
+
+Highlighting the command line during an incremental history search
+(with the `history-incremental-search-backward` widget, which is
+bound by default to <kbd>Ctrl+R</kbd> in zsh's emacs keymap) requires zsh 5.3
+or newer.
+
+Under zsh 5.2 and older, the zsh-default underlining of the matched portion
+of the buffer remains available, but zsh-syntax-highlighting's additional
+highlighting is unavailable.  (Those versions of zsh do not provide enough
+information to allow computing the highlighting correctly.)
+
+See [issue #288][i288] for details.
+
+[i288]: https://github.com/zsh-users/zsh-syntax-highlighting/pull/288
+
 ### How are new releases announced?
 
 There is currently no "push" announcements channel.  However, the following
