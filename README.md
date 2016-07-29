@@ -32,6 +32,15 @@ custom widgets have been created (i.e., after all `zle -N` calls and after
 running `compinit`).  Widgets created later will work, but will not update the
 syntax highlighting.
 
+### Why does syntax highlighting not work while searching history?
+
+In `zsh` versions before 5.3 is not possible for `zsh-syntax-highlighting.zsh`
+to know if an incremental search is currently active and that matched parts of the
+buffer should be underlined (or otherwise highlighted). Therefore, it is not possible
+for `zsh-syntax-highlighting.zsh` to apply syntax highlighting and to underline the
+matched part of the search. While searching the history, the latter is more important,
+so syntax highlighting is disabled in this case.
+
 ### How are new releases announced?
 
 There is currently no "push" announcements channel.  However, the following
