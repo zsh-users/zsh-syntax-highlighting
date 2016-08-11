@@ -34,7 +34,7 @@ emulate -LR zsh
 if (( $# != 3 )) || [[ $1 == -* ]]; then
   print -r -- >&2 "$0: usage: $0 BUFFER HIGHLIGHTER BASENAME"
   print -r -- >&2 ""
-  print -r -- >&2 "Generate highlighters/HIGHILGHTER/test-data/BASENAME.zsh based on the"
+  print -r -- >&2 "Generate highlighters/HIGHLIGHTER/test-data/BASENAME.zsh based on the"
   print -r -- >&2 "current highlighting of BUFFER."
   exit 1
 fi
