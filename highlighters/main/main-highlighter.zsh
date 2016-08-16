@@ -258,6 +258,7 @@ _zsh_highlight_main_highlighter()
   local proc_buf="$buf"
   for arg in ${interactive_comments-${(z)buf}} \
              ${interactive_comments+${(zZ+c+)buf}}; do
+    # Initialize $next_word.
     if (( in_redirection )); then
       (( --in_redirection ))
     fi
@@ -267,6 +268,14 @@ _zsh_highlight_main_highlighter()
     else
       # Stall $next_word.
     fi
+
+    # Initialize per-"simple command" [zshmisc(1)] variables:
+    #
+    #   $already_added       (see next paragraph)
+    #   $style               how to highlight $arg
+    #   $in_array_assignment boolean flag for "between '(' and ')' of array assignment"
+    #   $highlight_glob      boolean flag for "'noglob' is in effect"
+    #
     # $already_added is set to 1 to disable adding an entry to region_highlight
     # for this iteration.  Currently, that is done for "" and $'' strings,
     # which add the entry early so escape sequences within the string override
@@ -280,7 +289,7 @@ _zsh_highlight_main_highlighter()
       fi
     fi
 
-    # advance $start_pos, skipping over whitespace in $buf.
+    # Compute the new $start_pos and $end_pos, skipping over whitespace in $buf.
     if [[ $arg == ';' ]] ; then
       # We're looking for either a semicolon or a newline, whichever comes
       # first.  Both of these are rendered as a ";" (SEPER) by the ${(z)..}
@@ -300,8 +309,7 @@ _zsh_highlight_main_highlighter()
       ((end_pos=$start_pos+${#arg}))
     fi
 
-    # Above `if` computes new start_pos and end_pos.
-    # Here we compute new proc_buf. We advance it
+    # Compute the new $proc_buf. We advance it
     # (chop off characters from the beginning)
     # beyond what end_pos points to, by skipping
     # as many characters as end_pos was advanced.
@@ -320,6 +328,9 @@ _zsh_highlight_main_highlighter()
     # Why [,-1] is slower than [,length] isn't clear.
     proc_buf="${proc_buf[offset + $#arg + 1,len]}"
 
+    # Handle the INTERACTIVE_COMMENTS option.
+    #
+    # We use the (Z+c+) flag so the entire comment is presented as one token in $arg.
     if [[ -n ${interactive_comments+'set'} && $arg[1] == $histchars[3] ]]; then
       if [[ $this_word == *(':regular:'|':start:')* ]]; then
         style=comment
@@ -331,16 +342,21 @@ _zsh_highlight_main_highlighter()
       continue
     fi
 
+    # Analyse the current word.
     if _zsh_highlight_main__is_redirection $arg ; then
       # A '<' or '>', possibly followed by a digit
       in_redirection=2
     fi
 
-    # Parse the sudo command line
+    # Special-case the first word after 'sudo'.
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]] && [[ $arg != -* ]]; then
         this_word=${this_word//:sudo_opt:/}
       fi
+    fi
+
+    # Parse the sudo command line
+    if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]]; then
         case "$arg" in
           # Flag that requires an argument
@@ -358,6 +374,7 @@ _zsh_highlight_main_highlighter()
       fi
    fi
 
+   # The Great Fork: is this a command word?  Is this a non-command word?
    if [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
       style=precommand
