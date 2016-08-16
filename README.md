@@ -32,9 +32,7 @@ custom widgets have been created (i.e., after all `zle -N` calls and after
 running `compinit`).  Widgets created later will work, but will not update the
 syntax highlighting.
 
-### Why does syntax highlighting not work while searching history?
-
-_This problem is fixed in zsh 5.3 and newer._
+### Does syntax highlighting work during incremental history search?
 
 Highlighting the command line during an incremental history search
 (with the `history-incremental-search-backward` widget, which is
