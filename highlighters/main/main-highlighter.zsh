@@ -546,7 +546,12 @@ _zsh_highlight_main_highlighter()
       this_word=':start::regular:'
     fi
     start_pos=$end_pos
-    (( in_redirection == 0 )) && this_word=$next_word
+    if (( in_redirection == 0 )); then
+      # This is the default/common codepath.
+      this_word=$next_word
+    else
+      # Stall $this_word.
+    fi
   done
 }
 
