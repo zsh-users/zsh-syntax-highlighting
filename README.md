@@ -39,10 +39,10 @@ Highlighting the command line during an incremental history search
 bound by default to <kbd>Ctrl+R</kbd> in zsh's emacs keymap) requires zsh 5.3
 or newer.
 
-Under zsh 5.2 and older, the zsh-default [underlining][zshzle-Character-Highlighting] of the matched portion
-of the buffer remains available, but zsh-syntax-highlighting's additional
-highlighting is unavailable.  (Those versions of zsh do not provide enough
-information to allow computing the highlighting correctly.)
+Under zsh 5.2 and older, the zsh-default [underlining][zshzle-Character-Highlighting]
+of the matched portion of the buffer remains available, but zsh-syntax-highlighting's
+additional highlighting is unavailable.  (Those versions of zsh do not provide
+enough information to allow computing the highlighting correctly.)
 
 See [issue #288][i288] for details.
 
