@@ -305,7 +305,7 @@ _zsh_highlight_bind_widgets()
            zle -N $cur_widget _zsh_highlight_widget_$cur_widget
          else
       # Default: unhandled case.
-           print -r -- >&2 "zsh-syntax-highlighting: unhandled ZLE widget '$cur_widget'"
+           print -r -- >&2 "zsh-syntax-highlighting: unhandled ZLE widget ${(qq)cur_widget}"
          fi
     esac
   done
@@ -321,7 +321,7 @@ _zsh_highlight_load_highlighters()
 
   # Check the directory exists.
   [[ -d "$1" ]] || {
-    print -r -- >&2 "zsh-syntax-highlighting: highlighters directory '$1' not found."
+    print -r -- >&2 "zsh-syntax-highlighting: highlighters directory ${(qq)1} not found."
     return 1
   }
 
@@ -347,7 +347,7 @@ _zsh_highlight_load_highlighters()
         eval "_zsh_highlight_highlighter_${(q)highlighter}_paint() { _zsh_highlight_${(q)highlighter}_highlighter \"\$@\" }"
         eval "_zsh_highlight_highlighter_${(q)highlighter}_predicate() { _zsh_highlight_${(q)highlighter}_highlighter_predicate \"\$@\" }"
     else
-        print -r -- >&2 "zsh-syntax-highlighting: '${highlighter}' highlighter should define both required functions '_zsh_highlight_highlighter_${highlighter}_paint' and '_zsh_highlight_highlighter_${highlighter}_predicate' in '${highlighter_dir}/${highlighter}-highlighter.zsh'."
+        print -r -- >&2 "zsh-syntax-highlighting: ${(qq)highlighter} highlighter should define both required functions '_zsh_highlight_highlighter_${highlighter}_paint' and '_zsh_highlight_highlighter_${highlighter}_predicate' in ${(qq):-"$highlighter_dir/${highlighter}-highlighter.zsh"}."
     fi
   done
 }
