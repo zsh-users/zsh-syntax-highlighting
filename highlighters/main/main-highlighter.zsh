@@ -338,6 +338,9 @@ _zsh_highlight_main_highlighter()
 
     # Parse the sudo command line
     if (( ! in_redirection )); then
+      if [[ $this_word == *':sudo_opt:'* ]] && [[ $arg != -* ]]; then
+        this_word=${this_word//:sudo_opt:/}
+      fi
       if [[ $this_word == *':sudo_opt:'* ]]; then
         case "$arg" in
           # Flag that requires an argument

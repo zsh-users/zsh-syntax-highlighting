@@ -31,7 +31,7 @@
 # * -i  (no argument)
 # * -C3 (pasted argument)
 # * -u otheruser (non-pasted argument)
-BUFFER='sudo -C3 -u otheruser -i ls /; sudo ; sudo -u ;'
+BUFFER='sudo -C3 -u otheruser -i ls /; sudo ; sudo -u ; sudo notacommand'
 
 expected_region_highlight=(
   "1 4 precommand" # sudo
@@ -43,4 +43,5 @@ expected_region_highlight=(
   "29 29 path" # /
   "37 37 unknown-token" # ;, error because empty command
   "47 47 unknown-token" # ;, error because incomplete command
+  "54 64 unknown-token" # notacommand - doesn't falls back to "not a command word" codepath
 )
