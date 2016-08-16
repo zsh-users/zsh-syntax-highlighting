@@ -38,13 +38,13 @@
 : ${ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]:=standout}
 
 # Whether the brackets highlighter should be called or not.
-_zsh_highlight_brackets_highlighter_predicate()
+_zsh_highlight_highlighter_brackets_predicate()
 {
   _zsh_highlight_cursor_moved || _zsh_highlight_buffer_modified
 }
 
 # Brackets highlighting function.
-_zsh_highlight_brackets_highlighter()
+_zsh_highlight_highlighter_brackets_paint()
 {
   local char style
   local -i bracket_color_size=${#ZSH_HIGHLIGHT_STYLES[(I)bracket-level-*]} buflen=${#BUFFER} level=0 matchingpos pos

@@ -32,13 +32,13 @@
 typeset -gA ZSH_HIGHLIGHT_PATTERNS
 
 # Whether the pattern highlighter should be called or not.
-_zsh_highlight_pattern_highlighter_predicate()
+_zsh_highlight_highlighter_pattern_predicate()
 {
   _zsh_highlight_buffer_modified
 }
 
 # Pattern syntax highlighting function.
-_zsh_highlight_pattern_highlighter()
+_zsh_highlight_highlighter_pattern_paint()
 {
   setopt localoptions extendedglob
   local pattern

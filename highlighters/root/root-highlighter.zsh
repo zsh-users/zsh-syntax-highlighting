@@ -32,13 +32,13 @@
 : ${ZSH_HIGHLIGHT_STYLES[root]:=standout}
 
 # Whether the root highlighter should be called or not.
-_zsh_highlight_root_highlighter_predicate()
+_zsh_highlight_highlighter_root_predicate()
 {
   _zsh_highlight_buffer_modified
 }
 
 # root highlighting function.
-_zsh_highlight_root_highlighter()
+_zsh_highlight_highlighter_root_paint()
 {
   if (( EUID == 0 )) { _zsh_highlight_add_highlight 0 $#BUFFER root }
 }
