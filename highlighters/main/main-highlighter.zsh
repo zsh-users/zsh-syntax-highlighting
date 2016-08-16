@@ -331,6 +331,11 @@ _zsh_highlight_main_highlighter()
       continue
     fi
 
+    if _zsh_highlight_main__is_redirection $arg ; then
+      # A '<' or '>', possibly followed by a digit
+      in_redirection=2
+    fi
+
     # Parse the sudo command line
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]]; then
@@ -432,10 +437,8 @@ _zsh_highlight_main_highlighter()
                           else
                             style=unknown-token
                           fi
-                        elif _zsh_highlight_main__is_redirection $arg; then
-                          # A '<' or '>', possibly followed by a digit
+                        elif (( in_redirection == 2 )); then
                           style=redirection
-                          (( in_redirection=2 ))
                         elif [[ $arg[1,2] == '((' ]]; then
                           # Arithmetic evaluation.
                           #
@@ -509,9 +512,8 @@ _zsh_highlight_main_highlighter()
                    else
                      style=unknown-token
                    fi
-                 elif _zsh_highlight_main__is_redirection $arg; then
+                 elif (( in_redirection == 2 )); then
                    style=redirection
-                   (( in_redirection=2 ))
                  else
                    if _zsh_highlight_main_highlighter_check_path; then
                      style=$REPLY
