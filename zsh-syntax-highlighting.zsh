@@ -373,7 +373,7 @@ if (( $zsh_highlight_use_redrawhook )); then
     () {
       local -h +r WIDGET=zle-line-finish
       _zsh_highlight "$@"
-    }
+    } "$@"
   }
   _zsh_highlight_bind_widgets(){}
   if [[ -o zle ]]; then
