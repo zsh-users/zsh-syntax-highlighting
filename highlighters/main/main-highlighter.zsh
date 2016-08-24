@@ -101,7 +101,13 @@ _zsh_highlight_main__type() {
   fi
   unset REPLY
   if zmodload -e zsh/parameter; then
-    if (( $+aliases[(e)$1] )); then
+    if ! builtin type -w -- $1 >/dev/null 2>&1; then
+      REPLY=none
+      # work around zsh bug: even if type -w encounters an invalid command,
+      # it hashes it anyways. http://www.zsh.org/mla/workers/2016/msg01583.html
+      # we force an unhash here to keep the hash tables clean.
+      (( $+commands[(e)$1] )) && unhash $1
+    elif (( $+aliases[(e)$1] )); then
       REPLY=alias
     elif (( $+saliases[(e)${1##*.}] )); then
       REPLY='suffix alias'
@@ -113,8 +119,6 @@ _zsh_highlight_main__type() {
       REPLY=builtin
     elif (( $+commands[(e)$1] )); then
       REPLY=command
-    elif ! builtin type -w -- $1 >/dev/null 2>&1; then
-      REPLY=none
     fi
   fi
   if ! (( $+REPLY )); then
