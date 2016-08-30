@@ -113,7 +113,14 @@ _zsh_highlight_main__type() {
       REPLY=builtin
     elif (( $+commands[(e)$1] )); then
       REPLY=command
-    elif ! builtin type -w -- $1 >/dev/null 2>&1; then
+    # zsh 5.2 and older have a bug whereby running 'type -w ./sudo' implicitly
+    # runs 'hash ./sudo=/usr/local/bin/./sudo' (assuming /usr/local/bin/sudo
+    # exists and is in $PATH).  Avoid triggering the bug, at the expense of
+    # falling through to the $() below, incurring a fork.  (Issue #354.)
+    #
+    # The second disjunct mimics the isrelative() C call from the zsh bug.
+    elif { is-at-least 5.3 || [[ $1 != */* ]] } &&
+         ! builtin type -w -- $1 >/dev/null 2>&1; then
       REPLY=none
     fi
   fi
