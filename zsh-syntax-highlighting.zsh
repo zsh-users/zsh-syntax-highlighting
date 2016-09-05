@@ -49,10 +49,37 @@ if true; then
   fi
 fi
 
+# This function takes a single argument F and returns True iff F denotes the
+# name of a callable function.  A function is callable if it is fully defined
+# or if it is marked for autoloading and autoloading it at the first call to it
+# will succeed.  In particular, if a function has been marked for autoloading
+# but is not available in $fpath, then this function will return False therefor.
+#
+# See users/21671 http://www.zsh.org/cgi-bin/mla/redirect?USERNUMBER=21671
+_zsh_highlight__function_callable_p() {
+  { # Trenary condition: if the zle/parameter module is available, ...
+    if (( ${+functions} )); then
+      # ... then use it to make the decision, ...
+      if (( ${+functions[$1]} )); then
+        [[ "$functions[$1]" != *"builtin autoload -X" ]] \
+        ||
+        ( unfunction -- "$1" && autoload -U +X -- "$1" 2>/dev/null )
+      else
+        (                       autoload -U +X -- "$1" 2>/dev/null )
+      fi
+    else
+      # ... otherwise, use a fallback approach.
+      autoload -U +X -- "$1" 2>/dev/null
+      [[ "${${(@f)"$(which -- "$1")"}[2]}" != $'\t'$histchars[3]' undefined' ]]
+    fi
+  }
+  # Do nothing here!  We return the exit code of the if.
+}
+
 integer zsh_highlight_use_redrawhook
-if autoload -U +X -- add-zle-hook-widget 2>/dev/null;
-   [[ "${${(@f)"$(which -- add-zle-hook-widget)"}[2]}" != $'\t'$histchars[3]' undefined' ]];
+if _zsh_highlight__function_callable_p add-zle-hook-widget
 then
+  autoload -U add-zle-hook-widget
   (( zsh_highlight_use_redrawhook=1 ))
 fi
 
