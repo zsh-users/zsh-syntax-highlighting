@@ -292,6 +292,27 @@ in this area.
   (0a9b347483ae)
 
 
+# Changes in version 0.5.0
+
+
+## Incompatible changes:
+
+- An unsuccessful completion (a <kbd>⮀ Tab</kbd> press that doesn't change the
+  command line) no longer causes highlighting to be lost.  Visual feedback can
+  alternatively be achieved by setting the `format` zstyle under the `warnings`
+  tag, for example,
+
+        zstyle ':completion:*:warnings' format '%F{red}No matches%f'
+
+    Refer to the [description of the `format` style in `zshcompsys(1)`]
+    [zshcompsys-Standard-Styles].
+
+    (#90, part of #245, XXXXXXXXXXXX)
+
+[zshcompsys-Standard-Styles]: http://zsh.sourceforge.net/Doc/Release/Completion-System.html#Standard-Styles
+  
+
+
 # Changes in version 0.4.1
 
 ## Fixes:
