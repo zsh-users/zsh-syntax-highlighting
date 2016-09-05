@@ -305,11 +305,12 @@ in this area.
         zstyle ':completion:*:warnings' format '%F{red}No matches%f'
 
     Refer to the [description of the `format` style in `zshcompsys(1)`]
-    [zshcompsys-Standard-Styles].
+    [zshcompsys-Standard-Styles-format].
 
     (#90, part of #245, XXXXXXXXXXXX)
 
 [zshcompsys-Standard-Styles]: http://zsh.sourceforge.net/Doc/Release/Completion-System.html#Standard-Styles
+[zshcompsys-Standard-Styles-format]: http://zsh.sourceforge.net/Doc/Release/Completion-System.html#index-format_002c-completion-style
   
 
 
