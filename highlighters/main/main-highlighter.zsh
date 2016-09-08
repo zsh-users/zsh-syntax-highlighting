@@ -119,7 +119,7 @@ _zsh_highlight_main__type() {
     # falling through to the $() below, incurring a fork.  (Issue #354.)
     #
     # The second disjunct mimics the isrelative() C call from the zsh bug.
-    elif { is-at-least 5.3 || [[ $1 != */* ]] } &&
+    elif {  [[ $1 != */* ]] || is-at-least 5.3 } &&
          ! builtin type -w -- $1 >/dev/null 2>&1; then
       REPLY=none
     fi
