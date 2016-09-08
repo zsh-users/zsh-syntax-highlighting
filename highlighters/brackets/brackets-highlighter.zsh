@@ -40,7 +40,7 @@
 # Whether the brackets highlighter should be called or not.
 _zsh_highlight_highlighter_brackets_predicate()
 {
-  _zsh_highlight_cursor_moved || _zsh_highlight_buffer_modified
+  [[ $WIDGET == zle-line-finish ]] || _zsh_highlight_cursor_moved || _zsh_highlight_buffer_modified
 }
 
 # Brackets highlighting function.
@@ -85,11 +85,13 @@ _zsh_highlight_highlighter_brackets_paint()
     _zsh_highlight_add_highlight $((pos - 1)) $pos $style
   done
 
-  # If cursor is on a bracket, then highlight corresponding bracket, if any
-  pos=$((CURSOR + 1))
-  if [[ -n $levelpos[$pos] ]] && [[ -n $matching[$pos] ]]; then
-    local -i otherpos=$matching[$pos]
-    _zsh_highlight_add_highlight $((otherpos - 1)) $otherpos cursor-matchingbracket
+  # If cursor is on a bracket, then highlight corresponding bracket, if any.
+  if [[ $WIDGET != zle-line-finish ]]; then
+    pos=$((CURSOR + 1))
+    if [[ -n $levelpos[$pos] ]] && [[ -n $matching[$pos] ]]; then
+      local -i otherpos=$matching[$pos]
+      _zsh_highlight_add_highlight $((otherpos - 1)) $otherpos cursor-matchingbracket
+    fi
   fi
 }
 
