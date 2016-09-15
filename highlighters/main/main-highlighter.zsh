@@ -243,6 +243,7 @@ _zsh_highlight_highlighter_main_paint()
     'command' ''
     'nice' n
     'sudo' Cgprtu
+    'doas' aCu
   )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
