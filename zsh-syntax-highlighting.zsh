@@ -49,6 +49,25 @@ if true; then
   fi
 fi
 
+# This function takes a single argument F and returns True iff F is an autoload stub.
+_zsh_highlight__function_is_autoload_stub_p() {
+  if (( ${+functions} )); then
+    ## zsh/parameter is available
+    #(( ${+functions[$1]} )) &&
+    [[ "$functions[$1]" == *"builtin autoload -X" ]]
+  else
+    ## zsh/parameter isn't available
+    #[[ $(type -wa -- "$1") == *'function'* ]] &&
+    [[ "${${(@f)"$(which -- "$1")"}[2]}" == $'\t'$histchars[3]' undefined' ]]
+  fi
+  # Do nothing here: return the exit code of the if.
+}
+
+# Return True iff the argument denotes a function name.
+_zsh_highlight__is_function_p() {
+  (( ${+functions[$1]} )) || [[ $(type -wa -- "$1") == *'function'* ]]
+}
+
 # This function takes a single argument F and returns True iff F denotes the
 # name of a callable function.  A function is callable if it is fully defined
 # or if it is marked for autoloading and autoloading it at the first call to it
@@ -57,23 +76,21 @@ fi
 #
 # See users/21671 http://www.zsh.org/cgi-bin/mla/redirect?USERNUMBER=21671
 _zsh_highlight__function_callable_p() {
-  { # Trenary condition: if the zle/parameter module is available, ...
-    if (( ${+functions} )); then
-      # ... then use it to make the decision, ...
-      if (( ${+functions[$1]} )); then
-        [[ "$functions[$1]" != *"builtin autoload -X" ]] \
-        ||
-        ( unfunction -- "$1" && autoload -U +X -- "$1" 2>/dev/null )
-      else
-        (                       autoload -U +X -- "$1" 2>/dev/null )
-      fi
-    else
-      # ... otherwise, use a fallback approach.
-      autoload -U +X -- "$1" 2>/dev/null
-      [[ "${${(@f)"$(which -- "$1")"}[2]}" != $'\t'$histchars[3]' undefined' ]]
-    fi
-  }
-  # Do nothing here!  We return the exit code of the if.
+  if _zsh_highlight__is_function_p "$1" &&
+     ! _zsh_highlight__function_is_autoload_stub_p "$1"
+  then
+    # Already fully loaded.
+    return 0 # true
+  else
+    # "$1" is either an autoload stub, or not a function at all.
+    #
+    # Use a subshell to avoid affecting the calling shell.
+    #
+    # We expect 'autoload +X' to return non-zero if it fails to fully load
+    # the function.
+    ( autoload -U +X -- "$1" 2>/dev/null )
+    return $?
+  fi
 }
 
 integer zsh_highlight_use_redrawhook
