@@ -92,7 +92,11 @@ _zsh_highlight()
       typeset -ga ${cache_place}
 
       # If highlighter needs to be invoked
-      if "_zsh_highlight_highlighter_${highlighter}_predicate"; then
+      if ! type "_zsh_highlight_highlighter_${highlighter}_predicate" >&/dev/null; then
+        echo "zsh-syntax-highlighting: warning: disabling the ${(qq)highlighter} highlighter as it has not been loaded" >&2
+        # TODO: use ${(b)} rather than ${(q)} if supported
+        ZSH_HIGHLIGHT_HIGHLIGHTERS=( ${ZSH_HIGHLIGHT_HIGHLIGHTERS:#${highlighter}} )
+      elif "_zsh_highlight_highlighter_${highlighter}_predicate"; then
 
         # save a copy, and cleanup region_highlight
         region_highlight_copy=("${region_highlight[@]}")
