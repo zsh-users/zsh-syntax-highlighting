@@ -162,6 +162,11 @@ _zsh_highlight_highlighter_main_paint()
   if [[ -o interactive_comments ]]; then
     local interactive_comments= # set to empty
   fi
+  if [[ -o ignore_braces ]] || [[ -o ignore_close_braces ]]; then
+    local right_brace_is_recognised_everywhere=false
+  else
+    local right_brace_is_recognised_everywhere=true
+  fi
   if [[ -o path_dirs ]]; then
     integer path_dirs_was_set=1
   else
@@ -513,7 +518,18 @@ _zsh_highlight_highlighter_main_paint()
                  else
                    style=reserved-word
                  fi;;
-        $'\x7d') style=reserved-word;; # block
+        $'\x7d') # right brace
+                 #
+                 # Parsing rule: # {
+                 #
+                 #     Additionally, `tt(})' is recognized in any position if neither the
+                 #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set."""
+                 if $right_brace_is_recognised_everywhere; then
+                   style=reserved-word
+                 else
+                   # Fall through to the catchall case at the end.
+                 fi
+                 ;|
         '--'*)   style=double-hyphen-option;;
         '-'*)    style=single-hyphen-option;;
         "'"*)    style=single-quoted-argument;;
@@ -531,6 +547,8 @@ _zsh_highlight_highlighter_main_paint()
         [*?]*|*[^\\][*?]*)
                  $highlight_glob && style=globbing || style=default;;
         *)       if false; then
+                 elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
+                   # was handled by the $'\x7d' case above
                  elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
                    style=history-expansion
                  elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
