@@ -40,8 +40,10 @@ if (( $# != 3 )) || [[ $1 == -* ]]; then
 fi
 buffer=$1
 ZSH_HIGHLIGHT_HIGHLIGHTERS=( $2 )
-exec >${0:A:h:h}/highlighters/$2/test-data/$3.zsh
-git add -N ${0:A:h:h}/highlighters/$2/test-data/$3.zsh
+fname=${0:A:h:h}/highlighters/$2/test-data/$3.zsh
+exec 3>&1
+exec >$fname
+git add -N $fname
 
 # Load the main script.
 . ${0:A:h:h}/zsh-syntax-highlighting.zsh
@@ -85,3 +87,10 @@ print 'expected_region_highlight=('
   done
 }
 print ')'
+
+exec >&3
+year="`LC_ALL=C date +%Y`"
+if read -q "?Set copyright year to $year? "; then
+  <$fname >$fname.t sed s/YYYY/$year/ &&
+    mv $fname.t $fname
+fi
