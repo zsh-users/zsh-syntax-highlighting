@@ -29,14 +29,12 @@
 # -------------------------------------------------------------------------------------------------
 
 
-BUFFER=$'() { echo }\n}'
-# no special setopts
+BUFFER='() { echo foo )'
 
 expected_region_highlight=(
   '1 2 reserved-word' # ()
   '4 4 reserved-word' # {
   '6 9 builtin' # echo
-  '11 11 reserved-word' # }
-  '12 12 commandseparator' # \n
-  '13 13 unknown-token' # }
+  '11 13 default' # foo
+  '15 15 unknown-token' # )
 )

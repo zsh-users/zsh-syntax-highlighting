@@ -155,6 +155,20 @@ _zsh_highlight_main__resolve_alias() {
   fi
 }
 
+# Check that the top of $braces_stack has the expected value.  If it does, set
+# the style according to $2; otherwise, set style=unknown-token.
+#
+# $1: character expected to be at the top of $braces_stack
+# $2: assignment to execute it if matches
+_zsh_highlight_main__stack_pop() {
+  if [[ $braces_stack[1] == $1 ]]; then
+    braces_stack=${braces_stack:1}
+    eval "$2"
+  else
+    style=unknown-token
+  fi
+}
+
 # Main syntax highlighting function.
 _zsh_highlight_highlighter_main_paint()
 {
@@ -193,6 +207,8 @@ _zsh_highlight_highlighter_main_paint()
   local -a options_to_set # used in callees
   local buf="$PREBUFFER$BUFFER"
   integer len="${#buf}"
+
+  local braces_stack # "R" for round, "Q" for square, "Y" for curly
 
   if (( path_dirs_was_set )); then
     options_to_set+=( PATH_DIRS )
@@ -418,7 +434,15 @@ _zsh_highlight_highlighter_main_paint()
         fi
       }
       case $res in
-        reserved)       style=reserved-word;;
+        reserved)       # reserved word
+                        style=reserved-word
+                        if [[ $arg == $'\x7b' ]]; then
+                          braces_stack='Y'"$braces_stack"
+                        elif [[ $arg == $'\x7d' ]]; then
+                          # We're at command word, so no need to check $right_brace_is_recognised_everywhere
+                          _zsh_highlight_main__stack_pop 'Y' style=reserved-word
+                        fi
+                        ;;
         'suffix alias') style=suffix-alias;;
         alias)          () {
                           integer insane_alias
@@ -488,10 +512,13 @@ _zsh_highlight_highlighter_main_paint()
                             _zsh_highlight_main_add_region_highlight $((end_pos - 2)) $end_pos $style
                             already_added=1
                           fi
-                        elif [[ $arg == '()' || $arg == $'\x28' ]]; then
+                        elif [[ $arg == '()' ]]; then
                           # anonymous function
+                          style=reserved-word
+                        elif [[ $arg == $'\x28' ]]; then
                           # subshell
                           style=reserved-word
+                          braces_stack='R'"$braces_stack"
                         else
                           if _zsh_highlight_main_highlighter_check_path; then
                             style=$REPLY
@@ -516,7 +543,7 @@ _zsh_highlight_highlighter_main_paint()
                    in_array_assignment=false
                    next_word+=':start:'
                  else
-                   style=reserved-word
+                   _zsh_highlight_main__stack_pop 'R' style=reserved-word
                  fi;;
         $'\x7d') # right brace
                  #
@@ -525,7 +552,7 @@ _zsh_highlight_highlighter_main_paint()
                  #     Additionally, `tt(})' is recognized in any position if neither the
                  #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set."""
                  if $right_brace_is_recognised_everywhere; then
-                   style=reserved-word
+                   _zsh_highlight_main__stack_pop 'Y' style=reserved-word
                  else
                    # Fall through to the catchall case at the end.
                  fi
