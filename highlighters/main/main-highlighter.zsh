@@ -186,6 +186,11 @@ _zsh_highlight_highlighter_main_paint()
   else
     integer path_dirs_was_set=0
   fi
+  if [[ -o multi_func_def ]]; then
+    integer multi_func_def=1
+  else
+    integer multi_func_def=0
+  fi
   emulate -L zsh
   setopt localoptions extendedglob bareglobqual
 
@@ -545,6 +550,13 @@ _zsh_highlight_highlighter_main_paint()
                  else
                    _zsh_highlight_main__stack_pop 'R' style=reserved-word
                  fi;;
+        $'\x28\x29') # possibly a function definition
+                 if (( multi_func_def )) || false # TODO: or if the previous word was a command word
+                 then
+                   next_word+=':start:'
+                 fi
+                 style=reserved-word
+                 ;;
         $'\x7d') # right brace
                  #
                  # Parsing rule: # {
