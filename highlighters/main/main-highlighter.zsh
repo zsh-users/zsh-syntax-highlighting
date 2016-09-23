@@ -176,7 +176,7 @@ _zsh_highlight_highlighter_main_paint()
   if [[ -o interactive_comments ]]; then
     local interactive_comments= # set to empty
   fi
-  if [[ -o ignore_braces ]] || [[ -o ignore_close_braces ]]; then
+  if [[ -o ignore_braces ]] || eval '[[ -o ignore_close_braces ]] 2>/dev/null'; then
     local right_brace_is_recognised_everywhere=false
   else
     local right_brace_is_recognised_everywhere=true
