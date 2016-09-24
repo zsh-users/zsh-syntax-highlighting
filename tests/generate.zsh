@@ -41,9 +41,6 @@ fi
 buffer=$1
 ZSH_HIGHLIGHT_HIGHLIGHTERS=( $2 )
 fname=${0:A:h:h}/highlighters/$2/test-data/${3%.zsh}.zsh
-exec 3>&1
-exec >$fname
-git add -N $fname
 
 # Load the main script.
 . ${0:A:h:h}/zsh-syntax-highlighting.zsh
@@ -54,9 +51,17 @@ _zsh_highlight_add_highlight()
   region_highlight+=("$1 $2 $3")
 }
 
+
 # Copyright block
-<$0 sed -n -e '1,/^$/p' | sed -e 's/2[0-9][0-9][0-9]/YYYY/'
+year="`LC_ALL=C date +%Y`"
+if ! read -q "?Set copyright year to $year? "; then
+  year="YYYY"
+fi
+exec >$fname
+<$0 sed -n -e '1,/^$/p' | sed -e "s/2[0-9][0-9][0-9]/${year}/"
 echo ""
+# Assumes stdout is line-buffered
+git add -- $fname
 
 # Buffer
 print -n 'BUFFER='
@@ -87,10 +92,3 @@ print 'expected_region_highlight=('
   done
 }
 print ')'
-
-exec >&3
-year="`LC_ALL=C date +%Y`"
-if read -q "?Set copyright year to $year? "; then
-  <$fname >$fname.t sed s/YYYY/$year/ &&
-    mv $fname.t $fname
-fi
