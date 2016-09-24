@@ -40,7 +40,7 @@ if (( $# != 3 )) || [[ $1 == -* ]]; then
 fi
 buffer=$1
 ZSH_HIGHLIGHT_HIGHLIGHTERS=( $2 )
-fname=${0:A:h:h}/highlighters/$2/test-data/$3.zsh
+fname=${0:A:h:h}/highlighters/$2/test-data/${3%.zsh}.zsh
 exec 3>&1
 exec >$fname
 git add -N $fname
