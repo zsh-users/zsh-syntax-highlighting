@@ -613,8 +613,13 @@ _zsh_highlight_highlighter_main_paint()
       [[ $style == path || $style == path_prefix ]] && _zsh_highlight_main_highlighter_highlight_path_separators
     fi
     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
-      next_word=':start:'
-      highlight_glob=true
+      if [[ $arg == ';' ]] && $in_array_assignment; then
+        # literal newline inside an array assignment
+        next_word=':regular:'
+      else
+        next_word=':start:'
+        highlight_glob=true
+      fi
     elif
        [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]] ||
        [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} && $this_word == *':start:'* ]]; then
