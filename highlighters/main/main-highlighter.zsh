@@ -256,6 +256,8 @@ _zsh_highlight_highlighter_main_paint()
     '!' # reserved word; unrelated to $histchars[1]
   )
 
+  local -a match mbegin mend
+
   # State machine
   #
   # The states are:
@@ -344,7 +346,22 @@ _zsh_highlight_highlighter_main_paint()
       (( start_pos += offset ))
       (( end_pos = start_pos + $#arg ))
     else
-      integer offset=$(((len-start_pos)-${#${proc_buf##([[:space:]]|\\[[:space:]])#}}))
+      # The line was:
+      #
+      # integer offset=$(((len-start_pos)-${#${proc_buf##([[:space:]]|\\[[:space:]])#}}))
+      #
+      # - len-start_pos is length of current proc_buf; basically: initial length minus where
+      #   we are, and proc_buf is chopped to the "where we are" (compare the "previous value
+      #   of start_pos" below, and the len-(start_pos-offset) = len-start_pos+offset)
+      # - what's after main minus sign is: length of proc_buf without spaces at the beginning
+      # - so what the line actually did, was computing length of the spaces!
+      # - this can be done via (#b) flag, like below
+      if [[ "$proc_buf" = (#b)(#s)(([[:space:]]|\\[[:space:]])##)* ]]; then
+          # The first, outer parenthesis
+          integer offset="${#match[1]}"
+      else
+          integer offset=0
+      fi
       ((start_pos+=offset))
       ((end_pos=$start_pos+${#arg}))
     fi
