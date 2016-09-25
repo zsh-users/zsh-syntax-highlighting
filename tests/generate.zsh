@@ -77,6 +77,7 @@ print 'expected_region_highlight=('
   PREBUFFER=""
   BUFFER="$buffer"
   region_highlight=()
+  # TODO: use run_test() from tests/test-highlighting.zsh (to get a tempdir)
   _zsh_highlight
 
   for ((i=1; i<=${#region_highlight}; i++)); do
