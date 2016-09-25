@@ -756,6 +756,10 @@ _zsh_highlight_main_highlighter_highlight_string()
             elif [[ ${arg:$i} =~ ^[{]([A-Za-z_][A-Za-z0-9_]*|[0-9]+)[}] ]] ; then
               (( k += $#MATCH )) # highlight the parameter name and braces
               (( i += $#MATCH )) # skip past it
+            elif [[ $arg[i+1] == '$' ]]; then
+              # $$ - pid
+              (( k += 1 )) # highlight both dollar signs
+              (( i += 1 )) # don't consider the second one as introducing another parameter expansion
             elif [[ $arg[i+1] == $'\x28' ]]; then
               # Highlight just the '$'.
             else
