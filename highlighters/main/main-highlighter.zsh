@@ -218,6 +218,7 @@ _zsh_highlight_highlighter_main_paint()
   # "Q" for square
   # "Y" for curly
   # "D" for do/done
+  # "$" for 'end' (matches 'foreach' always; also used with cshjunkiequotes in repeat/while)
   local braces_stack
 
   if (( path_dirs_was_set )); then
@@ -467,6 +468,12 @@ _zsh_highlight_highlighter_main_paint()
                             ;;
                           ('done')
                             _zsh_highlight_main__stack_pop 'D' style=reserved-word
+                            ;;
+                          ('foreach')
+                            braces_stack='$'"$braces_stack"
+                            ;;
+                          ('end')
+                            _zsh_highlight_main__stack_pop '$' style=reserved-word
                             ;;
                         esac
                         ;;
