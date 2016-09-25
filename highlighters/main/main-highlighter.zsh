@@ -553,6 +553,9 @@ _zsh_highlight_highlighter_main_paint()
                           # subshell
                           style=reserved-word
                           braces_stack='R'"$braces_stack"
+                        elif [[ $arg == $'\x29' ]]; then
+                          # end of subshell
+                          _zsh_highlight_main__stack_pop 'R' style=reserved-word
                         else
                           if _zsh_highlight_main_highlighter_check_path; then
                             style=$REPLY
