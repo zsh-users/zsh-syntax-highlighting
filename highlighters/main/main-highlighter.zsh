@@ -260,6 +260,7 @@ _zsh_highlight_highlighter_main_paint()
   #                words) but not in "-ufoo" (one word).
   # - :regular:    "Not a command word", and command delimiters are permitted.
   #                Mainly used to detect premature termination of commands.
+  # - :always:     The word 'always' in the «{ foo } always { bar }» syntax.
   #
   # When the kind of a word is not yet known, $this_word / $next_word may contain
   # multiple states.  For example, after "sudo -i", the next word may be either
@@ -408,7 +409,11 @@ _zsh_highlight_highlighter_main_paint()
    fi
 
    # The Great Fork: is this a command word?  Is this a non-command word?
-   if [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
+   if [[ $this_word == *':always:'* && $arg == 'always' ]]; then
+     # try-always construct
+     style=reserved-word # de facto a reserved word, although not de jure
+     next_word=':start:'
+   elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
       style=precommand
      elif [[ "$arg" = "sudo" ]]; then
@@ -446,6 +451,9 @@ _zsh_highlight_highlighter_main_paint()
                         elif [[ $arg == $'\x7d' ]]; then
                           # We're at command word, so no need to check $right_brace_is_recognised_everywhere
                           _zsh_highlight_main__stack_pop 'Y' style=reserved-word
+                          if [[ $style == reserved-word ]]; then
+                            next_word+=':always:'
+                          fi
                         fi
                         ;;
         'suffix alias') style=suffix-alias;;
@@ -565,6 +573,9 @@ _zsh_highlight_highlighter_main_paint()
                  #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set."""
                  if $right_brace_is_recognised_everywhere; then
                    _zsh_highlight_main__stack_pop 'Y' style=reserved-word
+                   if [[ $style == reserved-word ]]; then
+                     next_word+=':always:'
+                   fi
                  else
                    # Fall through to the catchall case at the end.
                  fi
