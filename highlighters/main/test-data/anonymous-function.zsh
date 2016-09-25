@@ -27,7 +27,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER='() echo hello; () { echo world }'
+BUFFER='() echo hello; () { echo world } "argument"'
 
 expected_region_highlight=(
   "1 2 reserved-word" # ()
@@ -37,4 +37,5 @@ expected_region_highlight=(
   "16 17 reserved-word" # ()
   "19 19 reserved-word" # {
   "21 24 builtin" # echo
+  "34 43 double-quoted-argument" # "argument"
 )
