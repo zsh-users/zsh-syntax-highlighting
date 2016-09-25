@@ -214,7 +214,11 @@ _zsh_highlight_highlighter_main_paint()
   integer len="${#buf}"
   integer pure_buf_len=$(( len - ${#PREBUFFER} ))   # == $#BUFFER, used e.g. in *_check_path
 
-  local braces_stack # "R" for round, "Q" for square, "Y" for curly
+  # "R" for round
+  # "Q" for square
+  # "Y" for curly
+  # "D" for do/done
+  local braces_stack
 
   if (( path_dirs_was_set )); then
     options_to_set+=( PATH_DIRS )
@@ -447,15 +451,24 @@ _zsh_highlight_highlighter_main_paint()
       case $res in
         reserved)       # reserved word
                         style=reserved-word
-                        if [[ $arg == $'\x7b' ]]; then
-                          braces_stack='Y'"$braces_stack"
-                        elif [[ $arg == $'\x7d' ]]; then
-                          # We're at command word, so no need to check $right_brace_is_recognised_everywhere
-                          _zsh_highlight_main__stack_pop 'Y' style=reserved-word
-                          if [[ $style == reserved-word ]]; then
-                            next_word+=':always:'
-                          fi
-                        fi
+                        case $arg in
+                          ($'\x7b')
+                            braces_stack='Y'"$braces_stack"
+                            ;;
+                          ($'\x7d')
+                            # We're at command word, so no need to check $right_brace_is_recognised_everywhere
+                            _zsh_highlight_main__stack_pop 'Y' style=reserved-word
+                            if [[ $style == reserved-word ]]; then
+                              next_word+=':always:'
+                            fi
+                            ;;
+                          ('do')
+                            braces_stack='D'"$braces_stack"
+                            ;;
+                          ('done')
+                            _zsh_highlight_main__stack_pop 'D' style=reserved-word
+                            ;;
+                        esac
                         ;;
         'suffix alias') style=suffix-alias;;
         alias)          () {
