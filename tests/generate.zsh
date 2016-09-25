@@ -29,6 +29,7 @@
 # -------------------------------------------------------------------------------------------------
 
 emulate -LR zsh
+setopt localoptions extendedglob
 
 # Argument parsing.
 if (( $# != 3 )) || [[ $1 == -* ]]; then
@@ -64,7 +65,11 @@ git add -- $fname
 
 # Buffer
 print -n 'BUFFER='
-print -r -- ${(qq)buffer}
+if [[ $buffer != (#s)[$'\t -~']#(#e) ]]; then
+  print -r -- ${(qqqq)buffer}
+else
+  print -r -- ${(qq)buffer}
+fi
 echo ""
 
 # Expectations
@@ -88,7 +93,7 @@ print 'expected_region_highlight=('
       (( --end )) # convert to closed range, like expected_region_highlight
       (( ++start, ++end )) # region_highlight is 0-indexed; expected_region_highlight is 1-indexed
     fi
-    printf "  %s # %s\n" ${(qq):-"$start $end $highlight_zone[3]"} $BUFFER[start,end]
+    printf "  %s # %s\n" ${(qq):-"$start $end $highlight_zone[3]"} ${${(qqqq)BUFFER[start,end]}[3,-2]}
   done
 }
 print ')'
