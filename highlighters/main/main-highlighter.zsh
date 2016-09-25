@@ -760,6 +760,10 @@ _zsh_highlight_main_highlighter_highlight_string()
               # $$ - pid
               (( k += 1 )) # highlight both dollar signs
               (( i += 1 )) # don't consider the second one as introducing another parameter expansion
+            elif [[ $arg[i+1] == [-#*@?] ]]; then
+              # $#, $*, $@, $?, $- - like $$ above
+              (( k += 1 )) # highlight both dollar signs
+              (( i += 1 )) # don't consider the second one as introducing another parameter expansion
             elif [[ $arg[i+1] == $'\x28' ]]; then
               # Highlight just the '$'.
             else
