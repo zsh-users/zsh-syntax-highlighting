@@ -59,7 +59,6 @@ if ! read -q "?Set copyright year to $year? "; then
 fi
 exec >$fname
 <$0 sed -n -e '1,/^$/p' | sed -e "s/2[0-9][0-9][0-9]/${year}/"
-echo ""
 # Assumes stdout is line-buffered
 git add -- $fname
 
