@@ -32,17 +32,11 @@
 : ${ZSH_HIGHLIGHT_STYLES[default]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[unknown-token]:=fg=red,bold}
 : ${ZSH_HIGHLIGHT_STYLES[reserved-word]:=fg=yellow}
-: ${ZSH_HIGHLIGHT_STYLES[alias]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[suffix-alias]:=fg=green,underline}
-: ${ZSH_HIGHLIGHT_STYLES[builtin]:=fg=green}
-: ${ZSH_HIGHLIGHT_STYLES[function]:=fg=green}
-: ${ZSH_HIGHLIGHT_STYLES[command]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
-: ${ZSH_HIGHLIGHT_STYLES[hashed-command]:=fg=green}
 : ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_pathseparator]:=}
-: ${ZSH_HIGHLIGHT_STYLES[path_prefix]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]:=}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
@@ -58,6 +52,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[assign]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[redirection]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[comment]:=fg=black,bold}
+: ${ZSH_HIGHLIGHT_STYLES[arg0]:=fg=green}
 
 # Whether the highlighter should be called or not.
 _zsh_highlight_highlighter_main_predicate()
@@ -70,6 +65,33 @@ _zsh_highlight_highlighter_main_predicate()
 _zsh_highlight_main_add_region_highlight() {
   integer start=$1 end=$2
   shift 2
+
+  if (( $+argv[2] )); then
+    # Caller specified inheritance explicitly.
+  else
+    # Automate inheritance.
+    typeset -A fallback_of; fallback_of=(
+        alias arg0
+        suffix-alias arg0
+        builtin arg0
+        function arg0
+        command arg0
+        precommand arg0
+        hashed-command arg0
+        
+        path_prefix path
+        # The path separator fallback won't ever be used, due to the optimisation
+        # in _zsh_highlight_main_highlighter_highlight_path_separators().
+        path_pathseparator path
+        path_prefix_pathseparator path_prefix
+    )
+    local needle=$1 value
+    while [[ -n ${value::=$fallback_of[$needle]} ]]; do
+      unset "fallback_of[$needle]" # paranoia against infinite loops
+      argv+=($value)
+      needle=$value
+    done
+  fi
 
   # The calculation was relative to $PREBUFFER$BUFFER, but region_highlight is
   # relative to $BUFFER.
@@ -581,7 +603,7 @@ _zsh_highlight_highlighter_main_paint()
                           fi
                         fi
                         ;;
-        *)              _zsh_highlight_main_add_region_highlight $start_pos $end_pos commandtypefromthefuture-$res
+        *)              _zsh_highlight_main_add_region_highlight $start_pos $end_pos arg0_$res arg0
                         already_added=1
                         ;;
       esac
