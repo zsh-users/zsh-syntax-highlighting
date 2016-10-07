@@ -44,9 +44,9 @@ computing syntax highlighting for the command-line buffer as it stands at the
 time z-sy-h's hook is invoked.
 
 In zsh 5.2 and older,
-`zsh-syntax-highlighting.zsh` hooks into ZLE by wrapping ZLE widgets.  It must be sourced after all
-custom widgets have been created (i.e., after all `zle -N` calls and after
-running `compinit`) in order to be able to wrap all of them.
+`zsh-syntax-highlighting.zsh` hooks into ZLE by wrapping ZLE widgets.  It must
+be sourced after all custom widgets have been created (i.e., after all `zle -N`
+calls and after running `compinit`) in order to be able to wrap all of them.
 Widgets created after z-sy-h is sourced will work, but will not update the
 syntax highlighting.
 
