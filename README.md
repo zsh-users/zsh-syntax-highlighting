@@ -39,10 +39,22 @@ FAQ
 
 ### Why must `zsh-syntax-highlighting.zsh` be sourced at the end of the `.zshrc` file?
 
-`zsh-syntax-highlighting.zsh` wraps ZLE widgets.  It must be sourced after all
+zsh-syntax-highlighting works by hooking into the Zsh Line Editor (ZLE) and
+computing syntax highlighting for the command-line buffer as it stands at the
+time z-sy-h's hook is invoked.
+
+In zsh 5.2 and older,
+`zsh-syntax-highlighting.zsh` hooks into ZLE by wrapping ZLE widgets.  It must be sourced after all
 custom widgets have been created (i.e., after all `zle -N` calls and after
-running `compinit`).  Widgets created later will work, but will not update the
+running `compinit`) in order to be able to wrap all of them.
+Widgets created after z-sy-h is sourced will work, but will not update the
 syntax highlighting.
+
+In zsh 5.3 and newer,
+zsh-syntax-highlighting uses the `add-zle-hook-widget` facility to install
+a `zle-line-pre-redraw` hook.  Hooks are run in order of registration,
+therefore, z-sy-h must be sourced (and register its hook) after anything else
+that adds hooks that modify the command-line buffer.
 
 ### Does syntax highlighting work during incremental history search?
 
