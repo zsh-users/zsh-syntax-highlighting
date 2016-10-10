@@ -65,8 +65,11 @@ _zsh_highlight()
     return $ret
   fi
 
-  setopt localoptions warncreateglobal
-  setopt localoptions noksharrays
+# Did a couple of tweaks to highlighters/main/main-highlighter.zsh
+# to prevent need for following, thut there'll surely be others.
+# setopt localtraps
+# unfunction TRAPZERR
+  setopt localoptions noksharrays warncreateglobal
   local REPLY # don't leak $REPLY into global scope
 
   # Do not highlight if there are more than 300 chars in the buffer. It's most

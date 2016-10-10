@@ -95,7 +95,7 @@ _zsh_highlight_main_add_region_highlight() {
 
   # The calculation was relative to $PREBUFFER$BUFFER, but region_highlight is
   # relative to $BUFFER.
-  (( start -= $#PREBUFFER ))
+  (( start -= $#PREBUFFER )) || :
   (( end -= $#PREBUFFER ))
 
   (( end < 0 )) && return # having end<0 would be a bug
@@ -384,7 +384,7 @@ _zsh_highlight_highlighter_main_paint()
       else
           integer offset=0
       fi
-      ((start_pos+=offset))
+      ((start_pos+=offset)) || :
       ((end_pos=$start_pos+${#arg}))
     fi
 
