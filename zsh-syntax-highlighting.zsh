@@ -66,7 +66,7 @@ _zsh_highlight()
   fi
 
 # Did a couple of tweaks to highlighters/main/main-highlighter.zsh
-# to prevent need for following, thut there'll surely be others.
+# to prevent need for following, though there'll surely be others.
 # setopt localtraps
 # unfunction TRAPZERR
   setopt localoptions noksharrays warncreateglobal
@@ -337,7 +337,7 @@ _zsh_highlight_load_highlighters()
   for highlighter_dir ($1/*/); do
     highlighter="${highlighter_dir:t}"
     [[ -f "$highlighter_dir/${highlighter}-highlighter.zsh" ]] &&
-      . "$highlighter_dir/${highlighter}-highlighter.zsh"
+      source "$highlighter_dir/${highlighter}-highlighter.zsh"
     if type "_zsh_highlight_highlighter_${highlighter}_paint" &> /dev/null &&
        type "_zsh_highlight_highlighter_${highlighter}_predicate" &> /dev/null;
     then

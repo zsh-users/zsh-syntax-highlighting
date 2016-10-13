@@ -146,8 +146,8 @@ _zsh_highlight_main__type() {
       REPLY=none
     fi
   fi
-  if ! (( $+REPLY )); then
-    REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null)#*: }"
+  if ! (( $+REPLY )); then	# below will frequently trigger ERR trap without || :
+    REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null || :)#*: }"
   fi
   if (( $+_zsh_highlight_main__command_type_cache )); then
     _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
