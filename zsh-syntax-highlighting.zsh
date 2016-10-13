@@ -255,7 +255,7 @@ _zsh_highlight_call_widget()
 # Rebind all ZLE widgets to make them invoke _zsh_highlights.
 _zsh_highlight_bind_widgets()
 {
-  setopt localoptions noksharrays
+  setopt localoptions noksharrays unset
   typeset -F SECONDS
   local prefix=orig-s$SECONDS-r$RANDOM # unique each time, in case we're sourced more than once
 
@@ -280,7 +280,7 @@ _zsh_highlight_bind_widgets()
 
   local cur_widget
   for cur_widget in $widgets_to_bind; do
-    case $widgets[$cur_widget] in
+    case $widgets[$cur_widget] in	# requires no_unset be unset
 
       # Already rebound event: do nothing.
       user:_zsh_highlight_widget_*);;
