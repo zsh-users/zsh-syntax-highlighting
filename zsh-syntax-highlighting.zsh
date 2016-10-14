@@ -66,7 +66,7 @@ _zsh_highlight()
   fi
 
 # Did a couple of tweaks to highlighters/main/main-highlighter.zsh
-# to prevent need for following, though there'll surely be others.
+# to prevent need for following, though there'll surely be other areas.
 # setopt localtraps
 # unfunction TRAPZERR
   setopt localoptions noksharrays warncreateglobal
@@ -171,6 +171,9 @@ _zsh_highlight()
 _zsh_highlight_apply_zle_highlight() {
   local entry="$1" default="$2"
   integer first="$3" second="$4"
+
+  setopt localoptions unset	# seems to be the accessing the array entry
+# rather than ${entry-} that aborts otherwise
 
   # read the relevant entry from zle_highlight
   local region="${zle_highlight[(r)${entry}:*]}"

@@ -214,7 +214,7 @@ _zsh_highlight_highlighter_main_paint()
     integer multi_func_def=0
   fi
   emulate -L zsh
-  setopt localoptions extendedglob bareglobqual
+  setopt localoptions extendedglob bareglobqual #xtrace
 
   # At the PS3 prompt and in vared, highlight nothing.
   #
@@ -537,7 +537,9 @@ _zsh_highlight_highlighter_main_paint()
                             style=alias
                             _zsh_highlight_main__resolve_alias $arg
                             local alias_target="$REPLY"
-                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$alias_target"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]] && ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg)
+                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$alias_target"}
+                            && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]] &&
+                                ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg) || :
                           fi
                         }
                         ;;
@@ -684,7 +686,7 @@ _zsh_highlight_highlighter_main_paint()
     fi
     if ! (( already_added )); then
       _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-      [[ $style == path || $style == path_prefix ]] && _zsh_highlight_main_highlighter_highlight_path_separators
+      [[ $style == path || $style == path_prefix ]] && _zsh_highlight_main_highlighter_highlight_path_separators || :
     fi
     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
       if [[ $arg == ';' ]] && $in_array_assignment; then
