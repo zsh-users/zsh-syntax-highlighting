@@ -93,13 +93,6 @@ _zsh_highlight__function_callable_p() {
   fi
 }
 
-integer zsh_highlight_use_redrawhook
-if _zsh_highlight__function_callable_p add-zle-hook-widget
-then
-  autoload -U add-zle-hook-widget
-  (( zsh_highlight_use_redrawhook=1 ))
-fi
-
 # -------------------------------------------------------------------------------------------------
 # Core highlighting update system
 # -------------------------------------------------------------------------------------------------
@@ -341,7 +334,25 @@ _zsh_highlight_call_widget()
   _zsh_highlight
 }
 
-if true; then
+if _zsh_highlight__function_callable_p add-zle-hook-widget
+then
+  autoload -U add-zle-hook-widget
+  _zsh_highlight__zle-line-finish() {
+    # Reset $WIDGET since the 'main' highlighter depends on it.
+    #
+    # A nested function is required to hide zle parameters; see
+    # "User-defined widgets" in zshall.
+    () {
+      local -h +r WIDGET=zle-line-finish
+      _zsh_highlight "$@"
+    } "$@"
+  }
+  _zsh_highlight_bind_widgets(){}
+  if [[ -o zle ]]; then
+    add-zle-hook-widget zle-line-pre-redraw _zsh_highlight
+    add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
+  fi
+else
   # Rebind all ZLE widgets to make them invoke _zsh_highlights.
   _zsh_highlight_bind_widgets()
   {
@@ -408,24 +419,6 @@ if true; then
       esac
     done
   }
-fi
-
-if (( $zsh_highlight_use_redrawhook )); then
-  _zsh_highlight__zle-line-finish() {
-    # Reset $WIDGET since the 'main' highlighter depends on it.
-    #
-    # A nested function is required to hide zle parameters; see
-    # "User-defined widgets" in zshall.
-    () {
-      local -h +r WIDGET=zle-line-finish
-      _zsh_highlight "$@"
-    } "$@"
-  }
-  _zsh_highlight_bind_widgets(){}
-  if [[ -o zle ]]; then
-    add-zle-hook-widget zle-line-pre-redraw _zsh_highlight
-    add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
-  fi
 fi
 
 # Load highlighters from directory.
