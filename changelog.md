@@ -1,6 +1,61 @@
-up to 952a97dbc99a54bd86141b7a57625e748941a937 + 0.4.1
+up to bc7f8ea433ad
 
 
+
+
+# Changes in version 0.5.0
+
+
+## Added highlighting of:
+
+- 'pkexec' (a precommand).
+  (#248, 4f3910cbbaa5)
+
+- Aliases that cannot be defined normally nor invoked normally (highlighted as an error)
+  (#263 (in part), 28932316cca6)
+
+
+## Fixed highlighting of:
+
+- Command separator tokens in syntactically-invalid positions.
+  (09c4114eb980)
+
+- Redirections with a file descriptor number at command word.
+  (#238 (in part), 73ee7c1f6c4a)
+
+- The `select` prompt, `$PS3`.
+  (#268, 451665cb2a8b)
+
+- Values of variables in `vared`.
+  (e500ca246286)
+
+- `!` as an argument (neither a history expansion nor a reserved word).
+  (4c23a2fd1b90)
+
+
+## API changes (for highlighter authors):
+
+## Developer-visible changes:
+
+- Add `make quiet-test`.
+  (9b64ad750f35)
+
+- test harness: Better quote replaceables in error messages.
+  (30d8f92df225)
+
+
+## Other changes:
+
+- Under zsh≤5.2, widgets whose names start with a `_` are no longer excluded
+  from highlighting.
+  (ed33d2cb1388; reverts part of 186d80054a40 which was for #65)
+
+- Under zsh≤5.2, widgets implemented by a function named after the widget are
+  no longer excluded from highlighting.
+  (487b122c480d; reverts part of 776453cb5b692)
+
+- Under zsh≤5.2, shell-unsafe widget names can now be wrapped.
+  (#278, 6a634fac9fb9, et seq)
 
 
 # Changes in version 0.4.1
