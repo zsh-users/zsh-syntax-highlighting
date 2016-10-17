@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2010-2016 zsh-syntax-highlighting contributors
+# Copyright (c) 2016 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -27,31 +27,11 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+ZSH_HIGHLIGHT_REGEXP+=('[0-9\+\-]+' 'fg=white,bold,bg=red')
 
-# List of keyword and color pairs.
-typeset -gA ZSH_HIGHLIGHT_REGEXP
+BUFFER='echo 1+9-3 7+2'
 
-# Whether the pattern highlighter should be called or not.
-_zsh_highlight_highlighter_regexp_predicate(){
-  _zsh_highlight_buffer_modified
-}
-
-# Pattern syntax highlighting function.
-_zsh_highlight_highlighter_regexp_paint(){
-  setopt localoptions extendedglob
-  local pattern
-  for pattern in ${(k)ZSH_HIGHLIGHT_REGEXP}; do
-    _zsh_highlight_regexp_highlighter_loop "$BUFFER" "$pattern"
-  done
-}
-_zsh_highlight_regexp_highlighter_loop(){
-  local buf="$1" pat="$2" 
-  integer OFFSET=0
-  local MATCH; integer MBEGIN MEND
-  while true; do
-    [[ "$buf" =~ "$pat" ]] || return;  
-    region_highlight+=("$((MBEGIN - 1 + OFFSET)) $((MEND + OFFSET)) $ZSH_HIGHLIGHT_REGEXP[$pat]")
-    buf="$buf[$(($MEND+1)),-1]"
-    OFFSET=$((MEND+OFFSET));
-  done
-}
+expected_region_highlight=(
+  "6 10 fg=white,bold,bg=red"
+  "12 14 fg=white,bold,bg=red"
+)
