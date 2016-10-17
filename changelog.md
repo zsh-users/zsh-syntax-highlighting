@@ -11,7 +11,7 @@ up to cef49752fd0e
 - 'pkexec' (a precommand).
   (#248, 4f3910cbbaa5)
 
-- Aliases that cannot be defined normally nor invoked normally (highlighted as an error)
+- Aliases that cannot be defined normally nor invoked normally (highlighted as an error).
   (#263 (in part), 28932316cca6)
 
 - The `isearch` and `suffix` [`$zle_highlight` settings][zshzle-Character-Highlighting].
@@ -43,6 +43,8 @@ up to cef49752fd0e
 - New interface `_zsh_highlight_add_highlight`.
   (341a3ae1f015, c346f6eb6fb6)
 
+- tests: Specify the style key, not its value, in test expectations.
+  (a830613467af, fd061b5730bf, eaa4335c3441, among others)
 
 ## Developer-visible changes:
 
@@ -54,9 +56,6 @@ up to cef49752fd0e
 
 - test harness: Fix exit code for XPASS.
   (bb8d325c0cbd)
-
-- tests: Specify the style key, not its value, in test expectations.
-  (a830613467af; see also its successor 089329660bb3)
 
 - tests: Add the "NONE" expectation.
   (4da9889d1545)
@@ -72,7 +71,7 @@ up to cef49752fd0e
 
 - Under zsh≤5.2, widgets implemented by a function named after the widget are
   no longer excluded from highlighting.
-  (487b122c480d; reverts part of 776453cb5b692)
+  (487b122c480d; reverts part of 776453cb5b69)
 
 - Under zsh≤5.2, shell-unsafe widget names can now be wrapped.
   (#278, 6a634fac9fb9, et seq)
