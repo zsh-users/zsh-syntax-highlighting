@@ -337,76 +337,78 @@ _zsh_highlight_add_highlight()
 # $1 is name of widget to call
 _zsh_highlight_call_widget()
 {
-  builtin zle "$@" && 
+  builtin zle "$@" &&
   _zsh_highlight
 }
 
-# Rebind all ZLE widgets to make them invoke _zsh_highlights.
-_zsh_highlight_bind_widgets()
-{
-  setopt localoptions noksharrays
-  typeset -F SECONDS
-  local prefix=orig-s$SECONDS-r$RANDOM # unique each time, in case we're sourced more than once
+if true; then
+  # Rebind all ZLE widgets to make them invoke _zsh_highlights.
+  _zsh_highlight_bind_widgets()
+  {
+    setopt localoptions noksharrays
+    typeset -F SECONDS
+    local prefix=orig-s$SECONDS-r$RANDOM # unique each time, in case we're sourced more than once
 
-  # Load ZSH module zsh/zleparameter, needed to override user defined widgets.
-  zmodload zsh/zleparameter 2>/dev/null || {
-    print -r -- >&2 'zsh-syntax-highlighting: failed loading zsh/zleparameter.'
-    return 1
+    # Load ZSH module zsh/zleparameter, needed to override user defined widgets.
+    zmodload zsh/zleparameter 2>/dev/null || {
+      print -r -- >&2 'zsh-syntax-highlighting: failed loading zsh/zleparameter.'
+      return 1
+    }
+
+    # Override ZLE widgets to make them invoke _zsh_highlight.
+    local -U widgets_to_bind
+    widgets_to_bind=(${${(k)widgets}:#(.*|run-help|which-command|beep|set-local-history|yank|yank-pop)})
+
+    # Always wrap special zle-line-finish widget. This is needed to decide if the
+    # current line ends and special highlighting logic needs to be applied.
+    # E.g. remove cursor imprint, don't highlight partial paths, ...
+    widgets_to_bind+=(zle-line-finish)
+
+    # Always wrap special zle-isearch-update widget to be notified of updates in isearch.
+    # This is needed because we need to disable highlighting in that case.
+    widgets_to_bind+=(zle-isearch-update)
+
+    local cur_widget
+    for cur_widget in $widgets_to_bind; do
+      case ${widgets[$cur_widget]:-""} in
+
+        # Already rebound event: do nothing.
+        user:_zsh_highlight_widget_*);;
+
+        # The "eval"'s are required to make $cur_widget a closure: the value of the parameter at function
+        # definition time is used.
+        #
+        # We can't use ${0/_zsh_highlight_widget_} because these widgets are always invoked with
+        # NO_function_argzero, regardless of the option's setting here.
+
+        # User defined widget: override and rebind old one with prefix "orig-".
+        user:*) zle -N $prefix-$cur_widget ${widgets[$cur_widget]#*:}
+                eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget ${(q)prefix}-${(q)cur_widget} -- \"\$@\" }"
+                zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
+
+        # Completion widget: override and rebind old one with prefix "orig-".
+        completion:*) zle -C $prefix-$cur_widget ${${(s.:.)widgets[$cur_widget]}[2,3]}
+                      eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget ${(q)prefix}-${(q)cur_widget} -- \"\$@\" }"
+                      zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
+
+        # Builtin widget: override and make it call the builtin ".widget".
+        builtin) eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget .${(q)cur_widget} -- \"\$@\" }"
+                 zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
+
+        # Incomplete or nonexistent widget: Bind to z-sy-h directly.
+        *)
+           if [[ $cur_widget == zle-* ]] && (( ! ${+widgets[$cur_widget]} )); then
+             _zsh_highlight_widget_${cur_widget}() { :; _zsh_highlight }
+             zle -N $cur_widget _zsh_highlight_widget_$cur_widget
+           else
+        # Default: unhandled case.
+             print -r -- >&2 "zsh-syntax-highlighting: unhandled ZLE widget ${(qq)cur_widget}"
+             print -r -- >&2 "zsh-syntax-highlighting: (This is sometimes caused by doing \`bindkey <keys> ${(q-)cur_widget}\` without creating the ${(qq)cur_widget} widget with \`zle -N\` or \`zle -C\`.)"
+           fi
+      esac
+    done
   }
-
-  # Override ZLE widgets to make them invoke _zsh_highlight.
-  local -U widgets_to_bind
-  widgets_to_bind=(${${(k)widgets}:#(.*|run-help|which-command|beep|set-local-history|yank|yank-pop)})
-
-  # Always wrap special zle-line-finish widget. This is needed to decide if the
-  # current line ends and special highlighting logic needs to be applied.
-  # E.g. remove cursor imprint, don't highlight partial paths, ...
-  widgets_to_bind+=(zle-line-finish)
-
-  # Always wrap special zle-isearch-update widget to be notified of updates in isearch.
-  # This is needed because we need to disable highlighting in that case.
-  widgets_to_bind+=(zle-isearch-update)
-
-  local cur_widget
-  for cur_widget in $widgets_to_bind; do
-    case ${widgets[$cur_widget]:-""} in
-
-      # Already rebound event: do nothing.
-      user:_zsh_highlight_widget_*);;
-
-      # The "eval"'s are required to make $cur_widget a closure: the value of the parameter at function
-      # definition time is used.
-      #
-      # We can't use ${0/_zsh_highlight_widget_} because these widgets are always invoked with
-      # NO_function_argzero, regardless of the option's setting here.
-
-      # User defined widget: override and rebind old one with prefix "orig-".
-      user:*) zle -N $prefix-$cur_widget ${widgets[$cur_widget]#*:}
-              eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget ${(q)prefix}-${(q)cur_widget} -- \"\$@\" }"
-              zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
-
-      # Completion widget: override and rebind old one with prefix "orig-".
-      completion:*) zle -C $prefix-$cur_widget ${${(s.:.)widgets[$cur_widget]}[2,3]} 
-                    eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget ${(q)prefix}-${(q)cur_widget} -- \"\$@\" }"
-                    zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
-
-      # Builtin widget: override and make it call the builtin ".widget".
-      builtin) eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget .${(q)cur_widget} -- \"\$@\" }"
-               zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
-
-      # Incomplete or nonexistent widget: Bind to z-sy-h directly.
-      *) 
-         if [[ $cur_widget == zle-* ]] && (( ! ${+widgets[$cur_widget]} )); then
-           _zsh_highlight_widget_${cur_widget}() { :; _zsh_highlight }
-           zle -N $cur_widget _zsh_highlight_widget_$cur_widget
-         else
-      # Default: unhandled case.
-           print -r -- >&2 "zsh-syntax-highlighting: unhandled ZLE widget ${(qq)cur_widget}"
-           print -r -- >&2 "zsh-syntax-highlighting: (This is sometimes caused by doing \`bindkey <keys> ${(q-)cur_widget}\` without creating the ${(qq)cur_widget} widget with \`zle -N\` or \`zle -C\`.)"
-         fi
-    esac
-  done
-}
+fi
 
 if (( $zsh_highlight_use_redrawhook )); then
   _zsh_highlight__zle-line-finish() {
