@@ -1,4 +1,4 @@
-up to d37c55c788cd
+up to 0020f592c108
 
 
 
@@ -18,6 +18,45 @@ up to d37c55c788cd
   (79e4d3d12405; requires zsh 5.3 for `$ISEARCHMATCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
 
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
+
+- Path separators (`/`) — the default behaviour remains to highlight path separators
+  and path components the same way.
+  (#136, #260, 6cd39e7c70d3, 9a934d291e7c, f3d3aaa00cc4)
+
+- Assignments to individual positional arguments (`42=foo` to assign to `$42`).
+  (f4036a09cee3)
+
+- Linewise region (the `visual-line-mode` widget, bound to `V` in zsh's `vi` keymap).
+  (#267, a7a7f8b42280, ee07588cfd9b)
+
+- Command-lines recalled by `isearch` mode; requires zsh≥5.3.
+  (#261 (in part); #257; 4ad311ec0a68)
+
+- Command-lines whilst the `IGNORE_BRACES` or `IGNORE_CLOSE_BRACES` option is in effect.
+  (a8a6384356af, 02807f1826a5)
+
+- Mismatched parentheses and braces (in the `main` highlighter).
+  (51b9d79c3bb6, 2fabf7ca64b7, a4196eda5e6f, and others)
+
+- Mismatched `do`/`done` keywords.
+  (b2733a64da93)
+
+- Mismatched `foreach`/`end` keywords.
+  (#96, 2bb8f0703d8f)
+
+- In Bourne-style function definitions, when the `MULTI_FUNC_DEF` option is set
+  (which is the default), highlight the first word in the function body as
+  a command word: `f() { g "$@" }`.
+  (6f91850a01e1)
+
+- `always` blocks.
+  (#335, e5782e4ddfb6)
+
+- Command substitutions inside double quotes, `"$(echo foo)"`.
+  (#139 (in part), c3913e0d8ead)
+
+- Non-alphabetic parameters inside double quotes (`"$$"`, `"$#"`, `"$*"`, `"$@"`, `"$?"`, `"$-"`).
+  (44ef6e38e5a7)
 
 
 ## Fixed highlighting of:
@@ -43,6 +82,34 @@ up to d37c55c788cd
 - Process substitutions, `<(pwd)` and `>(wc -l)`.
   (#302, 6889ff6bd2ad, bfabffbf975c, fc9c892a3f15)
 
+- The non-`SHORT_LOOPS` form of `repeat` loops: `repeat 42; do true; done`.
+  (#290, 4832f18c50a5, ef68f50c048f, 6362c757b6f7)
+
+- Broken symlinks (are now highlighted as files).
+  (#342, 95f7206a9373, 53083da8215e)
+
+- Lines accepted from `isearch` mode.
+  (#284; #257, #259, #288; 5bae6219008b, a8fe22d42251)
+
+- Work around upstream bug that triggered when the command word was a relative
+  path, that when interpreted relative to a $PATH directory denoted a command;
+  the effect of that upstream bug was that the relative path was cached as
+  a "valid external command name".
+  (#354, #355, 51614ca2c994, fdaeec45146b, 7d38d07255e4;
+  upstream fix slated to be released in 5.3 (workers/39104))
+
+- After accepting a line with the cursor on a bracket, the matching bracket
+  of the bracket under the cursor no longer remains highlighted (with the
+  `brackets` highlighter).
+  (4c4baede519a)
+
+- The first word on a new line within an array assignment or initialization is no
+  longer considered a command position.
+  (8bf423d16d46)
+
+- Subshells that end at command position, `(true;)`.
+  (#344, 4fc35362ee5a)
+
 
 ## API changes (for highlighter authors):
 
@@ -53,7 +120,15 @@ up to d37c55c788cd
   (a830613467af, fd061b5730bf, eaa4335c3441, among others)
 
 - Module author documentation improvements.
-  (#306 (in part), 217669270418, 0ff354b44b6e, and others)
+  (#306 (in part), 217669270418, 0ff354b44b6e, 80148f6c8402, and others)
+
+- The driver no longer defines a `_zsh_highlight_${highlighter}_highlighter_cache`
+  variable, which is in the highlighters' namespace.
+  (3e59ab41b6b8, 80148f6c8402, f91a7b885e7d)
+
+- Rename highlighter entry points.  The old names remain supported for
+  backwards compatibility.
+  (a3d5dfcbdae9, c793e0dceab1)
 
 
 ## Developer-visible changes:
@@ -77,6 +152,9 @@ up to d37c55c788cd
 
 - tests: consider a test that writes to stderr to have failed.
   (#291, 1082067f9315)
+
+- tests: Create a script that generates a test file.
+  (8013dc3b8db6, et seq; `tests/generate.zsh`)
 
 
 ## Other changes:
@@ -104,6 +182,23 @@ up to d37c55c788cd
 
 - Don't leak the `PATH_DIRS` option.
   (7b82b88a7166)
+
+- Don't require the `FUNCTION_ARGZERO` option to be set.
+  (#338, 750aebc553f2)
+
+- Under zsh≤5.2, support binding incomplete/nonexistent widgets.
+  (9e569bb0fe04, part of #288)
+
+- Make the driver reentrant, fixing possibility of infinite recursion
+  under zsh≤5.2 under interaction with theoretical third-party code.
+  (#305, d711563fe1bf, 295d62ec888d, f3242cbd6aba)
+
+- Fix warnings when `WARN_CREATE_GLOBAL` is set prior to sourcing zsh-syntax-highlighting.
+  (z-sy-h already sets `WARN_CREATE_GLOBAL` internally.)
+  (da60234fb236)
+
+- Warn only once, rather than once per keypress, when a highlighter is unavailable.
+  (0a9b347483ae)
 
 
 # Changes in version 0.4.1
