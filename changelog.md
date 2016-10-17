@@ -1,4 +1,4 @@
-up to bc7f8ea433ad
+up to cef49752fd0e
 
 
 
@@ -13,6 +13,11 @@ up to bc7f8ea433ad
 
 - Aliases that cannot be defined normally nor invoked normally (highlighted as an error)
   (#263 (in part), 28932316cca6)
+
+- The `isearch` and `suffix` [`$zle_highlight` settings][zshzle-Character-Highlighting].
+  (79e4d3d12405; requires zsh 5.3 for `$ISEARCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
+
+[zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 
 
 ## Fixed highlighting of:
@@ -35,6 +40,10 @@ up to bc7f8ea433ad
 
 ## API changes (for highlighter authors):
 
+- New interface `_zsh_highlight_add_highlight`.
+  (341a3ae1f015, c346f6eb6fb6)
+
+
 ## Developer-visible changes:
 
 - Add `make quiet-test`.
@@ -42,6 +51,17 @@ up to bc7f8ea433ad
 
 - test harness: Better quote replaceables in error messages.
   (30d8f92df225)
+
+- test harness: Fix exit code for XPASS.
+  (bb8d325c0cbd)
+
+- tests: Specify the style key, not its value, in test expectations.
+  (a830613467af; see also its successor 089329660bb3)
+
+- tests: Add the "NONE" expectation.
+  (4da9889d1545)
+
+- Create [HACKING.md](HACKING.md).
 
 
 ## Other changes:
@@ -56,6 +76,13 @@ up to bc7f8ea433ad
 
 - Under zsh≤5.2, shell-unsafe widget names can now be wrapped.
   (#278, 6a634fac9fb9, et seq)
+
+- Correct some test expectations.
+  (78290e043bc5)
+
+- `zsh-syntax-highlighting.plugin.zsh`: Convert from symlink to plain file
+  for msys2 compatibility.
+  (#292, d4f8edc9f3ad)
 
 
 # Changes in version 0.4.1
