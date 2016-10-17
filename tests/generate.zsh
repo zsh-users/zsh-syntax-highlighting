@@ -31,6 +31,9 @@
 emulate -LR zsh
 setopt localoptions extendedglob
 
+# Required for add-zle-hook-widget.
+zmodload zsh/zle
+
 # Argument parsing.
 if (( $# != 3 )) || [[ $1 == -* ]]; then
   print -r -- >&2 "$0: usage: $0 BUFFER HIGHLIGHTER BASENAME"
