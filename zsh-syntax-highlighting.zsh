@@ -274,50 +274,52 @@ _zsh_highlight_call_widget()
   _zsh_highlight
 }
 
-# Rebind all ZLE widgets to make them invoke _zsh_highlights.
-_zsh_highlight_bind_widgets()
-{
-  setopt localoptions noksharrays
+if true; then
+  # Rebind all ZLE widgets to make them invoke _zsh_highlights.
+  _zsh_highlight_bind_widgets()
+  {
+    setopt localoptions noksharrays
 
-  # Load ZSH module zsh/zleparameter, needed to override user defined widgets.
-  zmodload zsh/zleparameter 2>/dev/null || {
-    echo 'zsh-syntax-highlighting: failed loading zsh/zleparameter.' >&2
-    return 1
+    # Load ZSH module zsh/zleparameter, needed to override user defined widgets.
+    zmodload zsh/zleparameter 2>/dev/null || {
+      echo 'zsh-syntax-highlighting: failed loading zsh/zleparameter.' >&2
+      return 1
+    }
+
+    # Override ZLE widgets to make them invoke _zsh_highlight.
+    local cur_widget
+    for cur_widget in ${${(f)"$(builtin zle -la)"}:#(.*|orig-*|run-help|which-command|beep|set-local-history|yank)}; do
+      case $widgets[$cur_widget] in
+
+        # Already rebound event: do nothing.
+        user:_zsh_highlight_widget_*);;
+
+        # The "eval"'s are required to make $cur_widget a closure: the value of the parameter at function
+        # definition time is used.
+        #
+        # We can't use ${0/_zsh_highlight_widget_} because these widgets are always invoked with
+        # NO_function_argzero, regardless of the option's setting here.
+
+        # User defined widget: override and rebind old one with prefix "orig-".
+        user:*) zle -N orig-$cur_widget ${widgets[$cur_widget]#*:}
+                eval "_zsh_highlight_widget_${(q)cur_widget}() { _zsh_highlight_call_widget orig-${(q)cur_widget} -- \"\$@\" }"
+                zle -N $cur_widget _zsh_highlight_widget_$cur_widget;;
+
+        # Completion widget: override and rebind old one with prefix "orig-".
+        completion:*) zle -C orig-$cur_widget ${${(s.:.)widgets[$cur_widget]}[2,3]} 
+                      eval "_zsh_highlight_widget_${(q)cur_widget}() { _zsh_highlight_call_widget orig-${(q)cur_widget} -- \"\$@\" }"
+                      zle -N $cur_widget _zsh_highlight_widget_$cur_widget;;
+
+        # Builtin widget: override and make it call the builtin ".widget".
+        builtin) eval "_zsh_highlight_widget_${(q)cur_widget}() { _zsh_highlight_call_widget .${(q)cur_widget} -- \"\$@\" }"
+                 zle -N $cur_widget _zsh_highlight_widget_$cur_widget;;
+
+        # Default: unhandled case.
+        *) echo "zsh-syntax-highlighting: unhandled ZLE widget '$cur_widget'" >&2 ;;
+      esac
+    done
   }
-
-  # Override ZLE widgets to make them invoke _zsh_highlight.
-  local cur_widget
-  for cur_widget in ${${(f)"$(builtin zle -la)"}:#(.*|orig-*|run-help|which-command|beep|set-local-history|yank)}; do
-    case $widgets[$cur_widget] in
-
-      # Already rebound event: do nothing.
-      user:_zsh_highlight_widget_*);;
-
-      # The "eval"'s are required to make $cur_widget a closure: the value of the parameter at function
-      # definition time is used.
-      #
-      # We can't use ${0/_zsh_highlight_widget_} because these widgets are always invoked with
-      # NO_function_argzero, regardless of the option's setting here.
-
-      # User defined widget: override and rebind old one with prefix "orig-".
-      user:*) zle -N orig-$cur_widget ${widgets[$cur_widget]#*:}
-              eval "_zsh_highlight_widget_${(q)cur_widget}() { _zsh_highlight_call_widget orig-${(q)cur_widget} -- \"\$@\" }"
-              zle -N $cur_widget _zsh_highlight_widget_$cur_widget;;
-
-      # Completion widget: override and rebind old one with prefix "orig-".
-      completion:*) zle -C orig-$cur_widget ${${(s.:.)widgets[$cur_widget]}[2,3]} 
-                    eval "_zsh_highlight_widget_${(q)cur_widget}() { _zsh_highlight_call_widget orig-${(q)cur_widget} -- \"\$@\" }"
-                    zle -N $cur_widget _zsh_highlight_widget_$cur_widget;;
-
-      # Builtin widget: override and make it call the builtin ".widget".
-      builtin) eval "_zsh_highlight_widget_${(q)cur_widget}() { _zsh_highlight_call_widget .${(q)cur_widget} -- \"\$@\" }"
-               zle -N $cur_widget _zsh_highlight_widget_$cur_widget;;
-
-      # Default: unhandled case.
-      *) echo "zsh-syntax-highlighting: unhandled ZLE widget '$cur_widget'" >&2 ;;
-    esac
-  done
-}
+fi
 
 if (( $zsh_highlight_use_redrawhook )); then
   _zsh_highlight__zle-line-finish() {
