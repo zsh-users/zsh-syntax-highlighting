@@ -1,4 +1,4 @@
-up to cef49752fd0e
+up to d37c55c788cd
 
 
 
@@ -15,7 +15,7 @@ up to cef49752fd0e
   (#263 (in part), 28932316cca6)
 
 - The `isearch` and `suffix` [`$zle_highlight` settings][zshzle-Character-Highlighting].
-  (79e4d3d12405; requires zsh 5.3 for `$ISEARCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
+  (79e4d3d12405; requires zsh 5.3 for `$ISEARCHMATCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
 
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 
@@ -37,6 +37,12 @@ up to cef49752fd0e
 - `!` as an argument (neither a history expansion nor a reserved word).
   (4c23a2fd1b90)
 
+- "division by zero" error under the `brackets` highlighter when `$ZSH_HIGHLIGHT_STYLES` is empty.
+  (f73f3d53d3a6)
+
+- Process substitutions, `<(pwd)` and `>(wc -l)`.
+  (#302, 6889ff6bd2ad, bfabffbf975c, fc9c892a3f15)
+
 
 ## API changes (for highlighter authors):
 
@@ -45,6 +51,10 @@ up to cef49752fd0e
 
 - tests: Specify the style key, not its value, in test expectations.
   (a830613467af, fd061b5730bf, eaa4335c3441, among others)
+
+- Module author documentation improvements.
+  (#306 (in part), 217669270418, 0ff354b44b6e, and others)
+
 
 ## Developer-visible changes:
 
@@ -58,9 +68,15 @@ up to cef49752fd0e
   (bb8d325c0cbd)
 
 - tests: Add the "NONE" expectation.
-  (4da9889d1545)
+  (4da9889d1545, 13018f3dd735, d37c55c788cd)
 
 - Create [HACKING.md](HACKING.md).
+
+- tests: Emit a description for PASS test points.
+  (6aa57d60aa64, f0bae44b76dd)
+
+- tests: consider a test that writes to stderr to have failed.
+  (#291, 1082067f9315)
 
 
 ## Other changes:
@@ -82,6 +98,12 @@ up to cef49752fd0e
 - `zsh-syntax-highlighting.plugin.zsh`: Convert from symlink to plain file
   for msys2 compatibility.
   (#292, d4f8edc9f3ad)
+
+- Document installation under some plugin managers.
+  (e635f766bef9, 9cab566f539b)
+
+- Don't leak the `PATH_DIRS` option.
+  (7b82b88a7166)
 
 
 # Changes in version 0.4.1
