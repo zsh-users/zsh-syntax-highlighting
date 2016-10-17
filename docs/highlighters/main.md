@@ -44,6 +44,7 @@ This highlighter defines the following styles:
 * `assign` - parameter assignments
 * `redirection` - redirection operators (`<`, `>`, etc)
 * `comment` - comments, when `setopt INTERACTIVE_COMMENTS` is in effect (`echo # foo`)
+* `arg0` - a command word other than one of those enumrated above (other than a command, precommand, alias, function, or shell builtin command).
 * `default` - everything else
 
 To override one of those styles, change its entry in `ZSH_HIGHLIGHT_STYLES`,
@@ -64,5 +65,27 @@ for example in `~/.zshrc`:
 The syntax for values is the same as the syntax of "types of highlighting" of
 the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`
 manual page][zshzle-Character-Highlighting].
+
+### Useless trivia
+
+#### Forward compatibility.
+
+zsh-syntax-highlighting attempts to be forward-compatible with zsh.
+Specifically, we attempt to facilitate highlighting _command word_ types that
+had not yet been invented when this version of zsh-syntax-highlighting was
+released.
+
+A _command word_ is something like a function name, external command name, et
+cetera.  (See
+[Simple Commands & Pipelines in `zshmisc(1)`][zshmisc-Simple-Commands-And-Pipelines]
+for a formal definition.)
+
+If a new _kind_ of command word is ever added to zsh — something conceptually
+different than "function" and "alias" and "external command" — then command words
+of that (new) kind will be highlighted by the style `arg0_$kind`,
+where `$kind` is the output of `type -w` on the new kind of command word.  If that
+style is not defined, then the style `arg0` will be used instead.
+
+[zshmisc-Simple-Commands-And-Pipelines]: http://zsh.sourceforge.net/Doc/Release/Shell-Grammar.html#Simple-Commands-_0026-Pipelines
 
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting

@@ -1,5 +1,6 @@
+#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2010-2011 zsh-syntax-highlighting contributors
+# Copyright (c) 2016 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -27,34 +28,19 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+BUFFER=': "$- $# $* $@ $?"'
 
-# List of keyword and color pairs.
-typeset -gA ZSH_HIGHLIGHT_PATTERNS
-
-# Whether the pattern highlighter should be called or not.
-_zsh_highlight_highlighter_pattern_predicate()
-{
-  _zsh_highlight_buffer_modified
-}
-
-# Pattern syntax highlighting function.
-_zsh_highlight_highlighter_pattern_paint()
-{
-  setopt localoptions extendedglob
-  local pattern
-  for pattern in ${(k)ZSH_HIGHLIGHT_PATTERNS}; do
-    _zsh_highlight_pattern_highlighter_loop "$BUFFER" "$pattern"
-  done
-}
-
-_zsh_highlight_pattern_highlighter_loop()
-{
-  # This does *not* do its job syntactically, sorry.
-  local buf="$1" pat="$2"
-  local -a match mbegin mend
-  local MATCH; integer MBEGIN MEND
-  if [[ "$buf" == (#b)(*)(${~pat})* ]]; then
-    region_highlight+=("$((mbegin[2] - 1)) $mend[2] $ZSH_HIGHLIGHT_PATTERNS[$pat]")
-    "$0" "$match[1]" "$pat"; return $?
-  fi
-}
+expected_region_highlight=(
+  '1 1 builtin' # :
+  '3 3 double-quoted-argument' # "
+  '4 5 dollar-double-quoted-argument' # $-
+  '6 6 double-quoted-argument' # <space>
+  '7 8 dollar-double-quoted-argument' # $#
+  '9 9 double-quoted-argument' # <space>
+  '10 11 dollar-double-quoted-argument' # $*
+  '12 12 double-quoted-argument' # <space>
+  '13 14 dollar-double-quoted-argument' # $@
+  '15 15 double-quoted-argument' # <space>
+  '16 17 dollar-double-quoted-argument' # $?
+  '18 18 double-quoted-argument' # "
+)

@@ -44,6 +44,23 @@ a `zle-line-pre-redraw` hook.  Hooks are run in order of registration,
 therefore, z-sy-h must be sourced (and register its hook) after anything else
 that adds hooks that modify the command-line buffer.
 
+### Does syntax highlighting work during incremental history search?
+
+Highlighting the command line during an incremental history search
+(with the `history-incremental-search-backward` widget, which is
+bound by default to <kbd>Ctrl+R</kbd> in zsh's emacs keymap) requires zsh 5.3
+or newer.
+
+Under zsh 5.2 and older, the zsh-default [underlining][zshzle-Character-Highlighting]
+of the matched portion of the buffer remains available, but zsh-syntax-highlighting's
+additional highlighting is unavailable.  (Those versions of zsh do not provide
+enough information to allow computing the highlighting correctly.)
+
+See [issue #288][i288] for details.
+
+[zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
+[i288]: https://github.com/zsh-users/zsh-syntax-highlighting/pull/288
+
 ### How are new releases announced?
 
 There is currently no "push" announcements channel.  However, the following

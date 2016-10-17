@@ -49,21 +49,21 @@ highlighter's documentation for details and examples.
 How to implement a new highlighter
 ----------------------------------
 
-To create your own `myhighlighter` highlighter:
+To create your own `acme` highlighter:
 
 * Create your script at
-    `highlighters/${myhighlighter}/${myhighlighter}-highlighter.zsh`.
+    `highlighters/acme/acme-highlighter.zsh`.
 
-* Implement the `_zsh_highlight_myhighlighter_highlighter_predicate` function.
+* Implement the `_zsh_highlight_highlighter_acme_predicate` function.
   This function must return 0 when the highlighter needs to be called and
   non-zero otherwise, for example:
 
-        _zsh_highlight_myhighlighter_highlighter_predicate() {
+        _zsh_highlight_highlighter_acme_predicate() {
           # Call this highlighter in SVN working copies
           [[ -d .svn ]]
         }
 
-* Implement the `_zsh_highlight_myhighlighter_highlighter` function.
+* Implement the `_zsh_highlight_highlighter_acme_paint` function.
   This function does the actual syntax highlighting, by calling
   `_zsh_highlight_add_highlight` with the start and end of the region to
   be highlighted and the `ZSH_HIGHLIGHT_STYLES` key to use. Define the default
@@ -71,15 +71,27 @@ To create your own `myhighlighter` highlighter:
   `: ${ZSH_HIGHLIGHT_STYLES[key]:=value}`, being sure to prefix
   the key with your highlighter name and a colon. For example:
 
-        : ${ZSH_HIGHLIGHT_STYLES[myhighlighter:aurora]:=fg=green}
+        : ${ZSH_HIGHLIGHT_STYLES[acme:aurora]:=fg=green}
 
-        _zsh_highlight_myhighlighter_highlighter() {
+        _zsh_highlight_highlighter_acme_paint() {
           # Colorize the whole buffer with the 'aurora' style
-          _zsh_highlight_add_highlight 0 $#BUFFER myhighlighter:aurora
+          _zsh_highlight_add_highlight 0 $#BUFFER acme:aurora
         }
+
+* Name your own functions and global variables `_zsh_highlight_acme_*`.
+
+    - In zsh-syntax-highlighting 0.4.0 and earlier, the entrypoints 
+        `_zsh_highlight_highlighter_acme_predicate` and
+        `_zsh_highlight_highlighter_acme_paint`
+        were named
+        `_zsh_highlight_acme_highlighter_predicate` and
+        `_zsh_highlight_highlighter_acme_paint` respectively.
+
+        These names are still supported for backwards compatibility;
+        however, support for them will be removed in a a future major or minor release (v0.x.0 or v1.0.0).
 
 * Activate your highlighter in `~/.zshrc`:
 
-        ZSH_HIGHLIGHT_HIGHLIGHTERS+=(myhighlighter)
+        ZSH_HIGHLIGHT_HIGHLIGHTERS+=(acme)
 
 * [Write tests](../tests/README.md).
