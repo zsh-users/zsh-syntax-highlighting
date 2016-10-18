@@ -15,7 +15,7 @@ up to 0020f592c108
   (#263 (in part), 28932316cca6)
 
 - The `isearch` and `suffix` [`$zle_highlight` settings][zshzle-Character-Highlighting].
-  (79e4d3d12405; requires zsh 5.3 for `$ISEARCHMATCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
+  (79e4d3d12405, 15db71abd0cc; requires zsh 5.3 for `$ISEARCHMATCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
 
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 
@@ -56,7 +56,7 @@ up to 0020f592c108
   (#139 (in part), c3913e0d8ead)
 
 - Non-alphabetic parameters inside double quotes (`"$$"`, `"$#"`, `"$*"`, `"$@"`, `"$?"`, `"$-"`).
-  (44ef6e38e5a7)
+  (4afe670f7a1b, 44ef6e38e5a7)
 
 
 ## Fixed highlighting of:
@@ -120,7 +120,7 @@ up to 0020f592c108
   (a830613467af, fd061b5730bf, eaa4335c3441, among others)
 
 - Module author documentation improvements.
-  (#306 (in part), 217669270418, 0ff354b44b6e, 80148f6c8402, and others)
+  (#306 (in part), 217669270418, 0ff354b44b6e, 80148f6c8402, 364f206a547f, and others)
 
 - The driver no longer defines a `_zsh_highlight_${highlighter}_highlighter_cache`
   variable, which is in the highlighters' namespace.
@@ -129,6 +129,12 @@ up to 0020f592c108
 - Rename highlighter entry points.  The old names remain supported for
   backwards compatibility.
   (a3d5dfcbdae9, c793e0dceab1)
+
+- tests: Add the "NONE" expectation.
+  (4da9889d1545, 13018f3dd735, d37c55c788cd)
+
+- tests: consider a test that writes to stderr to have failed.
+  (#291, 1082067f9315)
 
 
 ## Developer-visible changes:
@@ -142,16 +148,11 @@ up to 0020f592c108
 - test harness: Fix exit code for XPASS.
   (bb8d325c0cbd)
 
-- tests: Add the "NONE" expectation.
-  (4da9889d1545, 13018f3dd735, d37c55c788cd)
-
 - Create [HACKING.md](HACKING.md).
+  (cef49752fd0e)
 
 - tests: Emit a description for PASS test points.
   (6aa57d60aa64, f0bae44b76dd)
-
-- tests: consider a test that writes to stderr to have failed.
-  (#291, 1082067f9315)
 
 - tests: Create a script that generates a test file.
   (8013dc3b8db6, et seq; `tests/generate.zsh`)
