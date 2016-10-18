@@ -1,9 +1,28 @@
 up to 0020f592c108
 
-
-
-
 # Changes in version 0.5.0
+
+
+## TBW:
+
+- `arg0` style, inheritance, forward compatibility
+  (12b879caf7a6, da91264122cb, b4537a972eed, bccc3dc26943)
+
+
+## Performance improvements:
+
+We thank Sebastian Gniazdowski and "m0viefreak" for significant contributions
+in this area.
+
+- Optimize string operations in the `main` (default) highlighter.
+  (#372/3cb58fd7d7b9, 02229ebd6328, ef4bfe5bcc14, #372/c6b6513ac0d6, #374/15461e7d21c3)
+
+- Command word highlighting:  Use the `zsh/parameter` module to avoid forks.
+  Memoize (cache) the results.
+  (#298, 3ce01076b521, 2f18ba64e397, 12b879caf7a6; #320, 3b67e656bff5)
+
+- Avoid forks in the driver and in the `root` highlighter.
+  (b9112aec798a, 38c8fbea2dd2)
 
 
 ## Added highlighting of:
@@ -107,8 +126,11 @@ up to 0020f592c108
   longer considered a command position.
   (8bf423d16d46)
 
-- Subshells that end at command position, `(true;)`.
-  (#344, 4fc35362ee5a)
+- Subshells that end at command position, `(A=42)`, `(true;)`.
+  (#231, 7fb6f9979121; #344, 4fc35362ee5a)
+
+- Command word after array assignment, `a=(lorem ipsum) pwd`.
+  (#330, 7fb6f9979121)
 
 
 ## API changes (for highlighter authors):
