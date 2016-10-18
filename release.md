@@ -6,6 +6,7 @@
 - Confirm `make test` passes
   - check with multiple zsh versions
 - Update changelog.md
+  `tig --abbrev=12  --abbrev-commit 0.4.1..upstream/master`
 - Remove `-dev` suffix from `./.version`;
   Commit that using 'git commit -m "Tag version $(<.version).";
   Tag it using `git tag $(<.version)`;
