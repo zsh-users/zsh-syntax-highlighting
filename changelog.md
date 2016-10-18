@@ -27,7 +27,7 @@ in this area.
 
 ## Added highlighting of:
 
-- 'pkexec' (a precommand).
+- `pkexec` (a precommand).
   (#248, 4f3910cbbaa5)
 
 - Aliases that cannot be defined normally nor invoked normally (highlighted as an error).
