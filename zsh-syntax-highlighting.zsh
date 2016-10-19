@@ -143,7 +143,7 @@ _zsh_highlight()
     (( $+YANK_ACTIVE )) && (( YANK_ACTIVE )) && _zsh_highlight_apply_zle_highlight paste standout "$YANK_START" "$YANK_END"
 
     # isearch
-    (( $+ISEARCHMATCH_ACTIVE )) && (( ISEARCHMATCH_ACTIVE )) && _zsh_highlight_apply_zle_highlight isearch underline "$ISEARCHMATCH_START" "$ISEARCHMATCH_END"
+    (( $+ISEARCH_ACTIVE )) && (( ISEARCH_ACTIVE )) && _zsh_highlight_apply_zle_highlight isearch underline "$ISEARCH_START" "$ISEARCH_END"
 
     # suffix
     (( $+SUFFIX_ACTIVE )) && (( SUFFIX_ACTIVE )) && _zsh_highlight_apply_zle_highlight suffix bold "$SUFFIX_START" "$SUFFIX_END"
