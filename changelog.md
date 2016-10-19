@@ -3,12 +3,6 @@ up to 0020f592c108
 # Changes in version 0.5.0
 
 
-## TBW:
-
-- `arg0` style, inheritance, forward compatibility
-  (12b879caf7a6, da91264122cb, b4537a972eed, bccc3dc26943)
-
-
 ## Performance improvements:
 
 We thank Sebastian Gniazdowski and "m0viefreak" for significant contributions
@@ -76,6 +70,10 @@ in this area.
 
 - Non-alphabetic parameters inside double quotes (`"$$"`, `"$#"`, `"$*"`, `"$@"`, `"$?"`, `"$-"`).
   (4afe670f7a1b, 44ef6e38e5a7)
+
+- Command words from future versions of zsh (forward compatibly).
+  This also adds an `arg0` style that all other command word styles fall back to.
+  (b4537a972eed, bccc3dc26943)
 
 
 ## Fixed highlighting of:
