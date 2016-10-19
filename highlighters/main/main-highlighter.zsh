@@ -810,7 +810,7 @@ _zsh_highlight_main_highlighter_highlight_string()
             fi
             ;;
       "\\") style=back-double-quoted-argument
-            if [[ \\\`\"\$ == *$arg[$i+1]* ]]; then
+            if [[ \\\`\"\$${histchars[1]} == *$arg[$i+1]* ]]; then
               (( k += 1 )) # Color following char too.
               (( i += 1 )) # Skip parsing the escaped char.
             else
