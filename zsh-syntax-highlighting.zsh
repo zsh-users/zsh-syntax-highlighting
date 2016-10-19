@@ -60,7 +60,7 @@ _zsh_highlight()
 
   # Remove all highlighting in isearch, so that only the underlining done by zsh itself remains.
   # For details see FAQ entry 'Why does syntax highlighting not work while searching history?'.
-  if [[ $WIDGET == zle-isearch-update ]] && ! (( $+ISEARCHMATCH_ACTIVE )); then
+  if [[ $WIDGET == zle-isearch-update ]]; then
     region_highlight=()
     return $ret
   fi
@@ -141,12 +141,6 @@ _zsh_highlight()
 
     # yank / paste (zsh-5.1.1 and newer)
     (( $+YANK_ACTIVE )) && (( YANK_ACTIVE )) && _zsh_highlight_apply_zle_highlight paste standout "$YANK_START" "$YANK_END"
-
-    # isearch
-    (( $+ISEARCHMATCH_ACTIVE )) && (( ISEARCHMATCH_ACTIVE )) && _zsh_highlight_apply_zle_highlight isearch underline "$ISEARCHMATCH_START" "$ISEARCHMATCH_END"
-
-    # suffix
-    (( $+SUFFIX_ACTIVE )) && (( SUFFIX_ACTIVE )) && _zsh_highlight_apply_zle_highlight suffix bold "$SUFFIX_START" "$SUFFIX_END"
 
 
     return $ret
