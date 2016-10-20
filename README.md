@@ -23,7 +23,9 @@ Before: [![Screenshot](images/before2-smaller.png)](images/before2.png)
 <br/>
 After:&nbsp; [![Screenshot](images/after2-smaller.png)](images/after2.png)
 
-[![Screenshot](images/preview-smaller.png)](images/preview.png)
+Before: [![Screenshot](images/before3-smaller.png)](images/before3.png)
+<br/>
+After:&nbsp; [![Screenshot](images/after3-smaller.png)](images/after3.png)
 
 
 How to install
