@@ -13,9 +13,15 @@ highlighing of commands whilst they are typed at a zsh prompt into an
 interactive terminal.  This helps in reviewing commands before running
 them, particularly in catching syntax errors.
 
+Some examples:
+
 Before: [![Screenshot](images/before1-smaller.png)](images/before1.png)
 <br/>
-After:  [![Screenshot](images/after1-smaller.png)](images/after1.png)
+After:&nbsp; [![Screenshot](images/after1-smaller.png)](images/after1.png)
+
+Before: [![Screenshot](images/before2-smaller.png)](images/before2.png)
+<br/>
+After:&nbsp; [![Screenshot](images/after2-smaller.png)](images/after2.png)
 
 [![Screenshot](images/preview-smaller.png)](images/preview.png)
 
