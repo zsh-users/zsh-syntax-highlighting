@@ -76,7 +76,7 @@ in this area.
   (b4537a972eed, bccc3dc26943)
 
 - Escaped history expansions inside double quotes: `: "\!"`
-  (28d7056a7a06)
+  (28d7056a7a06, et seq)
 
 
 ## Fixed highlighting of:
