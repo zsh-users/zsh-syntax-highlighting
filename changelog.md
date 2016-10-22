@@ -1,4 +1,4 @@
-up to 0020f592c108
+up to 28d7056a7a06
 
 # Changes in version 0.5.0
 
@@ -74,6 +74,9 @@ in this area.
 - Command words from future versions of zsh (forward compatibly).
   This also adds an `arg0` style that all other command word styles fall back to.
   (b4537a972eed, bccc3dc26943)
+
+- Escaped history expansions inside double quotes: `: "\!"`
+  (28d7056a7a06)
 
 
 ## Fixed highlighting of:
