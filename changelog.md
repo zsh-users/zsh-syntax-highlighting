@@ -1,5 +1,3 @@
-up to 28d7056a7a06
-
 # Changes in version 0.5.0
 
 
