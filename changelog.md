@@ -27,11 +27,6 @@ in this area.
 - Aliases that cannot be defined normally nor invoked normally (highlighted as an error).
   (#263 (in part), 28932316cca6)
 
-- The `isearch` and `suffix` [`$zle_highlight` settings][zshzle-Character-Highlighting].
-  (79e4d3d12405, 15db71abd0cc; requires zsh 5.3 for `$ISEARCHMATCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
-
-[zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
-
 - Path separators (`/`) — the default behaviour remains to highlight path separators
   and path components the same way.
   (#136, #260, 6cd39e7c70d3, 9a934d291e7c, f3d3aaa00cc4)
