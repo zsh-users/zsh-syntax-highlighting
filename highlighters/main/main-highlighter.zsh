@@ -373,6 +373,7 @@ _zsh_highlight_highlighter_main_paint()
       fi
       _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
       already_added=1
+      start_pos=$end_pos
       continue
     fi
 
