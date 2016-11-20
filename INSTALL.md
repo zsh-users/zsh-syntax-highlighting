@@ -16,7 +16,7 @@ How to install
 [debian-package]: https://packages.debian.org/zsh-syntax-highlighting
 [freebsd-port]: http://www.freshports.org/textproc/zsh-syntax-highlighting/
 [gentoo-overlay]: http://gpo.zugaina.org/app-shells/zsh-syntax-highlighting
-[brew-package]: https://github.com/Homebrew/homebrew/blob/master/Library/Formula/zsh-syntax-highlighting.rb
+[brew-package]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-syntax-highlighting.rb
 [ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
 [fedora-package]: https://apps.fedoraproject.org/packages/zsh-syntax-highlighting
 
