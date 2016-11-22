@@ -818,6 +818,13 @@ _zsh_highlight_main_highlighter_highlight_string()
               continue
             fi
             ;;
+      ($histchars[1]) # ! - may be a history expansion
+            if [[ $arg[i+1] != ('='|$'\x28'|$'\x7b'|[[:blank:]]) ]]; then
+              style=history-expansion
+            else
+              continue
+            fi
+            ;;
       *) continue ;;
 
     esac
