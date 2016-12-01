@@ -28,7 +28,7 @@
 # -------------------------------------------------------------------------------------------------
 
 # First of all, ensure predictable parsing.
-zsh_highlight__aliases=`alias -L`
+zsh_highlight__aliases=`builtin alias -L`
 builtin unalias -m '*'
 
 # Set $0 to the expected value, regardless of functionargzero.
