@@ -47,6 +47,19 @@
   exit 2
 }
 
+# Set up results_filter
+local results_filter
+if [[ $QUIET == y ]]; then
+  if type -w perl >/dev/null; then
+    results_filter=${0:A:h}/tap-filter
+  else
+    echo >&2 "Bail out! quiet mode not supported: perl not found"; exit 2
+  fi
+else
+  results_filter=cat
+fi
+[[ -n $results_filter ]] || { echo >&2 "Bail out! BUG setting \$results_filter"; exit 2 }
+
 # Load the main script.
 . ${0:h:h}/zsh-syntax-highlighting.zsh
 
@@ -156,19 +169,6 @@ run_test() {
     rm -rf -- "$__tests_tempdir"
   }
 }
-
-# Set up results_filter
-local results_filter
-if [[ $QUIET == y ]]; then
-  if type -w perl >/dev/null; then
-    results_filter=${0:A:h}/tap-filter
-  else
-    echo >&2 "Bail out! quiet mode not supported: perl not found"; exit 2
-  fi
-else
-  results_filter=cat
-fi
-[[ -n $results_filter ]] || { echo >&2 "Bail out! BUG setting \$results_filter"; exit 2 }
 
 # Process each test data file in test data directory.
 integer something_failed=0
