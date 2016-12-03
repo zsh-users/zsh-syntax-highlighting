@@ -47,8 +47,33 @@
   exit 2
 }
 
+# Set up results_filter
+local results_filter
+if [[ $QUIET == y ]]; then
+  if type -w perl >/dev/null; then
+    results_filter=${0:A:h}/tap-filter
+  else
+    echo >&2 "Bail out! quiet mode not supported: perl not found"; exit 2
+  fi
+else
+  results_filter=cat
+fi
+[[ -n $results_filter ]] || { echo >&2 "Bail out! BUG setting \$results_filter"; exit 2 }
+
 # Load the main script.
+# While here, test that it doesn't eat aliases.
+print > >($results_filter | ${0:A:h}/tap-colorizer.zsh) -r -- "# global (driver) tests"
+print > >($results_filter | ${0:A:h}/tap-colorizer.zsh) -r -- "1..1"
+alias -- +plus=plus
+alias -- _other=other
+original_alias_dash_L_output="$(alias -L)"
 . ${0:h:h}/zsh-syntax-highlighting.zsh
+if [[ $original_alias_dash_L_output == $(alias -L) ]]; then
+  print -r -- "ok 1 # 'alias -- +foo=bar' is preserved"
+else
+  print -r -- "not ok 1 # 'alias -- +foo=bar' is preserved"
+  exit 1
+fi > >($results_filter | ${0:A:h}/tap-colorizer.zsh) 
 
 # Overwrite _zsh_highlight_add_highlight so we get the key itself instead of the style
 _zsh_highlight_add_highlight()
@@ -156,19 +181,6 @@ run_test() {
     rm -rf -- "$__tests_tempdir"
   }
 }
-
-# Set up results_filter
-local results_filter
-if [[ $QUIET == y ]]; then
-  if type -w perl >/dev/null; then
-    results_filter=${0:A:h}/tap-filter
-  else
-    echo >&2 "Bail out! quiet mode not supported: perl not found"; exit 2
-  fi
-else
-  results_filter=cat
-fi
-[[ -n $results_filter ]] || { echo >&2 "Bail out! BUG setting \$results_filter"; exit 2 }
 
 # Process each test data file in test data directory.
 integer something_failed=0
