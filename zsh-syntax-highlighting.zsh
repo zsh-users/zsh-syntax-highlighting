@@ -340,8 +340,8 @@ _zsh_highlight_load_highlighters()
   local highlighter highlighter_dir
   for highlighter_dir ($1/*/); do
     highlighter="${highlighter_dir:t}"
-    [[ -f "$highlighter_dir/${highlighter}-highlighter.zsh" ]] &&
-      . "$highlighter_dir/${highlighter}-highlighter.zsh"
+    [[ -f "$highlighter_dir${highlighter}-highlighter.zsh" ]] &&
+      . "$highlighter_dir${highlighter}-highlighter.zsh"
     if type "_zsh_highlight_highlighter_${highlighter}_paint" &> /dev/null &&
        type "_zsh_highlight_highlighter_${highlighter}_predicate" &> /dev/null;
     then
@@ -358,7 +358,7 @@ _zsh_highlight_load_highlighters()
         eval "_zsh_highlight_highlighter_${(q)highlighter}_paint() { _zsh_highlight_${(q)highlighter}_highlighter \"\$@\" }"
         eval "_zsh_highlight_highlighter_${(q)highlighter}_predicate() { _zsh_highlight_${(q)highlighter}_highlighter_predicate \"\$@\" }"
     else
-        print -r -- >&2 "zsh-syntax-highlighting: ${(qq)highlighter} highlighter should define both required functions '_zsh_highlight_highlighter_${highlighter}_paint' and '_zsh_highlight_highlighter_${highlighter}_predicate' in ${(qq):-"$highlighter_dir/${highlighter}-highlighter.zsh"}."
+        print -r -- >&2 "zsh-syntax-highlighting: ${(qq)highlighter} highlighter should define both required functions '_zsh_highlight_highlighter_${highlighter}_paint' and '_zsh_highlight_highlighter_${highlighter}_predicate' in ${(qq):-"$highlighter_dir${highlighter}-highlighter.zsh"}."
     fi
   done
 }
