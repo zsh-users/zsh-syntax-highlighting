@@ -82,7 +82,7 @@ Add `zgen load zsh-users/zsh-syntax-highlighting` to the end of your `.zshrc`.
 
 #### [zplug](https://github.com/zplug/zplug)
 
-Add `zplug "zsh-users/zsh-syntax-highlighting", nice:10` to your `.zshrc`.
+Add `zplug "zsh-users/zsh-syntax-highlighting", defer:2` to your `.zshrc`.
 
 #### [zplugin](https://github.com/psprint/zplugin)
 
