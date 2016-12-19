@@ -109,11 +109,8 @@ _zsh_highlight()
     return $ret
   fi
 
-# Did a couple of tweaks to highlighters/main/main-highlighter.zsh
-# to prevent need for following, though there'll surely be other areas.
-# setopt localtraps
-# unfunction TRAPZERR
-  setopt localoptions noksharrays warncreateglobal
+  setopt localoptions warncreateglobal
+  setopt localoptions noksharrays
   local REPLY # don't leak $REPLY into global scope
 
   # Do not highlight if there are more than 300 chars in the buffer. It's most
@@ -216,8 +213,7 @@ _zsh_highlight_apply_zle_highlight() {
   local entry="$1" default="$2"
   integer first="$3" second="$4"
 
-  setopt localoptions unset	# seems to be the accessing the array entry
-# rather than ${entry-} that aborts otherwise
+  setopt localoptions unset	# Is it bug or feature that nounset will often abort this function?
 
   # read the relevant entry from zle_highlight
   local region="${zle_highlight[(r)${entry}:*]}"
@@ -402,7 +398,7 @@ _zsh_highlight_load_highlighters()
   for highlighter_dir ($1/*/); do
     highlighter="${highlighter_dir:t}"
     [[ -f "$highlighter_dir/${highlighter}-highlighter.zsh" ]] &&
-      source "$highlighter_dir/${highlighter}-highlighter.zsh"
+      . "$highlighter_dir/${highlighter}-highlighter.zsh"
     if type "_zsh_highlight_highlighter_${highlighter}_paint" &> /dev/null &&
        type "_zsh_highlight_highlighter_${highlighter}_predicate" &> /dev/null;
     then

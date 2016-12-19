@@ -95,7 +95,7 @@ _zsh_highlight_main_add_region_highlight() {
 
   # The calculation was relative to $PREBUFFER$BUFFER, but region_highlight is
   # relative to $BUFFER.
-  (( start -= $#PREBUFFER )) || :
+  (( start -= $#PREBUFFER ))
   (( end -= $#PREBUFFER ))
 
   (( end < 0 )) && return # having end<0 would be a bug
@@ -146,8 +146,8 @@ _zsh_highlight_main__type() {
       REPLY=none
     fi
   fi
-  if ! (( $+REPLY )); then	# below will frequently trigger ERR trap without || :
-    REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null || :)#*: }"
+  if ! (( $+REPLY )); then
+    REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null)#*: }"
   fi
   if (( $+_zsh_highlight_main__command_type_cache )); then
     _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
@@ -214,7 +214,7 @@ _zsh_highlight_highlighter_main_paint()
     integer multi_func_def=0
   fi
   emulate -L zsh
-  setopt localoptions extendedglob bareglobqual #xtrace
+  setopt localoptions extendedglob bareglobqual
 
   # At the PS3 prompt and in vared, highlight nothing.
   #
@@ -384,7 +384,7 @@ _zsh_highlight_highlighter_main_paint()
       else
           integer offset=0
       fi
-      ((start_pos+=offset)) || :
+      ((start_pos+=offset))
       ((end_pos=$start_pos+${#arg}))
     fi
 
@@ -537,9 +537,7 @@ _zsh_highlight_highlighter_main_paint()
                             style=alias
                             _zsh_highlight_main__resolve_alias $arg
                             local alias_target="$REPLY"
-                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$alias_target"}
-                            && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]] &&
-                                ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg) || :
+                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$alias_target"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]] && ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg)
                           fi
                         }
                         ;;
@@ -686,7 +684,7 @@ _zsh_highlight_highlighter_main_paint()
     fi
     if ! (( already_added )); then
       _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-      [[ $style == path || $style == path_prefix ]] && _zsh_highlight_main_highlighter_highlight_path_separators || :
+      [[ $style == path || $style == path_prefix ]] && _zsh_highlight_main_highlighter_highlight_path_separators
     fi
     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
       if [[ $arg == ';' ]] && $in_array_assignment; then
