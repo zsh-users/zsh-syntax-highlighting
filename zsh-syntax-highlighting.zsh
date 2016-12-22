@@ -317,7 +317,7 @@ then
   add-zle-hook-widget zle-line-pre-redraw _zsh_highlight
   add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
 
-  setopt noxtrace ${prevunsetstate}UNSET	# put back as before
+  setopt ${prevunsetstate}UNSET	# put back as before
 else
   # Rebind all ZLE widgets to make them invoke _zsh_highlights.
   _zsh_highlight_bind_widgets()
