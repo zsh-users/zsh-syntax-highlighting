@@ -58,7 +58,7 @@
 _zsh_highlight_highlighter_main_predicate()
 {
   # may need to remove path_prefix highlighting when the line ends
-  [[ $WIDGET == zle-line-finish ]] || _zsh_highlight_buffer_modified
+  [[ ${WIDGET-} == zle-line-finish ]] || _zsh_highlight_buffer_modified
 }
 
 # Helper to deal with tokens crossing line boundaries.

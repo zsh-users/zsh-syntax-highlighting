@@ -40,7 +40,7 @@
 # Whether the brackets highlighter should be called or not.
 _zsh_highlight_highlighter_brackets_predicate()
 {
-  [[ $WIDGET == zle-line-finish ]] || _zsh_highlight_cursor_moved || _zsh_highlight_buffer_modified
+  [[ ${WIDGET-} == zle-line-finish ]] || _zsh_highlight_cursor_moved || _zsh_highlight_buffer_modified
 }
 
 # Brackets highlighting function.
@@ -59,7 +59,7 @@ _zsh_highlight_highlighter_brackets_paint()
         lastoflevel[$level]=$pos
         ;;
       [")]}"])
-        matchingpos=$lastoflevel[$level]
+        matchingpos=${lastoflevel[$level]-}
         levelpos[$pos]=$((level--))
 	if _zsh_highlight_brackets_match $matchingpos $pos; then
           matching[$matchingpos]=$pos
@@ -86,9 +86,9 @@ _zsh_highlight_highlighter_brackets_paint()
   done
 
   # If cursor is on a bracket, then highlight corresponding bracket, if any.
-  if [[ $WIDGET != zle-line-finish ]]; then
+  if [[ ${WIDGET-} != zle-line-finish ]]; then
     pos=$((CURSOR + 1))
-    if [[ -n $levelpos[$pos] ]] && [[ -n $matching[$pos] ]]; then
+    if [[ -n ${levelpos[$pos]-} && -n $matching[$pos] ]]; then
       local -i otherpos=$matching[$pos]
       _zsh_highlight_add_highlight $((otherpos - 1)) $otherpos cursor-matchingbracket
     fi
@@ -98,7 +98,7 @@ _zsh_highlight_highlighter_brackets_paint()
 # Helper function to differentiate type 
 _zsh_highlight_brackets_match()
 {
-  case $BUFFER[$1] in
+  case ${BUFFER[$1]-} in
     \() [[ $BUFFER[$2] == \) ]];;
     \[) [[ $BUFFER[$2] == \] ]];;
     \{) [[ $BUFFER[$2] == \} ]];;

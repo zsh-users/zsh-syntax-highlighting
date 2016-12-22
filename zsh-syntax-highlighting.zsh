@@ -104,7 +104,7 @@ _zsh_highlight()
 
   # Remove all highlighting in isearch, so that only the underlining done by zsh itself remains.
   # For details see FAQ entry 'Why does syntax highlighting not work while searching history?'.
-  if [[ $WIDGET == zle-isearch-update ]] && ! (( $+ISEARCHMATCH_ACTIVE )); then
+  if [[ ${WIDGET-} == zle-isearch-update ]] && ! (( $+ISEARCHMATCH_ACTIVE )); then
     region_highlight=()
     return $ret
   fi
@@ -118,7 +118,7 @@ _zsh_highlight()
   [[ -n ${ZSH_HIGHLIGHT_MAXLENGTH:-} ]] && [[ $#BUFFER -gt $ZSH_HIGHLIGHT_MAXLENGTH ]] && return $ret
 
   # Do not highlight if there are pending inputs (copy/paste).
-  [[ $PENDING -gt 0 ]] && return $ret
+  [[ ${PENDING-} -gt 0 ]] && return $ret
 
   # Reset region highlight to build it from scratch
   typeset -ga region_highlight
@@ -198,7 +198,7 @@ _zsh_highlight()
 
   } always {
     typeset -g _ZSH_HIGHLIGHT_PRIOR_BUFFER="$BUFFER"
-    typeset -gi _ZSH_HIGHLIGHT_PRIOR_CURSOR=$CURSOR
+    typeset -gi _ZSH_HIGHLIGHT_PRIOR_CURSOR=${CURSOR-}
   }
 }
 
@@ -213,10 +213,8 @@ _zsh_highlight_apply_zle_highlight() {
   local entry="$1" default="$2"
   integer first="$3" second="$4"
 
-  setopt localoptions unset	# Is it bug or feature that nounset will often abort this function?
-
   # read the relevant entry from zle_highlight
-  local region="${zle_highlight[(r)${entry}:*]}"
+  local region="${zle_highlight[(r)${entry}:*]-}"
 
   if [[ -z "$region" ]]; then
     # entry not specified at all, use default value
@@ -261,7 +259,7 @@ _zsh_highlight_buffer_modified()
 # Returns 0 if the cursor has moved since _zsh_highlight was last called.
 _zsh_highlight_cursor_moved()
 {
-  [[ -n $CURSOR ]] && [[ -n ${_ZSH_HIGHLIGHT_PRIOR_CURSOR-} ]] && (($_ZSH_HIGHLIGHT_PRIOR_CURSOR != $CURSOR))
+  [[ -n ${CURSOR-} && -n ${_ZSH_HIGHLIGHT_PRIOR_CURSOR-} ]] && (($_ZSH_HIGHLIGHT_PRIOR_CURSOR != $CURSOR))
 }
 
 # Add a highlight defined by ZSH_HIGHLIGHT_STYLES.
@@ -309,8 +307,17 @@ then
     } "$@"
   }
   _zsh_highlight_bind_widgets(){}
+
+  local prevunsetstate=
+  [[ -o unset ]] || prevunsetstate=NO_
+  setopt localoptions UNSET	# for following two add-zle-hook-widget calls...
+  # TODO: figure out why only 5.3 with no_unset gives following error
+  # add-zle-hook-widget:84: widgets[$hook]: parameter not set
+
   add-zle-hook-widget zle-line-pre-redraw _zsh_highlight
   add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
+
+  setopt noxtrace ${prevunsetstate}UNSET	# put back as before
 else
   # Rebind all ZLE widgets to make them invoke _zsh_highlights.
   _zsh_highlight_bind_widgets()
@@ -340,7 +347,7 @@ else
   
     local cur_widget
     for cur_widget in $widgets_to_bind; do
-      case $widgets[$cur_widget] in
+      case ${widgets[$cur_widget]-} in
   
         # Already rebound event: do nothing.
         user:_zsh_highlight_widget_*);;
@@ -367,7 +374,7 @@ else
   
         # Incomplete or nonexistent widget: Bind to z-sy-h directly.
         *) 
-           if [[ $cur_widget == zle-* ]] && [[ -z $widgets[$cur_widget] ]]; then
+           if [[ $cur_widget == zle-* && -z ${widgets[$cur_widget]-} ]]; then
              _zsh_highlight_widget_${cur_widget}() { :; _zsh_highlight }
              zle -N $cur_widget _zsh_highlight_widget_$cur_widget
            else

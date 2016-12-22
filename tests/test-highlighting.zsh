@@ -56,7 +56,7 @@ zmodload zsh/zle
 # Overwrite _zsh_highlight_add_highlight so we get the key itself instead of the style
 _zsh_highlight_add_highlight()
 {
-  region_highlight+=("$1 $2 $3")
+  region_highlight+=("$1 $2 ${3-}")
 }
 
 # Activate the highlighter.
@@ -96,7 +96,7 @@ run_test_internal() {
       (( --end )) # convert to closed range, like expected_region_highlight
       (( ++start, ++end )) # region_highlight is 0-indexed; expected_region_highlight is 1-indexed
       for j in {$start..$end}; do
-        observed_result[$j]=$highlight_zone[3]
+        observed_result[$j]=${highlight_zone[3]-}
       done
     else
       # noop range; ignore.
@@ -115,10 +115,10 @@ run_test_internal() {
     local desc="[$start,$end] «${BUFFER[$start,$end]//'#'/♯}»"
     # Match the emptiness of observed_result if no highlighting is expected
     [[ $highlight_zone[3] == NONE ]] && highlight_zone[3]=
-    [[ -n "$highlight_zone[4]" ]] && todo="# TODO $highlight_zone[4]"
+    [[ -n ${highlight_zone[4]-} ]] && todo="# TODO $highlight_zone[4]"
     for j in {$start..$end}; do
-      if [[ "$observed_result[$j]" != "$highlight_zone[3]" ]]; then
-        print -r -- "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]}. $todo"
+      if [[ ${observed_result[$j]-} != $highlight_zone[3] ]]; then
+        print -r -- "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]-}. $todo"
         continue 2
       fi
     done
@@ -162,7 +162,7 @@ run_test() {
 
 # Set up results_filter
 local results_filter
-if [[ $QUIET == y ]]; then
+if [[ ${QUIET-} == y ]]; then
   if type -w perl >/dev/null; then
     results_filter=${0:A:h}/tap-filter
   else
