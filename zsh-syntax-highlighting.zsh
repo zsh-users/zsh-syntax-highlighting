@@ -308,16 +308,13 @@ then
   }
   _zsh_highlight_bind_widgets(){}
 
-  local prevunsetstate=
-  [[ -o unset ]] || prevunsetstate=NO_
-  setopt localoptions UNSET	# for following two add-zle-hook-widget calls...
-  # TODO: figure out why only 5.3 with no_unset gives following error
-  # add-zle-hook-widget:84: widgets[$hook]: parameter not set
-
-  add-zle-hook-widget zle-line-pre-redraw _zsh_highlight
-  add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
-
-  setopt ${prevunsetstate}UNSET	# put back as before
+  # This is for 5.3 before about 5.3.2, or whenever add-zle-hook-widget
+  # in zsh source is modified to work with nounset in the calling scope.
+  () {
+	setopt localoptions UNSET
+	add-zle-hook-widget zle-line-pre-redraw _zsh_highlight
+	add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
+  }
 else
   # Rebind all ZLE widgets to make them invoke _zsh_highlights.
   _zsh_highlight_bind_widgets()
