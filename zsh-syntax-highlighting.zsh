@@ -36,8 +36,9 @@ local zsh_highlight__aliases="`builtin alias -Lm '[^+]*'`"
 # Hence, we exclude them from unaliasing:
 builtin unalias -m '[^+]*'
 
+# Set the 5.4-to-be WARN_NESTED_VAR option if it's available.
 emulate -L zsh
-setopt localoptions warncreateglobal
+setopt localoptions warncreateglobal ${(k)options[(I)warnnestedvar]}
 
 # Set $0 to the expected value, regardless of functionargzero.
 0=${(%):-%N}
@@ -49,7 +50,7 @@ if true; then
     # When running from a source tree without 'make install', $ZSH_HIGHLIGHT_REVISION
     # would be set to '$Format:%H$' literally.  That's an invalid value, and obtaining
     # the valid value (via `git rev-parse HEAD`, as Makefile does) might be costly, so:
-    ZSH_HIGHLIGHT_REVISION=HEAD
+    typeset -g ZSH_HIGHLIGHT_REVISION=HEAD
   fi
 fi
 
@@ -401,7 +402,7 @@ zmodload zsh/parameter 2>/dev/null || true
 autoload -U is-at-least
 
 # Initialize the array of active highlighters if needed.
-[[ $#ZSH_HIGHLIGHT_HIGHLIGHTERS -eq 0 ]] && ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
+[[ $#ZSH_HIGHLIGHT_HIGHLIGHTERS -eq 0 ]] && ZSH_HIGHLIGHT_HIGHLIGHTERS[1]=main
 
 # Restore the aliases we unned
 eval "$zsh_highlight__aliases"
