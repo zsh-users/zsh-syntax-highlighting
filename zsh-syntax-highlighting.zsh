@@ -36,6 +36,7 @@ local zsh_highlight__aliases="`builtin alias -Lm '[^+]*'`"
 # Hence, we exclude them from unaliasing:
 builtin unalias -m '[^+]*'
 
+emulate -L zsh
 setopt localoptions warncreateglobal
 
 # Set $0 to the expected value, regardless of functionargzero.
