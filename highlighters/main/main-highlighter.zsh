@@ -658,6 +658,7 @@ _zsh_highlight_highlighter_main_paint()
                  already_added=1
                  ;;
         '`'*)    style=back-quoted-argument;;
+        [$][*])  style=default;;
         [*?]*|*[^\\][*?]*)
                  $highlight_glob && style=globbing || style=default;;
         *)       if false; then
