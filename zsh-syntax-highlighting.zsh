@@ -317,6 +317,7 @@ _zsh_highlight_bind_widgets()
          else
       # Default: unhandled case.
            print -r -- >&2 "zsh-syntax-highlighting: unhandled ZLE widget ${(qq)cur_widget}"
+           print -r -- >&2 "zsh-syntax-highlighting: (This is sometimes caused by doing \`bindkey <keys> ${(q-)cur_widget}\` without creating the ${(qq)cur_widget} widget with \`zle -N\` or \`zle -C\`.)"
          fi
     esac
   done
