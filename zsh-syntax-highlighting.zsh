@@ -87,6 +87,12 @@ _zsh_highlight()
   setopt localoptions noksharrays
   local REPLY # don't leak $REPLY into global scope
 
+  # Do not highlight in isearch widgets.
+  if [[ $WIDGET == zle-isearch-update ]]; then
+    region_highlight=()
+    return $ret
+  fi
+
   # Do not highlight if there are more than 300 chars in the buffer. It's most
   # likely a pasted command or a huge list of files in that case..
   [[ -n ${ZSH_HIGHLIGHT_MAXLENGTH:-} ]] && [[ $#BUFFER -gt $ZSH_HIGHLIGHT_MAXLENGTH ]] && return $ret
