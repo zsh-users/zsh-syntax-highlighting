@@ -399,6 +399,7 @@ _zsh_highlight_preexec_hook()
   typeset -gi _ZSH_HIGHLIGHT_PRIOR_CURSOR=
 }
 autoload -U add-zsh-hook
+add-zsh-hook -d preexec _zsh_highlight_preexec_hook
 add-zsh-hook preexec _zsh_highlight_preexec_hook 2>/dev/null || {
     print -r -- >&2 'zsh-syntax-highlighting: failed loading add-zsh-hook.'
   }
