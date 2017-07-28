@@ -5,7 +5,7 @@ How to install
 
 * Arch Linux: [community/zsh-syntax-highlighting][arch-package] / [AUR/zsh-syntax-highlighting-git][AUR-package]
 * Debian: `zsh-syntax-highlighting` package [in `stretch`][debian-package]
-* Fedora: [zsh-syntax-highlighting package][fedora-package] in Fedora 24+
+* Fedora: [zsh-syntax-highlighting package][fedora-package-alt] in Fedora 24+
 * FreeBSD: `pkg install zsh-syntax-highlighting` (port name: [`textproc/zsh-syntax-highlighting`][freebsd-port])
 * Gentoo: [mv overlay][gentoo-overlay]
 * Mac OS X / Homebrew: [brew install zsh-syntax-highlighting][brew-package]
@@ -19,6 +19,7 @@ How to install
 [brew-package]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-syntax-highlighting.rb
 [ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
 [fedora-package]: https://apps.fedoraproject.org/packages/zsh-syntax-highlighting
+[fedora-package-alt]: https://bodhi.fedoraproject.org/updates/?packages=zsh-syntax-highlighting
 
 
 ### In your ~/.zshrc
