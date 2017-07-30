@@ -46,23 +46,19 @@ syntax highlighting.
 
 ### Does syntax highlighting work during incremental history search?
 
-Yes!
+Highlighting the command line during an incremental history search (by default bound to
+to <kbd>Ctrl+R</kbd> in zsh's emacs keymap) requires zsh 5.4 or newer.
 
-If you're using `history-incremental-search-backward` (by default bound to <kbd>Ctrl+R</kbd>
-in zsh's emacs keymap) then it works with _zsh version 5.3 and newer_.
-
-If you're using `history-incremental-pattern-search-backward`, then syntax highlighting works
-in _zsh 5.3.2 and newer_ due to [a bug in zsh](http://www.zsh.org/cgi-bin/mla/redirect?WORKERNUMBER=40285).
-
-Under zsh 5.2 and older, the zsh-default [underlining][zshzle-Character-Highlighting]
+Under zsh versions older than 5.4, the zsh-default [underlining][zshzle-Character-Highlighting]
 of the matched portion of the buffer remains available, but zsh-syntax-highlighting's
 additional highlighting is unavailable.  (Those versions of zsh do not provide
 enough information to allow computing the highlighting correctly.)
 
-See [issue #288][i288] for details.
+See issues [#288][i288] and [#415][i415] for details.
 
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 [i288]: https://github.com/zsh-users/zsh-syntax-highlighting/pull/288
+[i415]: https://github.com/zsh-users/zsh-syntax-highlighting/pull/415
 
 ### How are new releases announced?
 
