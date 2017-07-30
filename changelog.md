@@ -1,6 +1,13 @@
-up to 28d7056a7a06
+up to 5feed23962df
 
 # Changes in version 0.6.0
+
+This is a stable release, featuring bugfixes and minor improvements.
+
+
+## Performance improvements:
+
+(none)
 
 
 ## Added highlighting of:
@@ -9,6 +16,58 @@ up to 28d7056a7a06
   (79e4d3d12405, 15db71abd0cc; requires zsh 5.3 for `$ISEARCHMATCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
 
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
+
+- Possible history expansions in double-quoted strings.
+  (76ea9e1df316)
+
+- Mismatched `if`/`then`/`elif`/`else`/`fi`.
+  (73cb83270262)
+
+
+## Fixed highlighting of:
+
+- A comment line followed by a non-comment line.
+  (#385, 9396ad5c5f9c)
+
+- An unquoted `$*` (expands to the positional parameters).
+  (237f89ad629f)
+
+- history-incremental-pattern-search-backward under zsh 5.3.1.
+  (#407, #415, 462779629a0c)
+
+## API changes (for highlighter authors):
+
+(none)
+
+
+## Developer-visible changes:
+
+- tests: Set the `ALIAS_FUNC_DEF` option for zsh 5.4 compatibility.
+  (9523d6d49cb3)
+
+
+## Other changes:
+
+- docs: Added before/after screenshots.
+  (cd9ec14a65ec..b7e277106b49)
+
+- docs: Link Fedora package.
+  (3d74aa47e4a7, 5feed23962df)
+
+- docs: Link FreeBSD port.
+  (626c034c68d7)
+
+- Prevent user-defined aliases from taking effect in z-sy-h's own code.
+  (#390, 2dce602727d7, 8d5afe47f774; and #392, #395, b8fa1b9dc954)
+
+- docs: Update zplug installation instructions.
+  (#399, 4f49c4a35f17)
+
+- Improve "unhandled ZLE widget 'foo'" error message.
+  (#409, be083d7f3710)
+
+- Fix printing of "failed loading highlighters" error message.
+  (#426, ad522a091429)
 
 
 # Changes in version 0.5.0
