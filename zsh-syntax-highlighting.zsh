@@ -77,7 +77,7 @@ _zsh_highlight()
   # Remove all highlighting in isearch, so that only the underlining done by zsh itself remains.
   # For details see FAQ entry 'Why does syntax highlighting not work while searching history?'.
   # This disables highlighting during isearch (for reasons explained in README.md) unless zsh is new enough
-  # and doesn't have the 5.3.1 bug
+  # and doesn't have the pattern matching bug
   if [[ $WIDGET == zle-isearch-update ]] && { $zsh_highlight__pat_static_bug || ! (( $+ISEARCHMATCH_ACTIVE )) }; then
     region_highlight=()
     return $ret
