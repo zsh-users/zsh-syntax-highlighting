@@ -56,7 +56,7 @@ fi
 # Use workaround for bug in ZSH?
 # zsh-users/zsh@48cadf4 http://www.zsh.org/mla/workers//2017/msg00034.html
 autoload -U is-at-least
-if is-at-least 5.3.2; then
+if is-at-least 5.4; then
   zsh_highlight__pat_static_bug=false
 else
   zsh_highlight__pat_static_bug=true
