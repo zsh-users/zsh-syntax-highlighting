@@ -1,5 +1,3 @@
-up to dea1fedc7358
-
 # Changes in version 0.6.0
 
 This is a stable release, featuring bugfixes and minor improvements.
