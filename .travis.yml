@@ -1,0 +1,12 @@
+sudo: false
+
+env:
+  - ZSH=4.3.11
+  - ZSH=4.3.17
+  - ZSH=5.0.0
+  - ZSH=5.1.1
+  - ZSH=5.2
+  - ZSH=5.3
+  - ZSH=5.3.1
+
+script: docker run -v $PWD:/work -w /work desyncr/zsh-docker-zsh-${ZSH} /bin/sh -c 'make test'
