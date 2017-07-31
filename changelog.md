@@ -1,4 +1,4 @@
-up to 5feed23962df
+up to dea1fedc7358
 
 # Changes in version 0.6.0
 
@@ -13,7 +13,7 @@ This is a stable release, featuring bugfixes and minor improvements.
 ## Added highlighting of:
 
 - The `isearch` and `suffix` [`$zle_highlight` settings][zshzle-Character-Highlighting].
-  (79e4d3d12405, 15db71abd0cc; requires zsh 5.3 for `$ISEARCHMATCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
+  (79e4d3d12405, 15db71abd0cc, b56ee542d619; requires zsh 5.3 for `$ISEARCHMATCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
 
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 
@@ -34,6 +34,7 @@ This is a stable release, featuring bugfixes and minor improvements.
 
 - history-incremental-pattern-search-backward under zsh 5.3.1.
   (#407, #415, 462779629a0c)
+
 
 ## API changes (for highlighter authors):
 
@@ -56,6 +57,9 @@ This is a stable release, featuring bugfixes and minor improvements.
 
 - docs: Link FreeBSD port.
   (626c034c68d7)
+
+- docs: Link OpenSUSE Build Service packages
+  (#419, dea1fedc7358)
 
 - Prevent user-defined aliases from taking effect in z-sy-h's own code.
   (#390, 2dce602727d7, 8d5afe47f774; and #392, #395, b8fa1b9dc954)
