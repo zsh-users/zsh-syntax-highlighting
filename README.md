@@ -1,4 +1,4 @@
-zsh-syntax-highlighting [![Build Status](https://travis-ci.org/zsh-users/zsh-syntax-highlighting.svg?branch=master)](https://travis-ci.org/zsh-users/zsh-syntax-highlighting)
+zsh-syntax-highlighting [![Build Status][build-status-image]][build-status-travis]
 =======================
 
 **[Fish shell][fish]-like like syntax highlighting for [Zsh][zsh].**
@@ -75,3 +75,10 @@ How to tweak
 Syntax highlighting is done by pluggable highlighter scripts.  See the
 [documentation on highlighters](docs/highlighters.md) for details and
 configuration settings.
+
+
+
+
+[build-status-image]: https://travis-ci.org/zsh-users/zsh-syntax-highlighting.svg?branch=master
+[build-status-travis]: https://travis-ci.org/zsh-users/zsh-syntax-highlighting
+
