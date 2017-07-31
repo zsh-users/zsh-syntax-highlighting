@@ -4,12 +4,14 @@ How to install
 ### Using packages
 
 * Arch Linux: [community/zsh-syntax-highlighting][arch-package] / [AUR/zsh-syntax-highlighting-git][AUR-package]
-* Debian: `zsh-syntax-highlighting` package [in `stretch`][debian-package]
-* Fedora: [zsh-syntax-highlighting package][fedora-package-alt] in Fedora 24+
+* Debian: `zsh-syntax-highlighting` package [in `stretch`][debian-package] (or in [OBS repository][obs-repository])
+* Fedora: [zsh-syntax-highlighting package][fedora-package-alt] in Fedora 24+ (or in [OBS repository][obs-repository])
 * FreeBSD: `pkg install zsh-syntax-highlighting` (port name: [`textproc/zsh-syntax-highlighting`][freebsd-port])
 * Gentoo: [mv overlay][gentoo-overlay]
 * Mac OS X / Homebrew: [brew install zsh-syntax-highlighting][brew-package]
-* Ubuntu: `zsh-syntax-highlighting` package [in Xenial][ubuntu-package]
+* Ubuntu: `zsh-syntax-highlighting` package [in Xenial][ubuntu-package] (or in [OBS repository][obs-repository])
+* RHEL / CentOS / Scientific Linux: `zsh-syntax-highlighting` package in [OBS repository][obs-repository]
+* openSUSE / SLE: `zsh-syntax-highlighting` package in [OBS repository][obs-repository]
 
 [arch-package]: https://www.archlinux.org/packages/zsh-syntax-highlighting
 [AUR-package]: https://aur.archlinux.org/packages/zsh-syntax-highlighting-git
@@ -20,6 +22,7 @@ How to install
 [ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
 [fedora-package]: https://apps.fedoraproject.org/packages/zsh-syntax-highlighting
 [fedora-package-alt]: https://bodhi.fedoraproject.org/updates/?packages=zsh-syntax-highlighting
+[obs-repository]: https://software.opensuse.org//download.html?project=shells%3Azsh-users%3Azsh-syntax-highlighting&package=zsh-syntax-highlighting
 
 
 ### In your ~/.zshrc
