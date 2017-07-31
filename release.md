@@ -12,7 +12,7 @@
   Tag it using `git tag -m "Tag version $(<.version)"`;
   Increment `./.version` and restore the `-dev` suffix;
   Commit that using 'git commit -C b5c30ae52638e81a38fe5329081c5613d7bd6ca5'.
-- Push with `git push --tags`
+- Push with `git push && git push --tags`
 - Notify downstreams (OS packages)
   - anitya should autodetect the tag
 - Update /topic on IRC
