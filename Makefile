@@ -35,6 +35,7 @@ clean:
 	rm -f docs/all.md
 
 test:
+	@$(ZSH) --version
 	@result=0; \
 	for test in highlighters/*; do \
 		if [ -d $$test/test-data ]; then \
