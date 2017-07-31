@@ -1,4 +1,4 @@
-zsh-syntax-highlighting
+zsh-syntax-highlighting [![Build Status](https://travis-ci.org/zsh-users/zsh-syntax-highlighting.svg?branch=master)](https://travis-ci.org/zsh-users/zsh-syntax-highlighting)
 =======================
 
 **[Fish shell][fish]-like like syntax highlighting for [Zsh][zsh].**
