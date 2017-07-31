@@ -1,4 +1,5 @@
-sudo: false
+language: generic
+sudo: required
 
 env:
   - ZSH=4.3.11
