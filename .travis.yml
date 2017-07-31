@@ -11,3 +11,18 @@ env:
   - ZSH=5.3.1
 
 script: docker run -v $PWD:/work -w /work desyncr/zsh-docker-zsh-${ZSH} /bin/sh -c 'make test'
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/367e241cdea60cb2070b
+    on_success: change
+    on_failure: always
+    on_start: never
+  irc:
+    channels:
+      - "chat.freenode.net#zsh-syntax-highlighting"
+    on_success: change
+    on_failure: always
+    on_start: never
+    use_notice: true
