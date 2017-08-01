@@ -3,7 +3,7 @@ zsh-syntax-highlighting [![Build Status][build-status-image]][build-status-travi
 
 **[Fish shell][fish]-like like syntax highlighting for [Zsh][zsh].**
 
-*Requirements: zsh 4.3.17+.*
+*Requirements: zsh 4.3.11+.*
 
 [fish]: http://www.fishshell.com/
 [zsh]: http://www.zsh.org/
