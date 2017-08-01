@@ -36,7 +36,7 @@ clean:
 	rm -f docs/all.md
 
 test:
-	@$(ZSH) --version
+	@$(ZSH) -fc 'echo $$ZSH_PATCHLEVEL'
 	@result=0; \
 	for test in highlighters/*; do \
 		if [ -d $$test/test-data ]; then \
