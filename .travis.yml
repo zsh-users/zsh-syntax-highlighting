@@ -2,31 +2,31 @@ language: generic
 sudo: required
 
 env:
-  - ZSH=4.3.11
-  - ZSH=4.3.12
-  - ZSH=4.3.13
-  - ZSH=4.3.14
-  - ZSH=4.3.15
-  - ZSH=4.3.16
-  - ZSH=4.3.17
-  - ZSH=5.0.0
-  - ZSH=5.0.1
-  - ZSH=5.0.2
-  - ZSH=5.0.3
-  - ZSH=5.0.4
-  - ZSH=5.0.5
-  - ZSH=5.0.6
-  - ZSH=5.0.7
-  - ZSH=5.0.8
-  - ZSH=5.1
-  - ZSH=5.1.1
-  - ZSH=5.2
-  - ZSH=5.3
-  - ZSH=5.3.1
-  - ZSH=5.4
-  - ZSH=5.4.1
-  - ZSH=5.4.2
   - ZSH=master
+  - ZSH=5.4.2
+  - ZSH=5.4.1
+  - ZSH=5.4
+  - ZSH=5.3.1
+  - ZSH=5.3
+  - ZSH=5.2
+  - ZSH=5.1.1
+  - ZSH=5.1
+  - ZSH=5.0.8
+  - ZSH=5.0.7
+  - ZSH=5.0.6
+  - ZSH=5.0.5
+  - ZSH=5.0.4
+  - ZSH=5.0.3
+  - ZSH=5.0.2
+  - ZSH=5.0.1
+  - ZSH=5.0.0
+  - ZSH=4.3.17
+  - ZSH=4.3.16
+  - ZSH=4.3.15
+  - ZSH=4.3.14
+  - ZSH=4.3.13
+  - ZSH=4.3.12
+  - ZSH=4.3.11
 
 script: docker run -v $PWD:/work -w /work zshusers/zsh-${ZSH} /bin/sh -c 'make test'
 
