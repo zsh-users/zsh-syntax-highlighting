@@ -39,6 +39,3 @@ expected_region_highlight=(
   "1 2 function" # cd
   "4 5 function" # ls
 )
-
-# don't 'unfunction cd ls', since cd() and ls() should still be a functions
-# when _zsh_highlight runs.  Leaving the wrapper functions is harmless.
