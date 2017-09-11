@@ -25,6 +25,7 @@ env:
   - ZSH=5.3.1
   - ZSH=5.4
   - ZSH=5.4.1
+  - ZSH=5.4.2
   - ZSH=master
 
 script: docker run -v $PWD:/work -w /work zshusers/zsh-${ZSH} /bin/sh -c 'make test'
