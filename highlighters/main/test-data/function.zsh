@@ -27,10 +27,10 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-cd() {
+function cd {
   builtin cd "$@"
 }
-ls() {
+function ls {
   command ls "$@"
 }
 BUFFER='cd;ls'
