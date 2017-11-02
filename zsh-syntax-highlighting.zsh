@@ -295,7 +295,7 @@ _zsh_highlight_bind_widgets()
 
   local cur_widget
   for cur_widget in $widgets_to_bind; do
-    case $widgets[$cur_widget] in
+    case ${widgets[$cur_widget]:-""} in
 
       # Already rebound event: do nothing.
       user:_zsh_highlight_widget_*);;
@@ -322,7 +322,7 @@ _zsh_highlight_bind_widgets()
 
       # Incomplete or nonexistent widget: Bind to z-sy-h directly.
       *) 
-         if [[ $cur_widget == zle-* ]] && [[ -z $widgets[$cur_widget] ]]; then
+         if [[ $cur_widget == zle-* ]] && (( ! ${+widgets[$cur_widget]} )); then
            _zsh_highlight_widget_${cur_widget}() { :; _zsh_highlight }
            zle -N $cur_widget _zsh_highlight_widget_$cur_widget
          else
