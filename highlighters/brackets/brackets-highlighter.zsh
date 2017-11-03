@@ -91,7 +91,7 @@ _zsh_highlight_highlighter_brackets_paint()
   # If cursor is on a bracket, then highlight corresponding bracket, if any.
   if [[ $WIDGET != zle-line-finish ]]; then
     pos=$((CURSOR + 1))
-    if [[ -n $levelpos[$pos] ]] && [[ -n $matching[$pos] ]]; then
+    if (( $+levelpos[$pos] )) && (( $+matching[$pos] )); then
       local -i otherpos=$matching[$pos]
       _zsh_highlight_add_highlight $((otherpos - 1)) $otherpos cursor-matchingbracket
     fi
