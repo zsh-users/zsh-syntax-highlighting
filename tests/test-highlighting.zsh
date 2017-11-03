@@ -103,6 +103,9 @@ run_test_internal() {
   # Check the data declares $expected_region_highlight.
   (( ${#expected_region_highlight} == 0 )) && { echo >&2 "Bail out! 'expected_region_highlight' is not declared or empty."; return 1; }
 
+  # Set sane defaults for ZLE variables
+  : ${CURSOR=$#BUFFER} ${PENDING=0} ${WIDGET=z-sy-h-test-harness-test-widget}
+
   # Process the data.
   region_highlight=()
   _zsh_highlight
