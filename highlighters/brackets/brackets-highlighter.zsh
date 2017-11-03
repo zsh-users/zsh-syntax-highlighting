@@ -77,12 +77,11 @@ _zsh_highlight_highlighter_brackets_paint()
   for pos in ${(k)levelpos}; do
     if (( $+matching[$pos] )); then
       if (( bracket_color_size )); then
-        style=bracket-level-$(( (levelpos[$pos] - 1) % bracket_color_size + 1 ))
+        _zsh_highlight_add_highlight $((pos - 1)) $pos bracket-level-$(( (levelpos[$pos] - 1) % bracket_color_size + 1 ))
       fi
     else
-      style=bracket-error
+      _zsh_highlight_add_highlight $((pos - 1)) $pos bracket-error
     fi
-    _zsh_highlight_add_highlight $((pos - 1)) $pos $style
   done
 
   # If cursor is on a bracket, then highlight corresponding bracket, if any.
