@@ -59,11 +59,15 @@ _zsh_highlight_highlighter_brackets_paint()
         lastoflevel[$level]=$pos
         ;;
       [")]}"])
-        matchingpos=$lastoflevel[$level]
-        levelpos[$pos]=$((level--))
-	if _zsh_highlight_brackets_match $matchingpos $pos; then
-          matching[$matchingpos]=$pos
-          matching[$pos]=$matchingpos
+        if (( level > 0 )); then
+          matchingpos=$lastoflevel[$level]
+          levelpos[$pos]=$((level--))
+          if _zsh_highlight_brackets_match $matchingpos $pos; then
+            matching[$matchingpos]=$pos
+            matching[$pos]=$matchingpos
+          fi
+        else
+          levelpos[$pos]=-1
         fi
         ;;
       ['"'\'])
