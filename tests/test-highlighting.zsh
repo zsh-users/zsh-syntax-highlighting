@@ -49,7 +49,7 @@
 
 # Set up results_filter
 local results_filter
-if [[ $QUIET == y ]]; then
+if [[ ${QUIET-} == y ]]; then
   if type -w perl >/dev/null; then
     results_filter=${0:A:h}/tap-filter
   else
