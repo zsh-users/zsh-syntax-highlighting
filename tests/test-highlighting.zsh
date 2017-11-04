@@ -29,7 +29,7 @@
 # -------------------------------------------------------------------------------------------------
 
 
-setopt NOUNSET
+setopt NOUNSET WARN_CREATE_GLOBAL
 
 # Check an highlighter was given as argument.
 [[ -n "$1" ]] || {

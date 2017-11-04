@@ -27,7 +27,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-x=/usr/bin/env
+local x=/usr/bin/env
 BUFFER='$x "argument"'
 
 expected_region_highlight=(
