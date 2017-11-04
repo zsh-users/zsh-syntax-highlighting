@@ -21,6 +21,9 @@ point will not fail the test), and `$todo` is used as the explanation.
 **Note**: `$region_highlight` uses the same `"$i $j $style"` syntax but
 interprets the indexes differently.
 
+**Note**: Tests are run with `setopt NOUNSET WARN_CREATE_GLOBAL`, so any
+variables the test creates must be declared local.
+
 **Isolation**: Each test is run in a separate subshell, so any variables,
 aliases, functions, etc., it defines will be visible to the tested code (that
 computes `$region_highlight`), but will not affect subsequent tests.  The
