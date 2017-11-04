@@ -97,7 +97,8 @@ run_test_internal() {
   echo "# ${1:t:r}"
 
   # Load the data and prepare checking it.
-  PREBUFFER= BUFFER= ;
+  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET
+  local -a expected_region_highlight region_highlight
   . "$srcdir"/"$1"
 
   # Check the data declares $PREBUFFER or $BUFFER.
@@ -109,11 +110,11 @@ run_test_internal() {
   : ${CURSOR=$#BUFFER} ${PENDING=0} ${WIDGET=z-sy-h-test-harness-test-widget}
 
   # Process the data.
-  region_highlight=()
   _zsh_highlight
 
   # Overlapping regions can be declared in region_highlight, so we first build an array of the
   # observed highlighting.
+  local i j
   local -A observed_result
   for ((i=1; i<=${#region_highlight}; i++)); do
     local -a highlight_zone; highlight_zone=( ${(z)region_highlight[$i]} )
