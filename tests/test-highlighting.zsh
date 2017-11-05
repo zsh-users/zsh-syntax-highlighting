@@ -135,12 +135,16 @@ run_test_internal() {
     integer start=$highlight_zone[1] end=$highlight_zone[2]
     # Escape # as ♯ since the former is illegal in the 'description' part of TAP output
     local desc="[$start,$end] «${BUFFER[$start,$end]//'#'/♯}»"
-    # Match the emptiness of observed_result if no highlighting is expected
-    [[ $highlight_zone[3] == NONE ]] && highlight_zone[3]=
     (( $+highlight_zone[4] )) && todo="# TODO $highlight_zone[4]"
     for j in {$start..$end}; do
-      if [[ "$observed_result[$j]" != "$highlight_zone[3]" ]]; then
-        print -r -- "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]}. $todo"
+      if
+	if [[ $highlight_zone[3] == NONE ]]; then
+	  (( $+observed_result[$j] ))
+	else
+	  [[ "$observed_result[$j]" != "$highlight_zone[3]" ]]
+	fi
+      then
+        print -r -- "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]-NONE}. $todo"
         continue 2
       fi
     done
