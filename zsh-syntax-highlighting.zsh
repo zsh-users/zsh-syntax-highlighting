@@ -188,7 +188,11 @@ _zsh_highlight_apply_zle_highlight() {
   integer first="$3" second="$4"
 
   # read the relevant entry from zle_highlight
-  local region="${zle_highlight[(r)${(b)entry}:*]-}"
+  #
+  # ### In zsh≥5.0.8 we'd use ${(b)entry}, but we support older zsh's, so we don't
+  # ### add (b).  The only effect is on the failure mode for callers that violate
+  # ### the precondition.
+  local region="${zle_highlight[(r)${entry}:*]-}"
 
   if [[ -z "$region" ]]; then
     # entry not specified at all, use default value
