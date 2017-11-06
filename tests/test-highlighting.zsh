@@ -97,9 +97,11 @@ run_test_internal() {
   echo "# ${1:t:r}"
 
   # Load the data and prepare checking it.
-  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET
+  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET skip_test
   local -a expected_region_highlight region_highlight
   . "$srcdir"/"$1"
+
+  (( $#skip_test )) && { print -r -- "1..0 # SKIP $skip_test"; return; }
 
   # Check the data declares $PREBUFFER or $BUFFER.
   [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return 1; }
