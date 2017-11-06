@@ -44,6 +44,10 @@ do
     (#* | <->..<->)
       print -nP %F{blue}
       ;;
+    # SKIP
+    (*# SKIP*)
+      print -nP %F{yellow}
+      ;;
     # XPASS
     (ok*# TODO*)
       print -nP %F{red}
