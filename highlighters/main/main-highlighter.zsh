@@ -78,7 +78,7 @@ _zsh_highlight_main_add_region_highlight() {
         command arg0
         precommand arg0
         hashed-command arg0
-        
+
         path_prefix path
         # The path separator fallback won't ever be used, due to the optimisation
         # in _zsh_highlight_main_highlighter_highlight_path_separators().
@@ -286,7 +286,7 @@ _zsh_highlight_highlighter_main_paint()
   # and :sudo_opt:.
   #
   # The tokens are always added with both leading and trailing colons to serve as
-  # word delimiters (an improvised array); [[ $x == *:foo:* ]] and x=${x//:foo:/} 
+  # word delimiters (an improvised array); [[ $x == *:foo:* ]] and x=${x//:foo:/}
   # will DTRT regardless of how many elements or repetitions $x has..
   #
   # Handling of redirections: upon seeing a redirection token, we must stall
@@ -542,7 +542,7 @@ _zsh_highlight_highlighter_main_paint()
         'suffix alias') style=suffix-alias;;
         alias)          () {
                           integer insane_alias
-                          case $arg in 
+                          case $arg in
                             # Issue #263: aliases with '=' on their LHS.
                             #
                             # There are three cases:
