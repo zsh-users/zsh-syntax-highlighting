@@ -676,19 +676,7 @@ _zsh_highlight_highlighter_main_paint()
                  ;|
         '--'*)   style=double-hyphen-option;;
         '-'*)    style=single-hyphen-option;;
-        "'"*)    _zsh_highlight_main_highlighter_highlight_single_quote 1
-                 already_added=1
-                 ;;
-        '"'*)    _zsh_highlight_main_highlighter_highlight_double_quote
-                 already_added=1
-                 ;;
-        \$\'*)   _zsh_highlight_main_highlighter_highlight_dollar_quote
-                 already_added=1
-                 ;;
         '`'*)    style=back-quoted-argument;;
-        [$][*])  style=default;;
-        [*?]*|*[^\\][*?]*)
-                 $highlight_glob && style=globbing || style=default;;
         *)       if false; then
                  elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
                    # was handled by the $'\x7d' case above
@@ -706,7 +694,8 @@ _zsh_highlight_highlighter_main_paint()
                    if _zsh_highlight_main_highlighter_check_path; then
                      style=$REPLY
                    else
-                     style=default
+                     _zsh_highlight_main_highlighter_highlight_argument
+                     already_added=1
                    fi
                  fi
                  ;;
@@ -805,6 +794,49 @@ _zsh_highlight_main_highlighter_check_path()
   return 1
 }
 
+# Highlight an argument and possibly special chars in quotes
+# This command will at least highlight start_pos to end_pos with the default style
+_zsh_highlight_main_highlighter_highlight_argument()
+{
+  local i
+
+  _zsh_highlight_main_add_region_highlight $start_pos $end_pos default
+  for (( i = 1 ; i <= end_pos - start_pos ; i += 1 )); do
+    case "$arg[$i]" in
+      "\\") (( i += 1 )); continue;;
+      "'") _zsh_highlight_main_highlighter_highlight_single_quote $i; (( i = REPLY ));;
+      '"') _zsh_highlight_main_highlighter_highlight_double_quote $i; (( i = REPLY ));;
+      '$')
+        if [[ $arg[i+1] == "'" ]]; then
+          _zsh_highlight_main_highlighter_highlight_dollar_quote $i
+          (( i = REPLY ))
+        elif [[ $arg[i+1] == [\^=~#+] ]]; then
+          while [[ $arg[i+1] == [\^=~#+] ]]; do
+            (( i += 1 ))
+          done
+          if [[ $arg[i+1] == [*@#?-$!] ]]; then
+            (( i += 1 ))
+          fi
+        elif [[ $arg[i+1] == [*@#?-$!] ]]; then
+          (( i += 1 ))
+        fi;;
+      [*?])
+        if $highlight_glob; then
+          _zsh_highlight_main_add_region_highlight $start_pos $end_pos globbing
+          break
+        fi;;
+      *) continue;;
+    esac
+  done
+}
+
+# Quote Helper Functions
+#
+# $arg is expected to be set to the current argument
+# $start_pos is expected to be set to the start of $arg in $BUFFER
+# $1 is the index in $arg which starts the quote
+# $REPLY is returned as the end of quote index in $arg
+
 # Highlight single-quoted strings
 _zsh_highlight_main_highlighter_highlight_single_quote()
 {
@@ -832,11 +864,11 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
   local MATCH; integer MBEGIN MEND
   local i j k style
 
-  # Starting quote is at 1, so start parsing at offset 2 in the string.
-  for (( i = 2 ; i < end_pos - start_pos ; i += 1 )) ; do
+  for (( i = $1 + 1 ; i < end_pos - start_pos ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
+      '"') break;;
       '$' ) style=dollar-double-quoted-argument
             # Look for an alphanumeric parameter name.
             if [[ ${arg:$i} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+) ]] ; then
@@ -880,8 +912,9 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
     highlights+=($j $k $style)
   done
 
-  highlights=($start_pos $end_pos double-quoted-argument $highlights)
+  highlights=($(( start_pos + $1 - 1)) $(( start_pos + i )) double-quoted-argument $highlights)
   _zsh_highlight_main_add_many_region_highlights $highlights
+  REPLY=$i
 }
 
 # Highlight special chars inside dollar-quoted strings
@@ -893,11 +926,11 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
   local AA
   integer c
 
-  # Starting dollar-quote is at 1:2, so start parsing at offset 3 in the string.
-  for (( i = 3 ; i < end_pos - start_pos ; i += 1 )) ; do
+  for (( i = $1 + 2 ; i < end_pos - start_pos ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
+      "'") break;;
       "\\") style=back-dollar-quoted-argument
             for (( c = i + 1 ; c <= end_pos - start_pos ; c += 1 )); do
               [[ "$arg[$c]" != ([0-9xXuUa-fA-F]) ]] && break
@@ -926,8 +959,9 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
     highlights+=($j $k $style)
   done
 
-  highlights=($start_pos $end_pos dollar-quoted-argument $highlights)
+  highlights=($(( start_pos + $1 - 1 )) $(( start_pos + i )) dollar-quoted-argument $highlights)
   _zsh_highlight_main_add_many_region_highlights $highlights
+  REPLY=$i
 }
 
 # Called with a single positional argument.
