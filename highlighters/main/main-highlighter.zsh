@@ -103,6 +103,12 @@ _zsh_highlight_main_add_region_highlight() {
   _zsh_highlight_add_highlight $start $end "$@"
 }
 
+_zsh_highlight_main_add_many_region_highlights() {
+  for 1 2 3; do
+    _zsh_highlight_main_add_region_highlight $1 $2 $3
+  done
+}
+
 # Get the type of a command.
 #
 # Uses the zsh/parameter module if available to avoid forks, and a
@@ -670,14 +676,10 @@ _zsh_highlight_highlighter_main_paint()
         '--'*)   style=double-hyphen-option;;
         '-'*)    style=single-hyphen-option;;
         "'"*)    style=single-quoted-argument;;
-        '"'*)    style=double-quoted-argument
-                 _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-                 _zsh_highlight_main_highlighter_highlight_string
+        '"'*)    _zsh_highlight_main_highlighter_highlight_double_quote
                  already_added=1
                  ;;
-        \$\'*)   style=dollar-quoted-argument
-                 _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-                 _zsh_highlight_main_highlighter_highlight_dollar_string
+        \$\'*)   _zsh_highlight_main_highlighter_highlight_dollar_quote
                  already_added=1
                  ;;
         '`'*)    style=back-quoted-argument;;
@@ -801,11 +803,12 @@ _zsh_highlight_main_highlighter_check_path()
 }
 
 # Highlight special chars inside double-quoted strings
-_zsh_highlight_main_highlighter_highlight_string()
+_zsh_highlight_main_highlighter_highlight_double_quote()
 {
-  local -a match mbegin mend
+  local -a highlights match mbegin mend
   local MATCH; integer MBEGIN MEND
   local i j k style
+
   # Starting quote is at 1, so start parsing at offset 2 in the string.
   for (( i = 2 ; i < end_pos - start_pos ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
@@ -851,18 +854,22 @@ _zsh_highlight_main_highlighter_highlight_string()
       *) continue ;;
 
     esac
-    _zsh_highlight_main_add_region_highlight $j $k $style
+    highlights+=($j $k $style)
   done
+
+  highlights=($start_pos $end_pos double-quoted-argument $highlights)
+  _zsh_highlight_main_add_many_region_highlights $highlights
 }
 
 # Highlight special chars inside dollar-quoted strings
-_zsh_highlight_main_highlighter_highlight_dollar_string()
+_zsh_highlight_main_highlighter_highlight_dollar_quote()
 {
-  local -a match mbegin mend
+  local -a highlights match mbegin mend
   local MATCH; integer MBEGIN MEND
   local i j k style
   local AA
   integer c
+
   # Starting dollar-quote is at 1:2, so start parsing at offset 3 in the string.
   for (( i = 3 ; i < end_pos - start_pos ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
@@ -893,8 +900,11 @@ _zsh_highlight_main_highlighter_highlight_dollar_string()
       *) continue ;;
 
     esac
-    _zsh_highlight_main_add_region_highlight $j $k $style
+    highlights+=($j $k $style)
   done
+
+  highlights=($start_pos $end_pos dollar-quoted-argument $highlights)
+  _zsh_highlight_main_add_many_region_highlights $highlights
 }
 
 # Called with a single positional argument.
