@@ -46,6 +46,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[single-quoted-argument]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[double-quoted-argument]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]:=fg=yellow}
+: ${ZSH_HIGHLIGHT_STYLES[rc-quote]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]:=fg=cyan}
@@ -675,7 +676,9 @@ _zsh_highlight_highlighter_main_paint()
                  ;|
         '--'*)   style=double-hyphen-option;;
         '-'*)    style=single-hyphen-option;;
-        "'"*)    style=single-quoted-argument;;
+        "'"*)    _zsh_highlight_main_highlighter_highlight_single_quote 1
+                 already_added=1
+                 ;;
         '"'*)    _zsh_highlight_main_highlighter_highlight_double_quote
                  already_added=1
                  ;;
@@ -800,6 +803,26 @@ _zsh_highlight_main_highlighter_check_path()
 
   # It's not a path.
   return 1
+}
+
+# Highlight single-quoted strings
+_zsh_highlight_main_highlighter_highlight_single_quote()
+{
+  local arg1=$1 i q=\'
+  local -a highlights
+  i=$arg[(ib:arg1+1:)$q]
+
+  if [[ $zsyh_user_options[rcquotes] == on ]]; then
+    while [[ $arg[i+1] == "'" ]]; do
+      highlights+=($(( start_pos + i - 1 )) $(( start_pos + i + 1 )) rc-quote)
+      (( i++ ))
+      i=$arg[(ib:i+1:)$q]
+    done
+  fi
+
+  highlights=($(( start_pos + $1 - 1 )) $(( start_pos + i )) single-quoted-argument $highlights)
+  _zsh_highlight_main_add_many_region_highlights $highlights
+  REPLY=$i
 }
 
 # Highlight special chars inside double-quoted strings

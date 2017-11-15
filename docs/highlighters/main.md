@@ -38,6 +38,7 @@ This highlighter defines the following styles:
 * `single-quoted-argument` - single quoted arguments (`` 'foo' ``)
 * `double-quoted-argument` - double quoted arguments (`` "foo" ``)
 * `dollar-quoted-argument` - dollar quoted arguments (`` $'foo' ``)
+* `rc-quote` - two single quotes inside single quotes when the `RC_QUOTES` option is set (`` 'foo''bar' ``)
 * `dollar-double-quoted-argument` - parameter expansion inside double quotes (`$foo` inside `""`)
 * `back-double-quoted-argument` -  back double quoted arguments (`\x` inside `""`)
 * `back-dollar-quoted-argument` -  back dollar quoted arguments (`\x` inside `$''`)
