@@ -28,11 +28,16 @@
 # -------------------------------------------------------------------------------------------------
 
 ZSH_HIGHLIGHT_STYLES[bracket-level-1]=
+ZSH_HIGHLIGHT_STYLES[bracket-level-2]=
 
 BUFFER=': {"{x}"}'
 
 expected_region_highlight=(
   "3 3 bracket-level-1"
-  "4 8 NONE"
+  "4 4 NONE"
+  "5 5 bracket-level-2"
+  "6 6 NONE"
+  "7 7 bracket-level-2"
+  "8 8 NONE"
   "9 9 bracket-level-1"
 )

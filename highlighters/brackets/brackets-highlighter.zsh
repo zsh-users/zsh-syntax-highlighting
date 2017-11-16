@@ -70,10 +70,6 @@ _zsh_highlight_highlighter_brackets_paint()
           levelpos[$pos]=-1
         fi
         ;;
-      ['"'\'])
-        # Skip everything inside quotes
-	pos=$BUFFER[(ib:pos+1:)$char]
-        ;;
     esac
   done
 
