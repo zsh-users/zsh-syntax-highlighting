@@ -85,6 +85,10 @@ _zsh_highlight_main_add_region_highlight() {
         # in _zsh_highlight_main_highlighter_highlight_path_separators().
         path_pathseparator path
         path_prefix_pathseparator path_prefix
+
+        single-quoted-argument{-unclosed,}
+        double-quoted-argument{-unclosed,}
+        dollar-single-quoted-argument{-unclosed,}
     )
     local needle=$1 value
     while [[ -n ${value::=$fallback_of[$needle]} ]]; do
@@ -840,7 +844,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
 # Highlight single-quoted strings
 _zsh_highlight_main_highlighter_highlight_single_quote()
 {
-  local arg1=$1 i q=\'
+  local arg1=$1 i q=\' style
   local -a highlights
   i=$arg[(ib:arg1+1:)$q]
 
@@ -852,7 +856,12 @@ _zsh_highlight_main_highlighter_highlight_single_quote()
     done
   fi
 
-  highlights=($(( start_pos + $1 - 1 )) $(( start_pos + i )) single-quoted-argument $highlights)
+  if [[ $arg[i] == "'" ]]; then
+    style=single-quoted-argument
+  else
+    style=single-quoted-argument-unclosed
+  fi
+  highlights+=($(( start_pos + $1 - 1 )) $(( start_pos + i )) $style $highlights)
   _zsh_highlight_main_add_many_region_highlights $highlights
   REPLY=$i
 }
@@ -912,7 +921,12 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
     highlights+=($j $k $style)
   done
 
-  highlights=($(( start_pos + $1 - 1)) $(( start_pos + i )) double-quoted-argument $highlights)
+  if [[ $arg[i] == '"' ]]; then
+    style=double-quoted-argument
+  else
+    style=double-quoted-argument-unclosed
+  fi
+  highlights=($(( start_pos + $1 - 1)) $(( start_pos + i )) $style $highlights)
   _zsh_highlight_main_add_many_region_highlights $highlights
   REPLY=$i
 }
@@ -959,7 +973,12 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
     highlights+=($j $k $style)
   done
 
-  highlights=($(( start_pos + $1 - 1 )) $(( start_pos + i )) dollar-quoted-argument $highlights)
+  if [[ $arg[i] == "'" ]]; then
+    style=dollar-quoted-argument
+  else
+    style=dollar-quoted-argument-unclosed
+  fi
+  highlights+=($(( start_pos + $1 - 1 )) $(( start_pos + i )) $style $highlights)
   _zsh_highlight_main_add_many_region_highlights $highlights
   REPLY=$i
 }

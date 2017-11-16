@@ -32,6 +32,6 @@
 BUFFER=": \$'\xa1"
 
 expected_region_highlight=(
-  "3 4 dollar-quoted-argument" # $'
+  "3 4 dollar-quoted-argument-unclosed" # $'
   "5 8 back-dollar-quoted-argument" # \xa1
 )

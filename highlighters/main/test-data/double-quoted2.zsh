@@ -32,6 +32,6 @@
 BUFFER=': "foo$bar'
 
 expected_region_highlight=(
-  "3 6 double-quoted-argument" # "foo
+  "3 6 double-quoted-argument-unclosed" # "foo
   "7 10 dollar-double-quoted-argument" # $bar
 )
