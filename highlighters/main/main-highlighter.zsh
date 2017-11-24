@@ -195,7 +195,7 @@ _zsh_highlight_main__stack_pop() {
 _zsh_highlight_highlighter_main_paint()
 {
   # Before we even 'emulate -L', save the user's options
-  local -A useroptions=("${(@kv)options}")
+  local -A useroptions; useroptions=("${(@kv)options}")
   emulate -L zsh
   setopt localoptions extendedglob bareglobqual
 
