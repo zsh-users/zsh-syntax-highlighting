@@ -196,7 +196,21 @@ _zsh_highlight_main__stack_pop() {
 _zsh_highlight_highlighter_main_paint()
 {
   # Before we even 'emulate -L', save the user's options
-  local -A useroptions; useroptions=("${(@kv)options}")
+  local -A useroptions
+  if zmodload -e zsh/parameter; then
+    useroptions=("${(@kv)options}")
+  else
+    local canonicaloptions onoff option rawoptions
+    rawoptions=(${(f)"$(emulate -R zsh; set -o)"})
+    canonicaloptions=(${${${(M)rawoptions:#*off}%% *}#no} ${${(M)rawoptions:#*on}%% *})
+    for option in $canonicaloptions; do
+      [[ -o $option ]]
+      # This variable cannot be eliminated c.f. workers/42101.
+      onoff=${${=:-off on}[2-$?]}
+      useroptions+=($option $onoff)
+    done
+  fi
+
   emulate -L zsh
   setopt localoptions extendedglob bareglobqual
 
