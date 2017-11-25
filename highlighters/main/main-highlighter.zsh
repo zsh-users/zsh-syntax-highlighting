@@ -147,6 +147,7 @@ _zsh_highlight_main__type() {
     fi
   fi
   if ! (( $+REPLY )); then
+    # Note that 'type -w' will run 'rehash' implicitly.
     REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null)##*: }"
   fi
   if (( $+_zsh_highlight_main__command_type_cache )); then
@@ -457,7 +458,7 @@ _zsh_highlight_highlighter_main_paint()
    elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
       style=precommand
-     elif [[ "$arg" = "sudo" ]]; then
+     elif [[ "$arg" = "sudo" ]] && { _zsh_highlight_main__type sudo; [[ -n $REPLY && $REPLY != "none" ]] }; then
       style=precommand
       next_word=${next_word//:regular:/}
       next_word+=':sudo_opt:'
