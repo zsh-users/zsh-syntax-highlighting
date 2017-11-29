@@ -1,7 +1,7 @@
 zsh-syntax-highlighting [![Build Status][build-status-image]][build-status-travis]
 =======================
 
-**[Fish shell][fish]-like like syntax highlighting for [Zsh][zsh].**
+**[Fish shell][fish]-like syntax highlighting for [Zsh][zsh].**
 
 *Requirements: zsh 4.3.11+.*
 
