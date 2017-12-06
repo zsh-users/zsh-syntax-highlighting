@@ -26,6 +26,8 @@ How to install
 [obs-repository]: https://software.opensuse.org//download.html?project=shells%3Azsh-users%3Azsh-syntax-highlighting&package=zsh-syntax-highlighting
 [void-package]: https://github.com/voidlinux/void-packages/tree/master/srcpkgs/zsh-syntax-highlighting
 
+See also [repology's cross-distro index](https://repology.org/metapackage/zsh-syntax-highlighting/versions)
+
 
 ### In your ~/.zshrc
 
