@@ -27,7 +27,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-type sudo >/dev/null || skip_test='sudo must be present'
+sudo(){}
 
 BUFFER='sudo 2>./. -u otheruser ls'
 
