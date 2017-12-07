@@ -27,6 +27,8 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+type sudo >/dev/null || skip_test='sudo must be present'
+
 BUFFER='>/tmp >/tmp sudo echo >/tmp foo'
 
 expected_region_highlight=(
