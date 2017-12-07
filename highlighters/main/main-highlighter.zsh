@@ -488,6 +488,8 @@ _zsh_highlight_highlighter_main_paint()
       case $res in
         reserved)       # reserved word
                         style=reserved-word
+                        #
+                        # Match braces.
                         case $arg in
                           ($'\x7b')
                             braces_stack='Y'"$braces_stack"
@@ -554,6 +556,7 @@ _zsh_highlight_highlighter_main_paint()
                           if (( insane_alias )); then
                             style=unknown-token
                           else
+                            # The common case.
                             style=alias
                             _zsh_highlight_main__resolve_alias $arg
                             local alias_target="$REPLY"
