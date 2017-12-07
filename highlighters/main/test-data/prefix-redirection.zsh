@@ -27,15 +27,13 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-type sudo >/dev/null || skip_test='sudo must be present'
-
-BUFFER='>/tmp >/tmp sudo echo >/tmp foo'
+BUFFER='>/tmp >/tmp command echo >/tmp foo'
 
 expected_region_highlight=(
   "2  5  path"       # /tmp
   "8  11 path"       # /tmp
-  "13 16 precommand" # sudo
-  "18 21 builtin"    # echo
-  "24 27 path"       # /tmp
-  "29 31 default"    # foo
+  "13 19 precommand" # command
+  "21 24 builtin"    # echo
+  "27 30 path"       # /tmp
+  "32 34 default"    # foo
 )
