@@ -61,6 +61,11 @@ itself as third word (cf. the [documentation for `expected_region_highlight`]
       "1 8 fg=white,bold,bg=red" # rm -rf /
     )
 
+Testing the `regexp` highlighter
+---------------------------------
+
+Same as `pattern` highlighter
+
 Miscellany
 ----------
 
