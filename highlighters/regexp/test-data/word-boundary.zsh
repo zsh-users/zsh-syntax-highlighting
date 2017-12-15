@@ -27,12 +27,16 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-setopt RE_MATCH_PCRE
+if zmodload -s zsh/pcre; then
+  setopt RE_MATCH_PCRE
 
-ZSH_HIGHLIGHT_REGEXP+=('\bsudo\b' 'fg=white,bold,bg=red')
+  ZSH_HIGHLIGHT_REGEXP+=('\bsudo\b' 'fg=white,bold,bg=red')
 
-BUFFER='sudo ls'
+  BUFFER='sudo ls'
 
-expected_region_highlight=(
-  "1 4 fg=white,bold,bg=red"
-)
+  expected_region_highlight=(
+    "1 4 fg=white,bold,bg=red"
+  )
+else
+  skip_test='Test requires zsh/pcre'
+fi
