@@ -27,7 +27,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-if zmodload -s zsh/pcre; then
+if zmodload zsh/pcre 2>/dev/null; then
   setopt RE_MATCH_PCRE
 
   ZSH_HIGHLIGHT_REGEXP+=('\bsudo\b' 'fg=white,bold,bg=red')
