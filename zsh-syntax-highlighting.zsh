@@ -83,8 +83,25 @@ _zsh_highlight()
     return $ret
   fi
 
+  # Before we 'emulate -L', save the user's options
+  local -A zsyh_user_options
+  if zmodload -e zsh/parameter; then
+    zsyh_user_options=("${(@kv)options}")
+  else
+    local canonical_options onoff option raw_options
+    raw_options=(${(f)"$(emulate -R zsh; set -o)"})
+    canonical_options=(${${${(M)raw_options:#*off}%% *}#no} ${${(M)raw_options:#*on}%% *})
+    for option in $canonical_options; do
+      [[ -o $option ]]
+      # This variable cannot be eliminated c.f. workers/42101.
+      onoff=${${=:-off on}[2-$?]}
+      zsyh_user_options+=($option $onoff)
+    done
+  fi
+  typeset -r zsyh_user_options
+
+  emulate -L zsh
   setopt localoptions warncreateglobal
-  setopt localoptions noksharrays
   local REPLY # don't leak $REPLY into global scope
 
   # Do not highlight if there are more than 300 chars in the buffer. It's most

@@ -195,24 +195,7 @@ _zsh_highlight_main__stack_pop() {
 # Main syntax highlighting function.
 _zsh_highlight_highlighter_main_paint()
 {
-  # Before we even 'emulate -L', save the user's options
-  local -A useroptions
-  if zmodload -e zsh/parameter; then
-    useroptions=("${(@kv)options}")
-  else
-    local canonicaloptions onoff option rawoptions
-    rawoptions=(${(f)"$(emulate -R zsh; set -o)"})
-    canonicaloptions=(${${${(M)rawoptions:#*off}%% *}#no} ${${(M)rawoptions:#*on}%% *})
-    for option in $canonicaloptions; do
-      [[ -o $option ]]
-      # This variable cannot be eliminated c.f. workers/42101.
-      onoff=${${=:-off on}[2-$?]}
-      useroptions+=($option $onoff)
-    done
-  fi
-
-  emulate -L zsh
-  setopt localoptions extendedglob bareglobqual
+  setopt localoptions extendedglob
 
   # At the PS3 prompt and in vared, highlight nothing.
   #
@@ -243,13 +226,13 @@ _zsh_highlight_highlighter_main_paint()
   # ":" for 'then'
   local braces_stack
 
-  if [[ $useroptions[ignorebraces] == on || ${useroptions[ignoreclosebraces]:-off} == on ]]; then
+  if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
     local right_brace_is_recognised_everywhere=false
   else
     local right_brace_is_recognised_everywhere=true
   fi
 
-  if [[ $useroptions[pathdirs] == on ]]; then
+  if [[ $zsyh_user_options[pathdirs] == on ]]; then
     options_to_set+=( PATH_DIRS )
   fi
 
@@ -326,7 +309,7 @@ _zsh_highlight_highlighter_main_paint()
   # Processing buffer
   local proc_buf="$buf"
   local -a args
-  if [[ $useroptions[interactivecomments] == on ]]; then
+  if [[ $zsyh_user_options[interactivecomments] == on ]]; then
     args=(${(zZ+c+)buf})
   else
     args=(${(z)buf})
@@ -420,7 +403,7 @@ _zsh_highlight_highlighter_main_paint()
     # Handle the INTERACTIVE_COMMENTS option.
     #
     # We use the (Z+c+) flag so the entire comment is presented as one token in $arg.
-    if [[ $useroptions[interactivecomments] == on && $arg[1] == $histchars[3] ]]; then
+    if [[ $zsyh_user_options[interactivecomments] == on && $arg[1] == $histchars[3] ]]; then
       if [[ $this_word == *(':regular:'|':start:')* ]]; then
         style=comment
       else
@@ -659,7 +642,7 @@ _zsh_highlight_highlighter_main_paint()
                    _zsh_highlight_main__stack_pop 'R' style=reserved-word
                  fi;;
         $'\x28\x29') # possibly a function definition
-                 if [[ $useroptions[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
+                 if [[ $zsyh_user_options[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
                  then
                    next_word+=':start:'
                  fi
@@ -816,7 +799,6 @@ _zsh_highlight_main_highlighter_check_path()
 # Highlight special chars inside double-quoted strings
 _zsh_highlight_main_highlighter_highlight_string()
 {
-  setopt localoptions noksharrays
   local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
   local i j k style
@@ -872,7 +854,6 @@ _zsh_highlight_main_highlighter_highlight_string()
 # Highlight special chars inside dollar-quoted strings
 _zsh_highlight_main_highlighter_highlight_dollar_string()
 {
-  setopt localoptions noksharrays
   local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
   local i j k style

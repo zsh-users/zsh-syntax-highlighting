@@ -78,6 +78,14 @@ To create your own `acme` highlighter:
           _zsh_highlight_add_highlight 0 $#BUFFER acme:aurora
         }
 
+  If you need to test which options the user has set, test `zsyh_user_options`
+  with a sensible default if the option is not present in supported zsh
+  versions. For example:
+
+        [[ ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]
+
+  The option name must be all lowercase with no underscores and not an alias.
+
 * Name your own functions and global variables `_zsh_highlight_acme_*`.
 
     - In zsh-syntax-highlighting 0.4.0 and earlier, the entrypoints 
