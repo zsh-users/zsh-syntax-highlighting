@@ -417,8 +417,12 @@ _zsh_highlight_highlighter_main_paint()
 
     # Analyse the current word.
     if _zsh_highlight_main__is_redirection $arg ; then
-      # A '<' or '>', possibly followed by a digit
-      in_redirection=2
+      if (( in_redirection )); then
+        _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
+        already_added=1
+      else
+        in_redirection=2
+      fi
     fi
 
     # Special-case the first word after 'sudo'.
