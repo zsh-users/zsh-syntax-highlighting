@@ -162,7 +162,8 @@ _zsh_highlight_main__is_redirection() {
   # - starts with an optional single-digit number;
   # - then, has a '<' or '>' character;
   # - is not a process substitution [<(...) or >(...)].
-  [[ $1 == (<0-9>|)(\<|\>)* ]] && [[ $1 != (\<|\>)$'\x28'* ]]
+  # - is not a numeric glob <->
+  [[ $1 == (<0-9>|)(\<|\>)* ]] && [[ $1 != (\<|\>)$'\x28'* ]] && [[ $1 != '<'*'-'*'>' ]]
 }
 
 # Resolve alias.
@@ -682,7 +683,7 @@ _zsh_highlight_highlighter_main_paint()
                  ;;
         '`'*)    style=back-quoted-argument;;
         [$][*])  style=default;;
-        [*?]*|*[^\\][*?]*)
+        [*?]*|*[^\\][*?]*|'<'*'-'*'>')
                  $highlight_glob && style=globbing || style=default;;
         *)       if false; then
                  elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
