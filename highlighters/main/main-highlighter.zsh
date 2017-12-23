@@ -173,7 +173,8 @@ _zsh_highlight_main__is_redirection() {
   # - starts with an optional single-digit number;
   # - then, has a '<' or '>' character;
   # - is not a process substitution [<(...) or >(...)].
-  [[ $1 == (<0-9>|)(\<|\>)* ]] && [[ $1 != (\<|\>)$'\x28'* ]]
+  # - is not a numeric glob <->
+  [[ $1 == (<0-9>|)(\<|\>)* ]] && [[ $1 != (\<|\>)$'\x28'* ]] && [[ $1 != *'<'*'-'*'>'* ]]
 }
 
 # Resolve alias.
@@ -820,7 +821,8 @@ _zsh_highlight_main_highlighter_highlight_argument()
         elif [[ $arg[i+1] == [*@#?-$!] ]]; then
           (( i += 1 ))
         fi;;
-      [*?])
+      [*?]|\<)
+	# The '<' is for the <-> globbing syntax.  (This function doesn't get called on redirection tokens.)
         if $highlight_glob; then
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos globbing
           path_eligible=0
