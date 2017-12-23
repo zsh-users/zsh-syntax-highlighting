@@ -28,10 +28,13 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER=$'print <-> x<->'
+BUFFER=$'print <-> x<-> <foo2-3>'
 
 expected_region_highlight=(
   '1 5 builtin' # print
   '7 9 globbing' # <->
   '11 14 globbing' # x<->
+  '16 16 redirection' # <
+  '17 22 default' # foo2-3 (the filename)
+  '23 23 redirection' # >
 )
