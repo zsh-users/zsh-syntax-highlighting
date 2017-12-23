@@ -28,9 +28,10 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER=$'print <->'
+BUFFER=$'print <-> 0<->'
 
 expected_region_highlight=(
   '1 5 builtin' # print
   '7 9 globbing' # <->
+  '11 14 globbing' # 0<->
 )
