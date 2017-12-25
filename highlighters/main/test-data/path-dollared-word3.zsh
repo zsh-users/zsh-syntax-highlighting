@@ -35,5 +35,5 @@ BUFFER='$PWD; ${PWD}'
 
 expected_region_highlight=(
   "1 4 path" # $PWD
-  "7 12 unknown-token" # ${PWD}
+  "7 12 path" # ${PWD}
 )
