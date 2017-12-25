@@ -695,19 +695,14 @@ _zsh_highlight_highlighter_main_paint()
                  elif (( in_redirection == 2 )); then
                    style=redirection
                  else
-                   if _zsh_highlight_main_highlighter_check_path; then
-                     style=$REPLY
-                   else
-                     _zsh_highlight_main_highlighter_highlight_argument
-                     already_added=1
-                   fi
+                   _zsh_highlight_main_highlighter_highlight_argument
+                   already_added=1
                  fi
                  ;;
       esac
     fi
     if ! (( already_added )); then
       _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-      [[ $style == path || $style == path_prefix ]] && _zsh_highlight_main_highlighter_highlight_path_separators
     fi
     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
       if [[ $arg == ';' ]] && $in_array_assignment; then
@@ -802,7 +797,8 @@ _zsh_highlight_main_highlighter_check_path()
 # This command will at least highlight start_pos to end_pos with the default style
 _zsh_highlight_main_highlighter_highlight_argument()
 {
-  local i
+  local i path_eligible style
+  path_eligible=1
 
   _zsh_highlight_main_add_region_highlight $start_pos $end_pos default
   for (( i = 1 ; i <= end_pos - start_pos ; i += 1 )); do
@@ -827,11 +823,18 @@ _zsh_highlight_main_highlighter_highlight_argument()
       [*?])
         if $highlight_glob; then
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos globbing
+          path_eligible=0
           break
         fi;;
       *) continue;;
     esac
   done
+
+  if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path; then
+    style=$REPLY
+    _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
+    _zsh_highlight_main_highlighter_highlight_path_separators
+  fi
 }
 
 # Quote Helper Functions
