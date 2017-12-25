@@ -29,7 +29,7 @@
 # -------------------------------------------------------------------------------------------------
 
 # First of all, ensure predictable parsing.
-local zsh_highlight__aliases="`builtin alias -Lm '[^+]*'`"
+local zsh_highlight__aliases="$(builtin alias -Lm '[^+]*')"
 # In zsh <= 5.2, `alias -L` emits aliases that begin with a plus sign ('alias -- +foo=42')
 # them without a '--' guard, so they don't round trip.
 #
