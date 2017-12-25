@@ -286,8 +286,10 @@ _zsh_highlight_add_highlight()
 # $1 is name of widget to call
 _zsh_highlight_call_widget()
 {
-  builtin zle "$@" && 
+  builtin zle "$@"
+  local -r _zsyh_wrappee_status=$?
   _zsh_highlight
+  return _zsyh_wrappee_status
 }
 
 # Rebind all ZLE widgets to make them invoke _zsh_highlights.
