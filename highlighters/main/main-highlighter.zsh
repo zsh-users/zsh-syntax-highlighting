@@ -509,8 +509,14 @@ _zsh_highlight_main_highlighter_highlight_list()
       # parameters that refer to commands, functions, and builtins.
       local -a match mbegin mend
       local MATCH; integer MBEGIN MEND
+      local parameter_name
+      if [[ $arg[1] == '$' ]] && [[ ${arg[2]} == '{' ]] && [[ ${arg[-1]} == '}' ]]; then
+        parameter_name=${${arg:2}%?}
+      elif [[ $arg[1] == '$' ]]; then
+        parameter_name=${arg:1}
+      fi
       if [[ $res == none ]] && (( ${+parameters} )) &&
-         [[ ${arg[1]} == \$ ]] && [[ ${arg:1} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
+         [[ ${parameter_name} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
          (( ${+parameters[(e)${MATCH}]} )) && [[ ${parameters[(e)$MATCH]} != *special* ]]
          then
         arg=${(P)MATCH}
