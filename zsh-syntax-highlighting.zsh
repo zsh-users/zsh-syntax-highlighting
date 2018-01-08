@@ -53,7 +53,7 @@ fi
 _zsh_highlight__function_is_autoload_stub_p() {
   if zmodload -e zsh/parameter; then
     #(( ${+functions[$1]} )) &&
-    [[ "$functions[$1]" == *"builtin autoload -X" ]]
+    [[ "$functions[$1]" == *"builtin autoload -X"* ]]
   else
     #[[ $(type -wa -- "$1") == *'function'* ]] &&
     [[ "${${(@f)"$(which -- "$1")"}[2]}" == $'\t'$histchars[3]' undefined' ]]
