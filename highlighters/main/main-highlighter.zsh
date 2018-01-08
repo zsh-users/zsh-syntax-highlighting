@@ -89,6 +89,7 @@ _zsh_highlight_main_add_region_highlight() {
         single-quoted-argument{-unclosed,}
         double-quoted-argument{-unclosed,}
         dollar-single-quoted-argument{-unclosed,}
+        back-quoted-argument{-unclosed,}
     )
     local needle=$1 value
     while [[ -n ${value::=$fallback_of[$needle]} ]]; do
@@ -681,7 +682,6 @@ _zsh_highlight_highlighter_main_paint()
                  ;|
         '--'*)   style=double-hyphen-option;;
         '-'*)    style=single-hyphen-option;;
-        '`'*)    style=back-quoted-argument;;
         *)       if false; then
                  elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
                    # was handled by the $'\x7d' case above
@@ -807,6 +807,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
       "\\") (( i += 1 )); continue;;
       "'") _zsh_highlight_main_highlighter_highlight_single_quote $i; (( i = REPLY ));;
       '"') _zsh_highlight_main_highlighter_highlight_double_quote $i; (( i = REPLY ));;
+      '`') _zsh_highlight_main_highlighter_highlight_backtick $i; (( i = REPLY ));;
       '$')
         if [[ $arg[i+1] == "'" ]]; then
           _zsh_highlight_main_highlighter_highlight_dollar_quote $i
@@ -866,7 +867,7 @@ _zsh_highlight_main_highlighter_highlight_single_quote()
   else
     style=single-quoted-argument-unclosed
   fi
-  highlights+=($(( start_pos + $1 - 1 )) $(( start_pos + i )) $style $highlights)
+  highlights+=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style $highlights)
   _zsh_highlight_main_add_many_region_highlights $highlights
   REPLY=$i
 }
@@ -985,6 +986,21 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
   fi
   highlights+=($(( start_pos + $1 - 1 )) $(( start_pos + i )) $style $highlights)
   _zsh_highlight_main_add_many_region_highlights $highlights
+  REPLY=$i
+}
+
+# Highlight backtick subshells
+_zsh_highlight_main_highlighter_highlight_backtick()
+{
+  local arg1=$1 i=$1 q=\` style
+  while i=$arg[(ib:i+1:)$q]; [[ $arg[i-1] == '\' && $i -lt $(( end_pos - start_pos )) ]]; do done
+
+  if [[ $arg[i] == '`' ]]; then
+    style=back-quoted-argument
+  else
+    style=back-quoted-argument-unclosed
+  fi
+  _zsh_highlight_main_add_region_highlight $(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style
   REPLY=$i
 }
 

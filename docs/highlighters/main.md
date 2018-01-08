@@ -35,6 +35,7 @@ This highlighter defines the following styles:
 * `single-hyphen-option` - single hyphen options (`-o`)
 * `double-hyphen-option` - double hyphen options (`--option`)
 * `back-quoted-argument` - backquoted expressions (`` `foo` ``)
+* `back-quoted-argument-unclosed` - unclosed backquoted expressions (`` `foo ``)
 * `single-quoted-argument` - single quoted arguments (`` 'foo' ``)
 * `single-quoted-argument-unclosed` - unclosed single quoted arguments (`` 'foo ``)
 * `double-quoted-argument` - double quoted arguments (`` "foo" ``)

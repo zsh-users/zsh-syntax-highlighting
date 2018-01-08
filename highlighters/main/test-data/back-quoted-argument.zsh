@@ -27,8 +27,10 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER='echo `echo 42`'
+# 42 is in the command position in a nested subshell.
+BUFFER='echo `echo \`42\`` `echo 6 times 9'
 
 expected_region_highlight=(
-  "6 14 back-quoted-argument"
+  "6 18 back-quoted-argument"
+  "20 34 back-quoted-argument-unclosed"
 )
