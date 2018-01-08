@@ -349,7 +349,7 @@ then
     # A nested function is required to hide zle parameters; see
     # "User-defined widgets" in zshall.
     () {
-      local -h +r WIDGET=zle-line-finish
+      local -h -r WIDGET=zle-line-finish
       _zsh_highlight "$@"
     } "$@"
   }
