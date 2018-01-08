@@ -65,7 +65,13 @@ _zsh_highlight__function_is_autoload_stub_p() {
 
 # Return True iff the argument denotes a function name.
 _zsh_highlight__is_function_p() {
-  (( ${+functions[$1]} )) || [[ $(type -wa -- "$1") == *'function'* ]]
+  if (( ${+functions} )); then
+    ## zsh/parameter is available
+    (( ${+functions[$1]} ))
+  else
+    ## zsh/parameter isn't available
+    [[ $(type -wa -- "$1") == *'function'* ]]
+  fi
 }
 
 # This function takes a single argument F and returns True iff F denotes the
