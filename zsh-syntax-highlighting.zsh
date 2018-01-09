@@ -342,8 +342,9 @@ then
   _zsh_highlight__zle-line-finish() {
     # Reset $WIDGET since the 'main' highlighter depends on it.
     #
-    # A nested function is required to hide zle parameters; see
-    # "User-defined widgets" in zshall.
+    # Since $WIDGET is declared by zle as read-only in this function's scope,
+    # a nested function is required in order to shadow its built-in value;
+    # see "User-defined widgets" in zshall.
     () {
       local -h -r WIDGET=zle-line-finish
       _zsh_highlight "$@"
