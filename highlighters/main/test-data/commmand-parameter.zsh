@@ -28,9 +28,13 @@
 # -------------------------------------------------------------------------------------------------
 
 local x=/usr/bin/env
-BUFFER='$x "argument"'
+local y=sudo
+local -a z; z=(zsh -f)
+BUFFER='$x "argument"; $y; $z'
 
 expected_region_highlight=(
   "1 2 command" # $x
   "4 13 double-quoted-argument" # "argument"
+  "16 17 precommand" # $y (sudo)
+  "20 21 command" # $z - 'zsh' being the command
 )

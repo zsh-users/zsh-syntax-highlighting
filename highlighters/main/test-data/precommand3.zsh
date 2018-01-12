@@ -27,14 +27,15 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-alias a=:
-f() {}
-
-BUFFER='a;f;'
+BUFFER='nice -n10 ls; nice -n 10 ls'
 
 expected_region_highlight=(
-  "1 1 alias" # f
-  "2 2 commandseparator" # ;
-  "3 3 function" # g
-  "4 4 commandseparator" # ;
+  "1 4 precommand" # nice
+  "6 9 single-hyphen-option" # -n10
+  "11 12 command" # ls
+  "13 13 commandseparator" # ;
+  "15 18 precommand" # nice
+  "20 21 single-hyphen-option" # -n
+  "23 24 default" # 10
+  "26 27 command" # ls
 )

@@ -165,6 +165,19 @@ _zsh_highlight_main__type() {
   if (( $+_zsh_highlight_main__command_type_cache )); then
     _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
   fi
+  [[ -n $REPLY ]]
+  return $?
+}
+
+# Checks whether $1 is something that can be run.
+# 
+# Return 0 if runnable, 1 if not runnable, 2 if trouble.
+_zsh_highlight_main__is_runnable() {
+  if _zsh_highlight_main__type "$1"; then
+    [[ $REPLY != none ]]
+  else
+    return 2
+  fi
 }
 
 # Check whether the first argument is a redirection operator token.
@@ -220,10 +233,9 @@ _zsh_highlight_highlighter_main_paint()
   fi
 
   ## Variable declarations and initializations
-  local start_pos=0 end_pos highlight_glob=true arg style
+  local start_pos=0 end_pos highlight_glob=true arg arg_raw style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   typeset -a ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR
-  typeset -a ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
   typeset -a ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW
   local -a options_to_set # used in callees
   local buf="$PREBUFFER$BUFFER"
@@ -238,6 +250,30 @@ _zsh_highlight_highlighter_main_paint()
   # "?" for 'if'/'fi'; also checked by 'elif'/'else'
   # ":" for 'then'
   local braces_stack
+
+  # $flags_with_argument is a set of letters, corresponding to the option letters
+  # that would    be followed by a colon in a getopts specification.
+  local flags_with_argument
+  # $flags_sans_argument is a set of letters, corresponding to the option letters
+  # that wouldn't be followed by a colon in a getopts specification.
+  local flags_sans_argument
+  # $precommand_options maps precommand name to values of $flags_with_argument and
+  # $flags_sans_argument for that precommand, joined by a colon.
+  #
+  # Currently, setting $flags_sans_argument is only important for commands that
+  # have a non-empty $flags_with_argument; see test-data/precommand4.zsh.
+  local -A precommand_options
+  precommand_options=(
+    'command' :pvV # as of zsh 5.4.2
+    'nice' n # as of current POSIX spec
+    'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
+    'doas' aCu:Lns # as of OpenBSD's doas(1) dated September 4, 2016
+    'builtin' '' # as of zsh 5.4.2
+    'exec' a:cl # as of zsh 5.4.2
+    'nocorrect' '' # as of zsh 5.4.2
+    'noglob' '' # as of zsh 5.4.2
+    'pkexec' '' # doesn't take short options; immune to #121 because it's usually not passed --option flags
+  )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
     local right_brace_is_recognised_everywhere=false
@@ -255,10 +291,6 @@ _zsh_highlight_highlighter_main_paint()
     '&!' '&|'
     # ### 'case' syntax, but followed by a pattern, not by a command
     # ';;' ';&' ';|'
-  )
-  ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS=(
-    'builtin' 'command' 'exec' 'nocorrect' 'noglob'
-    'pkexec' # immune to #121 because it's usually not passed --option flags
   )
 
   # Tokens that, at (naively-determined) "command position", are followed by
@@ -285,8 +317,9 @@ _zsh_highlight_highlighter_main_paint()
   #
   # The states are:
   # - :start:      Command word
-  # - :sudo_opt:   A leading-dash option to sudo (such as "-u" or "-i")
-  # - :sudo_arg:   The argument to a sudo leading-dash option that takes one,
+  # - :sudo_opt:   A leading-dash option to a precommand, whether it takes an
+  #                argument or not.  (Example: sudo's "-u" or "-i".)
+  # - :sudo_arg:   The argument to a precommand's leading-dash option,
   #                when given as a separate word; i.e., "foo" in "-u foo" (two
   #                words) but not in "-ufoo" (one word).
   # - :regular:    "Not a command word", and command delimiters are permitted.
@@ -328,6 +361,9 @@ _zsh_highlight_highlighter_main_paint()
     args=(${(z)buf})
   fi
   for arg in $args; do
+    # Save an unmunged copy of the current word.
+    arg_raw="$arg"
+
     # Initialize $next_word.
     if (( in_redirection )); then
       (( --in_redirection ))
@@ -438,6 +474,65 @@ _zsh_highlight_highlighter_main_paint()
       fi
     fi
 
+    # Expand aliases.
+    # TODO: this should be done iteratively, e.g., 'alias x=y y=z z=w\n x' 
+    #       And then the entire 'alias' branch of the 'case' statement should
+    #       be done here.
+    # TODO: path expansion should happen _after_ alias expansion
+    _zsh_highlight_main_highlighter_expand_path $arg
+    _zsh_highlight_main__type "$REPLY"
+    local res="$REPLY"
+    if [[ $res == "alias" ]]; then
+      _zsh_highlight_main__resolve_alias $arg
+      () {
+        # Use a temporary array to ensure the subscript is interpreted as
+        # an array subscript, not as a scalar subscript
+        local -a reply
+        # TODO: the ${interactive_comments+set} path needs to skip comments; see test-data/alias-comment1.zsh
+        reply=( ${interactive_comments-${(z)REPLY}}
+                ${interactive_comments+${(zZ+c+)REPLY}} )
+        arg=$reply[1]
+      }
+    fi
+
+    # Expand parameters.
+    #
+    # ### For now, expand just '$foo' or '${foo}', possibly with braces, but with
+    # ### no other features of the parameter expansion syntax.  (No ${(x)foo},
+    # ### no ${foo[x]}, no ${foo:-x}.)
+    () {
+      # That's not entirely correct --- if the parameter's value happens to be a reserved
+      # word, the parameter expansion will be highlighted as a reserved word --- but that
+      # incorrectness is outweighed by the usability improvement of permitting the use of
+      # parameters that refer to commands, functions, and builtins.
+      local -a match mbegin mend
+      local MATCH; integer MBEGIN MEND
+      local parameter_name
+      if [[ $arg[1] == '$' ]] && [[ ${arg[2]} == '{' ]] && [[ ${arg[-1]} == '}' ]]; then
+        parameter_name=${${arg:2}%?}
+      elif [[ $arg[1] == '$' ]]; then
+        parameter_name=${arg:1}
+      fi
+      if [[ $res == none ]] && zmodload -e zsh/parameter &&
+         [[ ${parameter_name} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
+         (( ${+parameters[${MATCH}]} ))
+         then
+        # Set $arg.
+        case ${(tP)MATCH} in
+          (*array*|*assoc*)
+            local -a words=( ${(P)MATCH} )
+            arg=${words[1]}
+            ;;
+          (*)
+            # scalar, presumably
+            arg=${(P)MATCH}
+            ;;
+        esac
+        _zsh_highlight_main__type "$arg"
+        res=$REPLY
+      fi
+    }
+
     # Special-case the first word after 'sudo'.
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]] && [[ $arg != -* ]]; then
@@ -448,16 +543,23 @@ _zsh_highlight_highlighter_main_paint()
     # Parse the sudo command line
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]]; then
-        case "$arg" in
+        if [[ -n $flags_with_argument ]] &&
+           [[ $arg == '-'[$flags_sans_argument]#[$flags_with_argument] ]]; then
           # Flag that requires an argument
-          '-'[Cgprtu]) this_word=${this_word//:start:/};
-                       next_word=':sudo_arg:';;
+          this_word=${this_word//:start:/}
+          next_word=':sudo_arg:'
+        elif [[ $arg == '-'* ]]; then
+          # Flag that requires no argument, or unknown flag.
           # This prevents misbehavior with sudo -u -otherargument
-          '-'*)        this_word=${this_word//:start:/};
-                       next_word+=':start:';
-                       next_word+=':sudo_opt:';;
-          *)           ;;
-        esac
+          this_word=${this_word//:start:/}
+          next_word+=':start:'
+          next_word+=':sudo_opt:'
+        else
+          # Not an option flag; nothing to do.  (If the command line is
+          # syntactically valid, ${this_word//:sudo_opt:/} should be
+          # non-empty now.)
+          this_word=${this_word//:sudo_opt:/}
+        fi
       elif [[ $this_word == *':sudo_arg:'* ]]; then
         next_word+=':sudo_opt:'
         next_word+=':start:'
@@ -470,35 +572,14 @@ _zsh_highlight_highlighter_main_paint()
      style=reserved-word # de facto a reserved word, although not de jure
      next_word=':start:'
    elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
-     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
+     if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
       style=precommand
-     elif [[ "$arg" = "sudo" ]] && { _zsh_highlight_main__type sudo; [[ -n $REPLY && $REPLY != "none" ]] }; then
-      style=precommand
+      flags_with_argument=${precommand_options[$arg]%:*}
+      flags_sans_argument=${precommand_options[$arg]#*:}
       next_word=${next_word//:regular:/}
       next_word+=':sudo_opt:'
       next_word+=':start:'
      else
-      _zsh_highlight_main_highlighter_expand_path $arg
-      local expanded_arg="$REPLY"
-      _zsh_highlight_main__type ${expanded_arg}
-      local res="$REPLY"
-      () {
-        # Special-case: command word is '$foo', like that, without braces or anything.
-        #
-        # That's not entirely correct --- if the parameter's value happens to be a reserved
-        # word, the parameter expansion will be highlighted as a reserved word --- but that
-        # incorrectness is outweighed by the usability improvement of permitting the use of
-        # parameters that refer to commands, functions, and builtins.
-        local -a match mbegin mend
-        local MATCH; integer MBEGIN MEND
-        if [[ $res == none ]] && (( ${+parameters} )) &&
-           [[ ${arg[1]} == \$ ]] && [[ ${arg:1} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
-           (( ${+parameters[${MATCH}]} ))
-           then
-          _zsh_highlight_main__type ${(P)MATCH}
-          res=$REPLY
-        fi
-      }
       case $res in
         reserved)       # reserved word
                         style=reserved-word
@@ -554,8 +635,9 @@ _zsh_highlight_highlighter_main_paint()
                         ;;
         'suffix alias') style=suffix-alias;;
         alias)          () {
+                          # Make sure to use $arg_raw here, rather than $arg.
                           integer insane_alias
-                          case $arg in
+                          case $arg_raw in
                             # Issue #263: aliases with '=' on their LHS.
                             #
                             # There are three cases:
@@ -569,12 +651,15 @@ _zsh_highlight_highlighter_main_paint()
                           esac
                           if (( insane_alias )); then
                             style=unknown-token
+                          # Calling 'type' again; since __type memoizes the answer, this call is just a hash lookup.
+                          elif _zsh_highlight_main__type "$arg" && [[ $REPLY == 'none' ]]; then
+                            style=unknown-token
                           else
                             # The common case.
                             style=alias
-                            _zsh_highlight_main__resolve_alias $arg
-                            local alias_target="$REPLY"
-                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$alias_target"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]] && ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg)
+                            if (( ${+precommand_options[(re)"$arg"]} )) && (( ! ${+precommand_options[(re)"$arg_raw"]} )); then
+                              precommand_options[$arg_raw]=$precommand_options[$arg]
+                            fi
                           fi
                         }
                         ;;
@@ -714,8 +799,7 @@ _zsh_highlight_highlighter_main_paint()
         highlight_glob=true
       fi
     elif
-       [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]] ||
-       [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} && $this_word == *':start:'* ]]; then
+       [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]]; then
       next_word=':start:'
     elif [[ $arg == "repeat" && $this_word == *':start:'* ]]; then
       # skip the repeat-count word

@@ -27,14 +27,11 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-alias a=:
-f() {}
-
-BUFFER='a;f;'
+# see alias-comment1.zsh
+setopt NO_interactivecomments
+alias x=$'# foo\npwd'
+BUFFER='x'
 
 expected_region_highlight=(
-  "1 1 alias" # f
-  "2 2 commandseparator" # ;
-  "3 3 function" # g
-  "4 4 commandseparator" # ;
+  "1 1 unknown-token" # x becomes #
 )

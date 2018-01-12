@@ -1,5 +1,6 @@
+#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2016 zsh-syntax-highlighting contributors
+# Copyright (c) 2018 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -27,14 +28,12 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-alias a=:
-f() {}
-
-BUFFER='a;f;'
+doas(){}
+BUFFER=$'doas -nu phy1729 ls'
 
 expected_region_highlight=(
-  "1 1 alias" # f
-  "2 2 commandseparator" # ;
-  "3 3 function" # g
-  "4 4 commandseparator" # ;
+  '1 4 precommand' # doas
+  '6 8 single-hyphen-option' # -nu
+  '10 16 default' # phy1729
+  '18 19 command' # ls
 )
