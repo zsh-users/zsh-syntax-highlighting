@@ -234,16 +234,22 @@ _zsh_highlight_highlighter_main_paint()
   local braces_stack
 
   # $flags_with_argument is a set of letters, corresponding to the option letters
-  # that would be followed by a colon in a getopts specification.
+  # that would    be followed by a colon in a getopts specification.
   local flags_with_argument
-  # $precommand_options maps precommand name to value of $flags_with_argument
-  # for that precommand.
+  # $flags_sans_argument is a set of letters, corresponding to the option letters
+  # that wouldn't be followed by a colon in a getopts specification.
+  local flags_sans_argument
+  # $precommand_options maps precommand name to values of $flags_with_argument and
+  # $flags_sans_argument for that precommand, joined by a colon.
+  #
+  # Currently, setting $flags_sans_argument is only important for commands that
+  # have a non-empty $flags_with_argument; see test-data/precommand4.zsh.
   local -A precommand_options
   precommand_options=(
-    'command' ''
-    'nice' n
-    'sudo' Cgprtu
-    'doas' aCu
+    'command' :pvV # as of zsh 5.4.2
+    'nice' n # as of current POSIX spec
+    'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
+    'doas' aCu:Lns # as of OpenBSD's doas(1) dated September 4, 2016
   )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
@@ -511,7 +517,7 @@ _zsh_highlight_highlighter_main_paint()
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]]; then
         if [[ -n $flags_with_argument ]] &&
-           [[ $arg == '-'[$flags_with_argument] ]]; then
+           ( setopt extendedglob; [[ $arg == '-'[$flags_sans_argument]#[$flags_with_argument] ]] ); then
           # Flag that requires an argument
           this_word=${this_word//:start:/}
           next_word=':sudo_arg:'
@@ -538,7 +544,8 @@ _zsh_highlight_highlighter_main_paint()
    elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
      if (( ${+precommand_options[$arg]} )) && { _zsh_highlight_main__type $arg; [[ -n $REPLY && $REPLY != "none" ]] }; then
       style=precommand
-      flags_with_argument=${precommand_options[$arg]}
+      flags_with_argument=${precommand_options[$arg]%:*}
+      flags_sans_argument=${precommand_options[$arg]#*:}
       next_word=${next_word//:regular:/}
       next_word+=':sudo_opt:'
       next_word+=':start:'
