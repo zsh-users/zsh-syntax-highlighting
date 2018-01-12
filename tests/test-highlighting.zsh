@@ -92,7 +92,7 @@ run_test_internal() {
 
   local tests_tempdir="$1"; shift
   local srcdir="$PWD"
-  builtin cd -q -- "$tests_tempdir" || { echo >&2 "Bail out! cd failed: $?"; return 1 }
+  builtin cd -q -- "$tests_tempdir" || { echo >&2 "Bail out! On ${(qq)1}: cd failed: $?"; return 1 }
 
   echo "# ${1:t:r}"
 
@@ -104,9 +104,9 @@ run_test_internal() {
   (( $#skip_test )) && { print -r -- "1..0 # SKIP $skip_test"; return; }
 
   # Check the data declares $PREBUFFER or $BUFFER.
-  [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return 1; }
+  [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! On ${(qq)1}: Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return 1; }
   # Check the data declares $expected_region_highlight.
-  (( ${#expected_region_highlight} == 0 )) && { echo >&2 "Bail out! 'expected_region_highlight' is not declared or empty."; return 1; }
+  (( ${#expected_region_highlight} == 0 )) && { echo >&2 "Bail out! On ${(qq)1}: 'expected_region_highlight' is not declared or empty."; return 1; }
 
   # Set sane defaults for ZLE variables
   : ${CURSOR=$#BUFFER} ${PENDING=0} ${WIDGET=z-sy-h-test-harness-test-widget}
@@ -184,7 +184,7 @@ run_test() {
       local ret=$pipestatus[1] stderr=$pipestatus[2]
       if (( ! stderr )); then
         # stdout will become stderr
-        echo "Bail out! output on stderr"; return 1
+	echo "Bail out! On ${(qq)1}: output on stderr"; return 1
       else
         return $ret
       fi
