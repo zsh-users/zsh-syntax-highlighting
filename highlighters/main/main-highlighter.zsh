@@ -496,8 +496,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     () {
       # TODO: path expansion should happen _after_ alias expansion
       _zsh_highlight_main_highlighter_expand_path $arg
-      local expanded_arg="$REPLY"
-      _zsh_highlight_main__type ${expanded_arg}
+      _zsh_highlight_main__type "$REPLY"
     }
     local res="$REPLY"
     if [[ $res == "alias" ]]; then
