@@ -170,6 +170,8 @@ _zsh_highlight_main__type() {
   if (( $+_zsh_highlight_main__command_type_cache )); then
     _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
   fi
+  [[ -n $REPLY ]]
+  return $?
 }
 
 # Check whether the first argument is a redirection operator token.
@@ -584,7 +586,7 @@ _zsh_highlight_main_highlighter_highlight_list()
      style=reserved-word # de facto a reserved word, although not de jure
      next_word=':start:'
    elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
-     if (( ${+precommand_options[$arg]} )) && { _zsh_highlight_main__type $arg; [[ -n $REPLY && $REPLY != "none" ]] }; then
+     if (( ${+precommand_options[$arg]} )) && { _zsh_highlight_main__type $arg && [[ $REPLY != "none" ]] }; then
       style=precommand
       flags_with_argument=${precommand_options[$arg]%:*}
       flags_sans_argument=${precommand_options[$arg]#*:}
@@ -666,7 +668,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                           if (( insane_alias )); then
                             style=unknown-token
                           # Calling 'type' again; since __type memoizes the answer, this call is just a hash lookup.
-                          elif _zsh_highlight_main__type "$arg"; [[ $REPLY == 'none' ]]; then
+                          elif _zsh_highlight_main__type "$arg" && [[ $REPLY == 'none' ]]; then
                             style=unknown-token
                           else
                             # The common case.
