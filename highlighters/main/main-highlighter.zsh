@@ -230,7 +230,6 @@ _zsh_highlight_highlighter_main_paint()
   local start_pos=0 end_pos highlight_glob=true arg arg_raw style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   typeset -a ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR
-  typeset -a ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
   typeset -a ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW
   local -a options_to_set # used in callees
   local buf="$PREBUFFER$BUFFER"
@@ -263,6 +262,11 @@ _zsh_highlight_highlighter_main_paint()
     'nice' n # as of current POSIX spec
     'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
     'doas' aCu:Lns # as of OpenBSD's doas(1) dated September 4, 2016
+    'builtin' '' # as of zsh 5.4.2
+    'exec' a:cl # as of zsh 5.4.2
+    'nocorrect' '' # as of zsh 5.4.2
+    'noglob' '' # as of zsh 5.4.2
+    'pkexec' '' # doesn't take short options; immune to #121 because it's usually not passed --option flags
   )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
@@ -281,10 +285,6 @@ _zsh_highlight_highlighter_main_paint()
     '&!' '&|'
     # ### 'case' syntax, but followed by a pattern, not by a command
     # ';;' ';&' ';|'
-  )
-  ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS=(
-    'builtin' 'exec' 'nocorrect' 'noglob'
-    'pkexec' # immune to #121 because it's usually not passed --option flags
   )
 
   # Tokens that, at (naively-determined) "command position", are followed by
@@ -574,8 +574,6 @@ _zsh_highlight_highlighter_main_paint()
       next_word=${next_word//:regular:/}
       next_word+=':sudo_opt:'
       next_word+=':start:'
-     elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
-      style=precommand
      else
       case $res in
         reserved)       # reserved word
@@ -654,7 +652,9 @@ _zsh_highlight_highlighter_main_paint()
                           else
                             # The common case.
                             style=alias
-                            [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} && -z ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg_raw"} ]] && ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS+=($arg_raw)
+                            if (( ${+precommand_options[(re)"$arg"]} )) && (( ! ${+precommand_options[(re)"$arg_raw"]} )); then
+                              precommand_options[$arg_raw]=$precommand_options[$arg]
+                            fi
                           fi
                         }
                         ;;
@@ -800,8 +800,7 @@ _zsh_highlight_highlighter_main_paint()
         highlight_glob=true
       fi
     elif
-       [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]] ||
-       [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} && $this_word == *':start:'* ]]; then
+       [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]]; then
       next_word=':start:'
     elif [[ $arg == "repeat" && $this_word == *':start:'* ]]; then
       # skip the repeat-count word
