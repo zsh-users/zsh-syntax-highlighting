@@ -513,7 +513,17 @@ _zsh_highlight_highlighter_main_paint()
          [[ ${parameter_name} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
          (( ${+parameters[${MATCH}]} ))
          then
-        arg=${(P)MATCH}
+        # Set $arg.
+        case ${(tP)MATCH} in
+          (*array*|*assoc*)
+            local -a words=( ${(P)MATCH} )
+            arg=${words[1]}
+            ;;
+          (*)
+            # scalar, presumably
+            arg=${(P)MATCH}
+            ;;
+        esac
         _zsh_highlight_main__type "$arg"
         res=$REPLY
       fi
