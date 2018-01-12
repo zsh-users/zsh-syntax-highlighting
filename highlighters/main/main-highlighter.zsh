@@ -169,7 +169,7 @@ _zsh_highlight_main__type() {
 # Return 0 if runnable, 1 if not runnable, 2 if trouble.
 _zsh_highlight_main__is_runnable() {
   if _zsh_highlight_main__type "$1"; then
-    [[ -n $REPLY ]]
+    [[ $REPLY != none ]]
   else
     return 2
   fi
