@@ -528,7 +528,9 @@ _zsh_highlight_highlighter_main_paint()
           next_word+=':start:'
           next_word+=':sudo_opt:'
         else
-          #
+          # Not an option flag; nothing to do.  (If the command line is
+          # syntactically valid, ${this_state//:sudo_opt:/} should be
+          # non-empty now.)
         fi
       elif [[ $this_word == *':sudo_arg:'* ]]; then
         next_word+=':sudo_opt:'
