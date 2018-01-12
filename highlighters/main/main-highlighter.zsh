@@ -509,7 +509,7 @@ _zsh_highlight_highlighter_main_paint()
       elif [[ $arg[1] == '$' ]]; then
         parameter_name=${arg:1}
       fi
-      if [[ $res == none ]] && (( ${+parameters} )) &&
+      if [[ $res == none ]] && zmodload -e zsh/parameter &&
          [[ ${parameter_name} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
          (( ${+parameters[${MATCH}]} ))
          then
