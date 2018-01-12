@@ -538,7 +538,7 @@ _zsh_highlight_highlighter_main_paint()
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]]; then
         if [[ -n $flags_with_argument ]] &&
-           ( setopt extendedglob; [[ $arg == '-'[$flags_sans_argument]#[$flags_with_argument] ]] ); then
+           [[ $arg == '-'[$flags_sans_argument]#[$flags_with_argument] ]]; then
           # Flag that requires an argument
           this_word=${this_word//:start:/}
           next_word=':sudo_arg:'
