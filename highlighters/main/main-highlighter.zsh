@@ -514,7 +514,9 @@ _zsh_highlight_main_highlighter_highlight_list()
 
     # Expand parameters.
     #
-    # ### For now, expand just '$foo', like that, without braces or anything.
+    # ### For now, expand just '$foo' or '${foo}', possibly with braces, but with
+    # ### no other features of the parameter expansion syntax.  (No ${(x)foo},
+    # ### no ${foo[x]}, no ${foo:-x}.)
     () {
       # That's not entirely correct --- if the parameter's value happens to be a reserved
       # word, the parameter expansion will be highlighted as a reserved word --- but that
