@@ -512,11 +512,9 @@ _zsh_highlight_main_highlighter_highlight_list()
     # TODO: this should be done iteratively, e.g., 'alias x=y y=z z=w\n x'
     #       And then the entire 'alias' branch of the 'case' statement should
     #       be done here.
-    () {
-      # TODO: path expansion should happen _after_ alias expansion
-      _zsh_highlight_main_highlighter_expand_path $arg
-      _zsh_highlight_main__type "$REPLY"
-    }
+    # TODO: path expansion should happen _after_ alias expansion
+    _zsh_highlight_main_highlighter_expand_path $arg
+    _zsh_highlight_main__type "$REPLY"
     local res="$REPLY"
     if [[ $res == "alias" ]]; then
       _zsh_highlight_main__resolve_alias $arg
