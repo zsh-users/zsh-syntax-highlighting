@@ -29,9 +29,10 @@
 
 local x=/usr/bin/env
 local y=sudo
+local -a z; z=(zsh -f)
 sudo(){}
 
-BUFFER='$x "argument"; $y'
+BUFFER='$x "argument"; $y; $z'
 
 expected_region_highlight=(
   "1 2 command" # $x
@@ -39,4 +40,6 @@ expected_region_highlight=(
   "4 13 double-quoted-argument" # "argument"
   "14 14 commandseparator" # ;
   "16 17 precommand" # $y (sudo)
+  "18 18 unknown-token" # ;
+  "20 21 command" # $z - 'zsh' being the command
 )
