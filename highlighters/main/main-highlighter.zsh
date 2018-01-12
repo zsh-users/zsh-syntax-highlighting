@@ -164,6 +164,17 @@ _zsh_highlight_main__type() {
   return $?
 }
 
+# Checks whether $1 is something that can be run.
+# 
+# Return 0 if runnable, 1 if not runnable, 2 if trouble.
+_zsh_highlight_main__is_runnable() {
+  if _zsh_highlight_main__type "$1"; then
+    [[ -n $REPLY ]]
+  else
+    return 2
+  fi
+}
+
 # Check whether the first argument is a redirection operator token.
 # Report result via the exit code.
 _zsh_highlight_main__is_redirection() {
@@ -546,7 +557,7 @@ _zsh_highlight_highlighter_main_paint()
      style=reserved-word # de facto a reserved word, although not de jure
      next_word=':start:'
    elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
-     if (( ${+precommand_options[$arg]} )) && { _zsh_highlight_main__type $arg && [[ $REPLY != "none" ]] }; then
+     if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
       style=precommand
       flags_with_argument=${precommand_options[$arg]%:*}
       flags_sans_argument=${precommand_options[$arg]#*:}
