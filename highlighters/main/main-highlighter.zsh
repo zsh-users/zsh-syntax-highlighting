@@ -514,7 +514,7 @@ _zsh_highlight_highlighter_main_paint()
         # Set $arg.
         case ${(tP)MATCH} in
           (*array*|*assoc*)
-            local -a words=( ${(P)MATCH} )
+            local -a words; words=( ${(P)MATCH} )
             arg=${words[1]}
             ;;
           (*)
