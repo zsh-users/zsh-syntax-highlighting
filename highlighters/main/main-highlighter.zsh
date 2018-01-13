@@ -259,7 +259,7 @@ _zsh_highlight_highlighter_main_paint()
   local -A precommand_options
   precommand_options=(
     'command' :pvV # as of zsh 5.4.2
-    'nice' n # as of current POSIX spec
+    'nice' n: # as of current POSIX spec
     'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
     'doas' aCu:Lns # as of OpenBSD's doas(1) dated September 4, 2016
     'builtin' '' # as of zsh 5.4.2
