@@ -665,24 +665,16 @@ _zsh_highlight_highlighter_main_paint()
                  fi
                  style=reserved-word
                  ;;
-        $'\x7d') # right brace
-                 #
-                 # Parsing rule: # {
-                 #
-                 #     Additionally, `tt(})' is recognized in any position if neither the
-                 #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set."""
-                 if $right_brace_is_recognised_everywhere; then
+        *)       if false; then
+                 elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
+                   # Parsing rule: }
+                   #
+                   #     Additionally, `tt(})' is recognized in any position if neither the
+                   #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set.
                    _zsh_highlight_main__stack_pop 'Y' style=reserved-word
                    if [[ $style == reserved-word ]]; then
                      next_word+=':always:'
                    fi
-                 else
-                   # Fall through to the catchall case at the end.
-                 fi
-                 ;|
-        *)       if false; then
-                 elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
-                   # was handled by the $'\x7d' case above
                  elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
                    style=history-expansion
                  elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
