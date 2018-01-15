@@ -680,8 +680,6 @@ _zsh_highlight_highlighter_main_paint()
                    # Fall through to the catchall case at the end.
                  fi
                  ;|
-        '--'*)   style=double-hyphen-option;;
-        '-'*)    style=single-hyphen-option;;
         *)       if false; then
                  elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
                    # was handled by the $'\x7d' case above
@@ -804,6 +802,15 @@ _zsh_highlight_main_highlighter_highlight_argument()
 
   local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
+
+  if [[ $arg[1] == - ]]; then
+    if [[ $arg[2] == - ]]; then
+      base_style=double-hyphen-option
+    else
+      base_style=single-hyphen-option
+    fi
+    path_eligible=0
+  fi
 
   for (( i = 1 ; i <= end_pos - start_pos ; i += 1 )); do
     case "$arg[$i]" in
