@@ -894,7 +894,7 @@ _zsh_highlight_main_highlighter_highlight_single_quote()
 # Highlight special chars inside double-quoted strings
 _zsh_highlight_main_highlighter_highlight_double_quote()
 {
-  local -a match mbegin mend
+  local -a match mbegin mend saved_reply
   local MATCH; integer MBEGIN MEND
   local i j k style
   reply=()
@@ -904,6 +904,12 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
     (( k = j + 1 ))
     case "$arg[$i]" in
       '"') break;;
+      '`') saved_reply=($reply)
+           _zsh_highlight_main_highlighter_highlight_backtick $i
+           (( i = REPLY ))
+           reply=($saved_reply $reply)
+           continue
+           ;;
       '$' ) style=dollar-double-quoted-argument
             # Look for an alphanumeric parameter name.
             if [[ ${arg:$i} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+) ]] ; then
