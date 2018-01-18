@@ -801,6 +801,9 @@ _zsh_highlight_main_highlighter_highlight_argument()
   local i path_eligible style
   path_eligible=1
 
+  local -a match mbegin mend
+  local MATCH; integer MBEGIN MEND
+
   _zsh_highlight_main_add_region_highlight $start_pos $end_pos default
   for (( i = 1 ; i <= end_pos - start_pos ; i += 1 )); do
     case "$arg[$i]" in
@@ -822,14 +825,16 @@ _zsh_highlight_main_highlighter_highlight_argument()
         elif [[ $arg[i+1] == [*@#?-$!] ]]; then
           (( i += 1 ))
         fi;;
-      [*?]|\<)
-	# The '<' is for the <-> globbing syntax.  (This function doesn't get called on redirection tokens.)
-        if $highlight_glob; then
+      *)
+        if $highlight_glob && [[ ${arg[$i]} == [*?] || ${arg:$i-1} == \<[0-9]#-[0-9]#\>* ]]; then
+	  (( i += $#MATCH - 1 ))
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos globbing
           path_eligible=0
           break
-        fi;;
-      *) continue;;
+        else
+          continue
+        fi
+        ;;
     esac
   done
 
