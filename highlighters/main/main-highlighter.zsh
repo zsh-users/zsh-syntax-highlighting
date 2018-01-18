@@ -751,10 +751,11 @@ _zsh_highlight_main_highlighter_highlight_path_separators()
 {
   local pos style_pathsep
   style_pathsep=$1_pathseparator
+  reply=()
   [[ -z "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" || "$ZSH_HIGHLIGHT_STYLES[$1]" == "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" ]] && return 0
   for (( pos = start_pos; $pos <= end_pos; pos++ )) ; do
     if [[ $BUFFER[pos] == / ]]; then
-      _zsh_highlight_main_add_region_highlight $((pos - 1)) $pos $style_pathsep
+      reply+=($((pos - 1)) $pos $style_pathsep)
     fi
   done
 }
@@ -799,6 +800,7 @@ _zsh_highlight_main_highlighter_check_path()
 _zsh_highlight_main_highlighter_highlight_argument()
 {
   local i path_eligible style
+  local -a highlights reply
   path_eligible=1
 
   local -a match mbegin mend
@@ -808,13 +810,26 @@ _zsh_highlight_main_highlighter_highlight_argument()
   for (( i = 1 ; i <= end_pos - start_pos ; i += 1 )); do
     case "$arg[$i]" in
       "\\") (( i += 1 )); continue;;
-      "'") _zsh_highlight_main_highlighter_highlight_single_quote $i; (( i = REPLY ));;
-      '"') _zsh_highlight_main_highlighter_highlight_double_quote $i; (( i = REPLY ));;
-      '`') _zsh_highlight_main_highlighter_highlight_backtick $i; (( i = REPLY ));;
+      "'")
+        _zsh_highlight_main_highlighter_highlight_single_quote $i
+        (( i = REPLY ))
+        highlights+=($reply)
+        ;;
+      '"')
+        _zsh_highlight_main_highlighter_highlight_double_quote $i
+        (( i = REPLY ))
+        highlights+=($reply)
+        ;;
+      '`')
+        _zsh_highlight_main_highlighter_highlight_backtick $i
+        (( i = REPLY ))
+        highlights+=($reply)
+        ;;
       '$')
         if [[ $arg[i+1] == "'" ]]; then
           _zsh_highlight_main_highlighter_highlight_dollar_quote $i
           (( i = REPLY ))
+          highlights+=($reply)
         elif [[ $arg[i+1] == [\^=~#+] ]]; then
           while [[ $arg[i+1] == [\^=~#+] ]]; do
             (( i += 1 ))
@@ -841,8 +856,10 @@ _zsh_highlight_main_highlighter_highlight_argument()
   if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path; then
     style=$REPLY
     _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-    _zsh_highlight_main_highlighter_highlight_path_separators $style
+    highlights+=($reply)
   fi
+
+  _zsh_highlight_main_add_many_region_highlights $highlights
 }
 
 # Quote Helper Functions
@@ -851,17 +868,18 @@ _zsh_highlight_main_highlighter_highlight_argument()
 # $start_pos is expected to be set to the start of $arg in $BUFFER
 # $1 is the index in $arg which starts the quote
 # $REPLY is returned as the end of quote index in $arg
+# $reply is returned as an array of region_highlight additions
 
 # Highlight single-quoted strings
 _zsh_highlight_main_highlighter_highlight_single_quote()
 {
   local arg1=$1 i q=\' style
-  local -a highlights
   i=$arg[(ib:arg1+1:)$q]
+  reply=()
 
   if [[ $zsyh_user_options[rcquotes] == on ]]; then
     while [[ $arg[i+1] == "'" ]]; do
-      highlights+=($(( start_pos + i - 1 )) $(( start_pos + i + 1 )) rc-quote)
+      reply+=($(( start_pos + i - 1 )) $(( start_pos + i + 1 )) rc-quote)
       (( i++ ))
       i=$arg[(ib:i+1:)$q]
     done
@@ -872,17 +890,17 @@ _zsh_highlight_main_highlighter_highlight_single_quote()
   else
     style=single-quoted-argument-unclosed
   fi
-  highlights+=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style $highlights)
-  _zsh_highlight_main_add_many_region_highlights $highlights
+  reply+=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style $reply)
   REPLY=$i
 }
 
 # Highlight special chars inside double-quoted strings
 _zsh_highlight_main_highlighter_highlight_double_quote()
 {
-  local -a highlights match mbegin mend
+  local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
   local i j k style
+  reply=()
 
   for (( i = $1 + 1 ; i < end_pos - start_pos ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
@@ -929,7 +947,7 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
       *) continue ;;
 
     esac
-    highlights+=($j $k $style)
+    reply+=($j $k $style)
   done
 
   if [[ $arg[i] == '"' ]]; then
@@ -937,19 +955,19 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
   else
     style=double-quoted-argument-unclosed
   fi
-  highlights=($(( start_pos + $1 - 1)) $(( start_pos + i )) $style $highlights)
-  _zsh_highlight_main_add_many_region_highlights $highlights
+  reply=($(( start_pos + $1 - 1)) $(( start_pos + i )) $style $reply)
   REPLY=$i
 }
 
 # Highlight special chars inside dollar-quoted strings
 _zsh_highlight_main_highlighter_highlight_dollar_quote()
 {
-  local -a highlights match mbegin mend
+  local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
   local i j k style
   local AA
   integer c
+  reply=()
 
   for (( i = $1 + 2 ; i < end_pos - start_pos ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
@@ -981,7 +999,7 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
       *) continue ;;
 
     esac
-    highlights+=($j $k $style)
+    reply+=($j $k $style)
   done
 
   if [[ $arg[i] == "'" ]]; then
@@ -989,8 +1007,7 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
   else
     style=dollar-quoted-argument-unclosed
   fi
-  highlights+=($(( start_pos + $1 - 1 )) $(( start_pos + i )) $style $highlights)
-  _zsh_highlight_main_add_many_region_highlights $highlights
+  reply+=($(( start_pos + $1 - 1 )) $(( start_pos + i )) $style $reply)
   REPLY=$i
 }
 
@@ -998,6 +1015,7 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
 _zsh_highlight_main_highlighter_highlight_backtick()
 {
   local arg1=$1 i=$1 q=\` style
+  reply=()
   while i=$arg[(ib:i+1:)$q]; [[ $arg[i-1] == '\' && $i -lt $(( end_pos - start_pos )) ]]; do done
 
   if [[ $arg[i] == '`' ]]; then
@@ -1005,7 +1023,7 @@ _zsh_highlight_main_highlighter_highlight_backtick()
   else
     style=back-quoted-argument-unclosed
   fi
-  _zsh_highlight_main_add_region_highlight $(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style
+  reply=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style)
   REPLY=$i
 }
 
