@@ -799,14 +799,13 @@ _zsh_highlight_main_highlighter_check_path()
 # This command will at least highlight start_pos to end_pos with the default style
 _zsh_highlight_main_highlighter_highlight_argument()
 {
-  local i path_eligible style
+  local base_style=default i path_eligible style
   local -a highlights reply
   path_eligible=1
 
   local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
 
-  _zsh_highlight_main_add_region_highlight $start_pos $end_pos default
   for (( i = 1 ; i <= end_pos - start_pos ; i += 1 )); do
     case "$arg[$i]" in
       "\\") (( i += 1 )); continue;;
@@ -843,7 +842,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
       *)
         if $highlight_glob && [[ ${arg[$i]} == [*?] || ${arg:$i-1} == \<[0-9]#-[0-9]#\>* ]]; then
 	  (( i += $#MATCH - 1 ))
-          _zsh_highlight_main_add_region_highlight $start_pos $end_pos globbing
+          base_style=globbing
           path_eligible=0
           break
         else
@@ -854,11 +853,12 @@ _zsh_highlight_main_highlighter_highlight_argument()
   done
 
   if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path; then
-    style=$REPLY
-    _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
+    base_style=$REPLY
+    _zsh_highlight_main_highlighter_highlight_path_separators $base_style
     highlights+=($reply)
   fi
 
+  highlights=($start_pos $end_pos $base_style $highlights)
   _zsh_highlight_main_add_many_region_highlights $highlights
 }
 
