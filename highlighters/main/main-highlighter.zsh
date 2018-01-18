@@ -822,7 +822,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
         elif [[ $arg[i+1] == [*@#?-$!] ]]; then
           (( i += 1 ))
         fi;;
-      [*?]*|\<*)
+      [*?]*|\<[0-9]#-[0-9]#\>)
 	# The '<' is for the <-> globbing syntax.  (This function doesn't get called on redirection tokens.)
         if $highlight_glob; then
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos globbing
