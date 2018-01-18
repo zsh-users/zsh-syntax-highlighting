@@ -750,8 +750,8 @@ _zsh_highlight_main_highlighter_check_assign()
 _zsh_highlight_main_highlighter_highlight_path_separators()
 {
   local pos style_pathsep
-  style_pathsep=${style}_pathseparator
-  [[ -z "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" || "$ZSH_HIGHLIGHT_STYLES[$style]" == "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" ]] && return 0
+  style_pathsep=$1_pathseparator
+  [[ -z "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" || "$ZSH_HIGHLIGHT_STYLES[$1]" == "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" ]] && return 0
   for (( pos = start_pos; $pos <= end_pos; pos++ )) ; do
     if [[ $BUFFER[pos] == / ]]; then
       _zsh_highlight_main_add_region_highlight $((pos - 1)) $pos $style_pathsep
@@ -841,7 +841,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
   if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path; then
     style=$REPLY
     _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-    _zsh_highlight_main_highlighter_highlight_path_separators
+    _zsh_highlight_main_highlighter_highlight_path_separators $style
   fi
 }
 
