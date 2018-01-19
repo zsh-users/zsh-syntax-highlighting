@@ -803,12 +803,12 @@ _zsh_highlight_main_highlighter_highlight_argument()
 
   _zsh_highlight_main_add_region_highlight $start_pos $end_pos default
   for (( i = 1 ; i <= end_pos - start_pos ; i += 1 )); do
-    case "$arg[$i]" in
-      "\\") (( i += 1 )); continue;;
-      "'") _zsh_highlight_main_highlighter_highlight_single_quote $i; (( i = REPLY ));;
-      '"') _zsh_highlight_main_highlighter_highlight_double_quote $i; (( i = REPLY ));;
-      '`') _zsh_highlight_main_highlighter_highlight_backtick $i; (( i = REPLY ));;
-      '$')
+    case ${arg:$i-1} in
+      "\\"*) (( i += 1 )); continue;;
+      "'"*) _zsh_highlight_main_highlighter_highlight_single_quote $i; (( i = REPLY ));;
+      '"'*) _zsh_highlight_main_highlighter_highlight_double_quote $i; (( i = REPLY ));;
+      '`'*) _zsh_highlight_main_highlighter_highlight_backtick $i; (( i = REPLY ));;
+      '$'*)
         if [[ $arg[i+1] == "'" ]]; then
           _zsh_highlight_main_highlighter_highlight_dollar_quote $i
           (( i = REPLY ))
@@ -822,7 +822,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
         elif [[ $arg[i+1] == [*@#?-$!] ]]; then
           (( i += 1 ))
         fi;;
-      [*?]|\<)
+      [*?]*|\<[0-9]#-[0-9]#\>*)
 	# The '<' is for the <-> globbing syntax.  (This function doesn't get called on redirection tokens.)
         if $highlight_glob; then
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos globbing

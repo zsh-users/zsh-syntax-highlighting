@@ -32,5 +32,5 @@ BUFFER=$': $(<foo)'
 
 expected_region_highlight=(
   '1 1 builtin' # :
-  '3 9 default "issue #483"' # $(<foo)
+  '3 9 default' # $(<foo)
 )
