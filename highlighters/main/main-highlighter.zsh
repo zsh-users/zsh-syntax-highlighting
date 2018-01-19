@@ -888,7 +888,7 @@ _zsh_highlight_main_highlighter_highlight_single_quote()
   else
     style=single-quoted-argument-unclosed
   fi
-  reply+=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style $reply)
+  reply=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style $reply)
   REPLY=$i
 }
 
@@ -1005,7 +1005,7 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
   else
     style=dollar-quoted-argument-unclosed
   fi
-  reply+=($(( start_pos + $1 - 1 )) $(( start_pos + i )) $style $reply)
+  reply=($(( start_pos + $1 - 1 )) $(( start_pos + i )) $style $reply)
   REPLY=$i
 }
 
