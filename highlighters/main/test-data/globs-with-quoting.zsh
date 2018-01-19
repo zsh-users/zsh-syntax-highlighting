@@ -1,5 +1,6 @@
+#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2015 zsh-syntax-highlighting contributors
+# Copyright (c) 2018 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -27,15 +28,15 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER=': foo* bar? *baz qux\?'
+BUFFER=$': "foo"*\'bar\'?"baz?"<17-29>"qu*ux"'
 
 expected_region_highlight=(
-  "1 1 builtin" # :
-  "3 5 default" # foo
-  "6 6 globbing" # *
-  "8 10 default" # bar
-  "11 11 globbing" # ?
-  "13 13 globbing" # *
-  "14 16 default" # baz
-  "18 22 default" # qux\?
+  '1 1 builtin' # :
+  '3 7 double-quoted-argument' # "foo"
+  '8 8 globbing' # *
+  '9 13 single-quoted-argument' # 'bar'
+  '14 14 globbing' # ?
+  '15 20 double-quoted-argument' # "baz?"
+  '21 27 globbing' # <17-29>
+  '28 34 double-quoted-argument' # "qu*ux"
 )

@@ -799,9 +799,8 @@ _zsh_highlight_main_highlighter_check_path()
 # This command will at least highlight start_pos to end_pos with the default style
 _zsh_highlight_main_highlighter_highlight_argument()
 {
-  local base_style=default i path_eligible style
+  local base_style=default i path_eligible=1 style
   local -a highlights reply
-  path_eligible=1
 
   local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
@@ -841,10 +840,9 @@ _zsh_highlight_main_highlighter_highlight_argument()
         fi;;
       *)
         if $highlight_glob && [[ ${arg[$i]} =~ ^[*?] || ${arg:$i-1} =~ ^\<[0-9]*-[0-9]*\> ]]; then
-	  (( i += $#MATCH - 1 ))
-          base_style=globbing
+          highlights+=($(( start_pos + i - 1 )) $(( start_pos + i + $#MATCH - 1)) globbing)
+          (( i += $#MATCH - 1 ))
           path_eligible=0
-          break
         else
           continue
         fi
