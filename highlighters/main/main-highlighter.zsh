@@ -840,7 +840,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
           (( i += 1 ))
         fi;;
       *)
-        if $highlight_glob && [[ ${arg[$i]} == [*?] || ${arg:$i-1} == \<[0-9]#-[0-9]#\>* ]]; then
+        if $highlight_glob && [[ ${arg[$i]} =~ ^[*?] || ${arg:$i-1} =~ ^\<[0-9]*-[0-9]*\> ]]; then
 	  (( i += $#MATCH - 1 ))
           base_style=globbing
           path_eligible=0
