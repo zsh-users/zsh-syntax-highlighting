@@ -801,7 +801,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
     else
       base_style=single-hyphen-option
     fi
-    path_eligible=0
+    #path_eligible=0
   fi
 
   for (( i = 1 ; i <= end_pos - start_pos ; i += 1 )); do
