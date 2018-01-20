@@ -823,7 +823,9 @@ _zsh_highlight_main_highlighter_highlight_argument()
         highlights+=($reply)
         ;;
       '$')
+        path_eligible=0
         if [[ $arg[i+1] == "'" ]]; then
+          path_eligible=1
           _zsh_highlight_main_highlighter_highlight_dollar_quote $i
           (( i = REPLY ))
           highlights+=($reply)
