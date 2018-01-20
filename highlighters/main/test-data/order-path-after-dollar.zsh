@@ -33,6 +33,6 @@ BUFFER=': $foo \$foo'
 
 expected_region_highlight=(
   '1 1 builtin' # :
-  '3 6 default "issue #474"' # $foo - if we add a "unquoted parameter expansion" style then this expectation should change
+  '3 6 default' # $foo - if we add a "unquoted parameter expansion" style then this expectation should change
   '8 12 path' # \$foo
 )
