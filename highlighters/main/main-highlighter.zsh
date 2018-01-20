@@ -1282,10 +1282,11 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
            ;;
       '$' ) style=dollar-double-quoted-argument
             # Look for an alphanumeric parameter name.
-            if [[ ${arg:$i} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+) ]] ; then
+            local alphanumeric_parameter_name='[A-Za-z_][A-Za-z0-9_]*|[0-9]+'
+            if [[ ${arg:$i} =~ ^(${alphanumeric_parameter_name}) ]] ; then
               (( k += $#MATCH )) # highlight the parameter name
               (( i += $#MATCH )) # skip past it
-            elif [[ ${arg:$i} =~ ^[{]([A-Za-z_][A-Za-z0-9_]*|[0-9]+)[}] ]] ; then
+            elif [[ ${arg:$i} =~ ^[{](${alphanumeric_parameter_name})[}] ]] ; then
               (( k += $#MATCH )) # highlight the parameter name and braces
               (( i += $#MATCH )) # skip past it
             elif [[ $arg[i+1] == '$' ]]; then
