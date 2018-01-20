@@ -493,7 +493,7 @@ _zsh_highlight_highlighter_main_paint()
         local MATCH; integer MBEGIN MEND
         if [[ $res == none ]] && (( ${+parameters} )) &&
            [[ ${arg[1]} == \$ ]] && [[ ${arg:1} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
-           (( ${+parameters[${MATCH}]} ))
+           (( ${+parameters[(e)${MATCH}]} )) && [[ ${parameters[(e)$MATCH]} != *special* ]]
            then
           _zsh_highlight_main__type ${(P)MATCH}
           res=$REPLY
