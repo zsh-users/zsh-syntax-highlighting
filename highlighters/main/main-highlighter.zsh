@@ -1283,10 +1283,12 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
       '$' ) style=dollar-double-quoted-argument
             # Look for an alphanumeric parameter name.
             local alphanumeric_parameter_name='[A-Za-z_][A-Za-z0-9_]*|[0-9]+'
-            if [[ ${arg:$i} =~ ^(${alphanumeric_parameter_name}) ]] ; then
+            # :gs,:s,:F,:W take an argument between delimiters; we don't currently highlight delimiters.
+            local history_modifiers=':[aAcehlpPqQ&tuxfw]|:gs.|:s.|:F.|:W.'
+            if [[ ${arg:$i} =~ ^(${alphanumeric_parameter_name})(${history_modifiers})* ]] ; then
               (( k += $#MATCH )) # highlight the parameter name
               (( i += $#MATCH )) # skip past it
-            elif [[ ${arg:$i} =~ ^[{](${alphanumeric_parameter_name})[}] ]] ; then
+            elif [[ ${arg:$i} =~ ^[{](${alphanumeric_parameter_name})(${history_modifiers})*[}] ]] ; then
               (( k += $#MATCH )) # highlight the parameter name and braces
               (( i += $#MATCH )) # skip past it
             elif [[ $arg[i+1] == '$' ]]; then
