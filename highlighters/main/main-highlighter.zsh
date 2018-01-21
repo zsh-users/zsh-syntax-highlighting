@@ -757,13 +757,26 @@ _zsh_highlight_main_highlighter_highlight_path_separators()
 _zsh_highlight_main_highlighter_check_path()
 {
   _zsh_highlight_main_highlighter_expand_path $arg;
-  local expanded_path="$REPLY"
+  local expanded_path="$REPLY" tmp_path
 
   REPLY=path
 
   [[ -z $expanded_path ]] && return 1
   [[ -L $expanded_path ]] && return 0
   [[ -e $expanded_path ]] && return 0
+
+  # Check if this is a blacklisted path
+  if [[ $expanded_path[1] == / ]]; then
+    tmp_path=$expanded_path
+  else
+    tmp_path=$PWD/$expanded_path
+  fi
+  tmp_path=$tmp_path:a
+
+  while [[ $tmp_path != / ]]; do
+    [[ -n "${(M)ZSH_HIGHLIGHT_DIRS_BLACKLIST:#$tmp_path}" ]] && return 1
+    tmp_path=$tmp_path:h
+  done
 
   # Search the path in CDPATH
   local cdpath_dir
@@ -1070,3 +1083,4 @@ else
   # Make sure the cache is unset
   unset _zsh_highlight_main__command_type_cache
 fi
+typeset -ga ZSH_HIGHLIGHT_DIRS_BLACKLIST

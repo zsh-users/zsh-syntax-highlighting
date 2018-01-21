@@ -71,6 +71,12 @@ The syntax for values is the same as the syntax of "types of highlighting" of
 the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`
 manual page][zshzle-Character-Highlighting].
 
+#### Parameters
+
+To avoid partial path lookups on a path, add the path to the `ZSH_HIGHLIGHT_DIRS_BLACKLIST` array.
+
+    ZSH_HIGHLIGHT_DIRS_BLACKLIST+=(/mnt/slow_share)
+
 ### Useless trivia
 
 #### Forward compatibility.
