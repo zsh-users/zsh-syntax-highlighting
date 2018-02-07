@@ -104,7 +104,8 @@ _zsh_highlight_main_add_region_highlight() {
   (( start -= $#PREBUFFER ))
   (( end -= $#PREBUFFER ))
 
-  (( end < 0 )) && return # having end<0 would be a bug
+  (( start >= end )) && { print -r -- >&2 "zsh-syntax-highlighting: BUG: _zsh_highlight_main_add_region_highlight: start($start) >= end($end)"; return }
+  (( end <= 0 )) && return
   (( start < 0 )) && start=0 # having start<0 is normal with e.g. multiline strings
   _zsh_highlight_add_highlight $start $end "$@"
 }
