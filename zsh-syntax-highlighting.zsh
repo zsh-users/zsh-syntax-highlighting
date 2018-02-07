@@ -141,7 +141,7 @@ _zsh_highlight()
         {
           "_zsh_highlight_highlighter_${highlighter}_paint"
         } always {
-          eval "${cache_place}=(\"\${region_highlight[@]}\")"
+          : ${(AP)cache_place::="${region_highlight[@]}"}
         }
 
         # Restore saved region_highlight
@@ -150,7 +150,7 @@ _zsh_highlight()
       fi
 
       # Use value form cache if any cached
-      eval "region_highlight+=(\"\${${cache_place}[@]}\")"
+      region_highlight+=("${(@P)cache_place}")
 
     done
 
