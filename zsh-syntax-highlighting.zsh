@@ -168,8 +168,10 @@ _zsh_highlight()
         else
           min=$MARK max=$CURSOR
         fi
-        (( min = ${${BUFFER[1,$min]}[(I)$needle]} ))
-        (( max += ${${BUFFER:($max-1)}[(i)$needle]} - 1 ))
+        # CURSOR and MARK are 0 indexed between letters like region_highlight
+        # Do not include the newline in the highlight
+        (( min = ${BUFFER[(Ib:min:)$needle]} ))
+        (( max = ${BUFFER[(ib:max:)$needle]} - 1 ))
         _zsh_highlight_apply_zle_highlight region standout "$min" "$max"
       }
     fi
