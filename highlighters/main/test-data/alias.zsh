@@ -43,7 +43,7 @@ BUFFER='x.alias2; alias1'
 # functionality is present, and skip verifying suffix-alias highlighting
 # if it isn't.
 expected_region_highlight=()
-if [[ "$(type -w x.alias2)" == *suffix* ]]; then
+if zmodload -e zsh/parameter || [[ "$(type -w x.alias2)" == *suffix* ]]; then
   expected_region_highlight+=(
     "1 8 suffix-alias" # x.alias2
   )
