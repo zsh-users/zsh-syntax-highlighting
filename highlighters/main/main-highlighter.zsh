@@ -888,6 +888,8 @@ _zsh_highlight_main_highlighter_highlight_single_quote()
   if [[ $arg[i] == "'" ]]; then
     style=single-quoted-argument
   else
+    # If unclosed, i points past the end
+    (( i-- ))
     style=single-quoted-argument-unclosed
   fi
   reply=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style $reply)
@@ -902,7 +904,7 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
   local i j k style
   reply=()
 
-  for (( i = $1 + 1 ; i < end_pos - start_pos ; i += 1 )) ; do
+  for (( i = $1 + 1 ; i <= end_pos - start_pos ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
@@ -959,6 +961,8 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
   if [[ $arg[i] == '"' ]]; then
     style=double-quoted-argument
   else
+    # If unclosed, i points past the end
+    (( i-- ))
     style=double-quoted-argument-unclosed
   fi
   reply=($(( start_pos + $1 - 1)) $(( start_pos + i )) $style $reply)
@@ -975,7 +979,7 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
   integer c
   reply=()
 
-  for (( i = $1 + 2 ; i < end_pos - start_pos ; i += 1 )) ; do
+  for (( i = $1 + 2 ; i <= end_pos - start_pos ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
@@ -1011,6 +1015,8 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
   if [[ $arg[i] == "'" ]]; then
     style=dollar-quoted-argument
   else
+    # If unclosed, i points past the end
+    (( i-- ))
     style=dollar-quoted-argument-unclosed
   fi
   reply=($(( start_pos + $1 - 1 )) $(( start_pos + i )) $style $reply)
@@ -1027,6 +1033,8 @@ _zsh_highlight_main_highlighter_highlight_backtick()
   if [[ $arg[i] == '`' ]]; then
     style=back-quoted-argument
   else
+    # If unclosed, i points past the end
+    (( i-- ))
     style=back-quoted-argument-unclosed
   fi
   reply=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style)
