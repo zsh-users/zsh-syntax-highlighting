@@ -32,5 +32,6 @@ BUFFER='$x "argument"'
 
 expected_region_highlight=(
   "1 2 command" # $x
+  "4 13 default" # "argument"
   "4 13 double-quoted-argument" # "argument"
 )

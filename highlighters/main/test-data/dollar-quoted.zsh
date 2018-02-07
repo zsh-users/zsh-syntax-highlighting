@@ -30,6 +30,9 @@
 BUFFER=": \$'*' 'foo'"
 
 expected_region_highlight=(
+  "1 1 builtin" # :
+  "3 6 default" # $'*'
   "3 6 dollar-quoted-argument" # $'*' - not a glob
+  "8 12 default" # 'foo'
   "8 12 single-quoted-argument" # 'foo'
 )

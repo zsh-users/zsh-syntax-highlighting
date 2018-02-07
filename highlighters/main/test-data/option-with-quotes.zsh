@@ -32,6 +32,6 @@ BUFFER=$': --user="phy1729"'
 
 expected_region_highlight=(
   '1 1 builtin' # :
-  '3 9 double-hyphen-option' # --user=
+  '3 18 double-hyphen-option' # --user="phy1729"
   '10 18 double-quoted-argument' # "phy1729"
 )

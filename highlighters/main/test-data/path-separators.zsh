@@ -37,17 +37,17 @@ touch A/mu
 BUFFER='ls /bin/ / A/mu A/m'
 
 expected_region_highlight=(
+  "1 2 command"                      # ls
+  "4 8 path"                         # /bin/
   "4 4 path_pathseparator"           # /
-  "5 7 path"                         # bin
   "8 8 path_pathseparator"           # /
 
+  "10 10 path"                       # /
   "10 10 path_pathseparator"         # /
 
-  "12 12 path"                       # A
+  "12 15 path"                       # A/mu
   "13 13 path_pathseparator"         # /
-  "14 15 path"                       # mu
 
-  "17 17 path_prefix"                # A
+  "17 19 path_prefix"                # A/m
   "18 18 path_prefix_pathseparator"  # /
-  "19 19 path_prefix"                # m
 )

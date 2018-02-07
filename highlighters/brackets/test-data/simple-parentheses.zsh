@@ -27,6 +27,8 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+unsorted=1
+
 ZSH_HIGHLIGHT_STYLES[bracket-level-1]=
 ZSH_HIGHLIGHT_STYLES[bracket-level-2]=
 

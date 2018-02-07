@@ -32,6 +32,7 @@ BUFFER='A=1 b=("foo" bar)'
 expected_region_highlight=(
   "1 3 assign" # A=1
   "5 7 assign" # b=(
+  "8 12 default" # "foo"
   "8 12 double-quoted-argument" # "foo"
   "14 16 default" # bar
   "17 17 assign" # )

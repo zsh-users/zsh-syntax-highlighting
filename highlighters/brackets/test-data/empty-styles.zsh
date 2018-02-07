@@ -30,5 +30,4 @@
 BUFFER=': (x)'
 
 expected_region_highlight=(
-  "1 5 NONE"
 )

@@ -30,5 +30,9 @@
 BUFFER=':; noglob echo *'
 
 expected_region_highlight=(
+  "1 1 builtin" # :
+  "2 2 commandseparator" # ;
+  "4 9 precommand" # noglob
+  "11 14 builtin" # echo
   "16 16 default" # *
 )

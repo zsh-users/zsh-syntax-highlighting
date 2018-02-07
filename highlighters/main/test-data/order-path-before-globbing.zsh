@@ -33,6 +33,7 @@ BUFFER=': * \*'
 
 expected_region_highlight=(
   '1 1 builtin' # :
+  '3 3 default' # *
   '3 3 globbing' # *
   '5 6 path' # \*
 )

@@ -31,4 +31,7 @@ BUFFER='a+=(lorem ipsum)'
 
 expected_region_highlight=(
   "1 4 assign" # a+=(
+  "5 9 default" # lorem
+  "11 15 default" # ipsum
+  "16 16 assign" # )
 )

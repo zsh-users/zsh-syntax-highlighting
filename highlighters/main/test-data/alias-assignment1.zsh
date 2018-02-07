@@ -34,4 +34,5 @@ BUFFER='x=y ls'
 
 expected_region_highlight=(
   "1 3 unknown-token" # x=y
+  "5 6 default" # ls
 )

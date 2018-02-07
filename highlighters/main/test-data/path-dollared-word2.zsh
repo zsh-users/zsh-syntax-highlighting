@@ -32,5 +32,6 @@ touch \$lambda
 BUFFER=': \$lambda'
 
 expected_region_highlight=(
-  "3 8 path" # \$lambda
+  "1 1 builtin" # :
+  "3 10 path" # \$lambda
 )

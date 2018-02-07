@@ -30,6 +30,7 @@
 BUFFER=':; pwd &! ls'
 
 expected_region_highlight=(
+  "1 1 builtin" # :
   "2 2 commandseparator" # ;
   "4 6 builtin" # pwd
   "8 9 commandseparator" # &!

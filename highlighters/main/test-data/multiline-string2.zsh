@@ -30,5 +30,7 @@
 BUFFER=$'echo \'foo1\n'
 
 expected_region_highlight=(
-  "6 10 single-quoted-argument-unclosed" # 'foo1
+  "1 4 builtin" # echo
+  "6 11 default" # 'foo1\n
+  "6 11 single-quoted-argument-unclosed" # 'foo1\n
 )

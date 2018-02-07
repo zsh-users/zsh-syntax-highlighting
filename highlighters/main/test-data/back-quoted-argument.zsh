@@ -31,9 +31,12 @@
 BUFFER='echo `echo \`42\`` "is `echo equal` to" `echo 6 times 9'
 
 expected_region_highlight=(
+  "1 4 builtin" # echo
+  "6 18 default" # `echo \`42\``
   "6 18 back-quoted-argument" # `echo \`42\``
-  "20 23 double-quoted-argument" # "is
+  "20 39 default" # "is `echo equal` to"
+  "20 39 double-quoted-argument" # "is `echo equal` to"
   "24 35 back-quoted-argument" # `echo equal`
-  "36 39 double-quoted-argument" # to"
+  "41 55 default" # `echo 6 times 9
   "41 55 back-quoted-argument-unclosed" # `echo 6 times 9
 )

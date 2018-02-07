@@ -37,5 +37,6 @@ BUFFER='cd;ls'
 
 expected_region_highlight=(
   "1 2 function" # cd
+  "3 3 commandseparator" # ;
   "4 5 function" # ls
 )

@@ -33,5 +33,6 @@ BUFFER='$PWD; ${PWD}'
 
 expected_region_highlight=(
   "1 4 unknown-token" # $PWD - not eval'd; issue #328
+  "5 5 commandseparator" # ;
   "7 12 unknown-token" # ${PWD}
 )

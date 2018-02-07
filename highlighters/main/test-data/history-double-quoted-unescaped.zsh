@@ -32,7 +32,7 @@ BUFFER='echo "Hello!"'
 
 expected_region_highlight=(
   '1 4 builtin' # echo
-  '6 11 double-quoted-argument' # "Hello
+  '6 13 default' # "Hello!"
+  '6 13 double-quoted-argument' # "Hello!"
   '12 12 history-expansion' # !
-  '13 13 double-quoted-argument' # "
 )

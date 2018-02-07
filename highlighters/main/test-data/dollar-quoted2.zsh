@@ -30,11 +30,10 @@
 BUFFER=": \$'foo\xbar\udeadbeef\uzzzz'"
 
 expected_region_highlight=(
-  "3 7 dollar-quoted-argument" # $'foo
+  "1 1 builtin" # :
+  "3 29 default" # $'foo\xbar\udeadbeef\uzzzz'
+  "3 29 dollar-quoted-argument" # $'foo\xbar\udeadbeef\uzzzz'
   "8 11 back-dollar-quoted-argument" # \xba
-  "12 12 dollar-quoted-argument" # r
   "13 18 back-dollar-quoted-argument" # \dead
-  "19 22 dollar-quoted-argument" # beef
   "23 24 unknown-token" # \u
-  "25 29 dollar-quoted-argument" # zzzz'
 )

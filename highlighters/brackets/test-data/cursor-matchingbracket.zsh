@@ -27,6 +27,8 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+unsorted=1
+
 ZSH_HIGHLIGHT_STYLES[bracket-level-1]=
 ZSH_HIGHLIGHT_STYLES[bracket-level-2]=
 ZSH_HIGHLIGHT_STYLES[bracket-level-3]=
@@ -35,5 +37,11 @@ BUFFER=': ((( )))'
 CURSOR=2 # cursor is zero-based
 
 expected_region_highlight=(
+  "3 3 bracket-level-1"
+  "4 4 bracket-level-2"
+  "5 5 bracket-level-3"
+  "7 7 bracket-level-3"
+  "8 8 bracket-level-2"
+  "9 9 bracket-level-1"
   "9 9 cursor-matchingbracket"
 )

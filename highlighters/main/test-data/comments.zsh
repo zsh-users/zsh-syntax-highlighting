@@ -33,6 +33,7 @@ BUFFER='echo "foo #bar" #baz # quux'
 
 expected_region_highlight=(
   "1 4 builtin" # echo
+  "6 15 default" # "foo #bar"
   "6 15 double-quoted-argument" # "foo #bar"
   "17 27 comment" # #baz # quux
 )

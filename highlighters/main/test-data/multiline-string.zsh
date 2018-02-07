@@ -31,6 +31,7 @@ PREBUFFER=$'echo "foo1\n'
 BUFFER='foo2" ./'
 
 expected_region_highlight=(
+  "1 5 default" # 'foo2"'
   "1 5 double-quoted-argument" # 'foo2"'
   "7 8 path" # './'
 )

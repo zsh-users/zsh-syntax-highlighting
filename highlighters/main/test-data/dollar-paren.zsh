@@ -32,7 +32,7 @@ BUFFER=': "$(:)"'
 
 expected_region_highlight=(
   '1 1 builtin' # :
-  '3 3 double-quoted-argument' # "
+  '3 8 default' # "$(:)"
+  '3 8 double-quoted-argument' # "$(:)"
   '4 4 dollar-double-quoted-argument' # $
-  '5 8 double-quoted-argument' # (:)"
 )

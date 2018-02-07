@@ -34,17 +34,24 @@ expected_region_highlight+=(
   "7 8 reserved-word" # if
   "10 13 builtin" # echo
   "15 19 default" # Hello
+  "20 20 commandseparator" # ;
   "22 25 reserved-word" # then
   "27 28 command" # ls
   "30 30 path" # /
   "31 31 commandseparator" # ;
   "33 36 reserved-word" # else
   "38 39 command" # ls
+  "40 40 commandseparator" # ;
   "42 43 reserved-word" # fi
+  "44 44 commandseparator" # ;
   "46 47 reserved-word" # do
   "49 52 command" # stat
+  "54 56 default" # "x"
   "54 56 double-quoted-argument" # "x"
+  "57 57 commandseparator" # ;
   "59 62 reserved-word" # done
+  "63 63 commandseparator" # ;
   "65 70 reserved-word" # repeat
+  "72 73 default" # 10
   "75 76 command" # ls
 )

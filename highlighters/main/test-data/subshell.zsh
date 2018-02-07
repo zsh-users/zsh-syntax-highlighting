@@ -31,10 +31,20 @@ BUFFER='tar cf - * | (cd /target; tar xfp -) | { cat }'
 
 expected_region_highlight=(
   "1 3 command" # tar
+  "5 6 default" # cf
+  "8 8 single-hyphen-option" # -
+  "10 10 default" # *
+  "10 10 globbing" # *
+  "12 12 commandseparator" # |
   "14 14 reserved-word" # (
   "15 16 builtin" # cd
+  "18 24 default" # /target
+  "25 25 commandseparator" # ;
   "27 29 command" # tar
+  "31 33 default" # xfp
+  "35 35 single-hyphen-option" # -
   "36 36 reserved-word" # )
+  "38 38 commandseparator" # |
   "40 40 reserved-word" # {
   "42 44 command" # cat
   "46 46 reserved-word" # }

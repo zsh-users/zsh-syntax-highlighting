@@ -97,7 +97,7 @@ run_test_internal() {
   echo "# ${1:t:r}"
 
   # Load the data and prepare checking it.
-  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET skip_test
+  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET skip_test unsorted=0
   local -a expected_region_highlight region_highlight
   . "$srcdir"/"$1"
 
@@ -106,7 +106,7 @@ run_test_internal() {
   # Check the data declares $PREBUFFER or $BUFFER.
   [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! On ${(qq)1}: Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return 1; }
   # Check the data declares $expected_region_highlight.
-  (( ${#expected_region_highlight} == 0 )) && { echo >&2 "Bail out! On ${(qq)1}: 'expected_region_highlight' is not declared or empty."; return 1; }
+  (( $+expected_region_highlight == 0 )) && { echo >&2 "Bail out! On ${(qq)1}: 'expected_region_highlight' is not declared."; return 1; }
 
   # Set sane defaults for ZLE variables
   : ${CURSOR=$#BUFFER} ${PENDING=0} ${WIDGET=z-sy-h-test-harness-test-widget}
@@ -114,54 +114,48 @@ run_test_internal() {
   # Process the data.
   _zsh_highlight
 
-  # Overlapping regions can be declared in region_highlight, so we first build an array of the
-  # observed highlighting.
-  local i j
-  local -A observed_result
-  for ((i=1; i<=${#region_highlight}; i++)); do
-    local -a highlight_zone; highlight_zone=( ${(z)region_highlight[$i]} )
-    integer start=$highlight_zone[1] end=$highlight_zone[2]
-    if (( start < end )) # region_highlight ranges are half-open
-    then
-      (( --end )) # convert to closed range, like expected_region_highlight
-      (( ++start, ++end )) # region_highlight is 0-indexed; expected_region_highlight is 1-indexed
-      for j in {$start..$end}; do
-        observed_result[$j]=$highlight_zone[3]
-      done
-    else
-      # noop range; ignore.
-    fi
-    unset start end
-    unset highlight_zone
-  done
+  if (( unsorted )); then
+    region_highlight=("${(@n)region_highlight}")
+    expected_region_highlight=("${(@n)expected_region_highlight}")
+  fi
 
-  # Then we compare the observed result with the expected one.
-  echo "1..${#expected_region_highlight}"
-  for ((i=1; i<=${#expected_region_highlight}; i++)); do
-    local -a highlight_zone; highlight_zone=( ${(z)expected_region_highlight[$i]} )
+  echo "1..$(( $#expected_region_highlight + 1))"
+  local i
+  for ((i=1; i<=$#expected_region_highlight; i++)); do
+    local -a expected_highlight_zone; expected_highlight_zone=( ${(z)expected_region_highlight[i]} )
+    integer exp_start=$expected_highlight_zone[1] exp_end=$expected_highlight_zone[2]
     local todo=
-    integer start=$highlight_zone[1] end=$highlight_zone[2]
+    (( $+expected_highlight_zone[4] )) && todo="# TODO $expected_highlight_zone[4]"
+    if ! (( $+region_highlight[i] )); then
+      print -r -- "not ok $i - unmatched expectation ($exp_start $exp_end $expected_highlight_zone[3])"
+      continue
+    fi
+    local -a highlight_zone; highlight_zone=( ${(z)region_highlight[i]} )
+    integer start=$(( highlight_zone[1] + 1 )) end=$highlight_zone[2]
     # Escape # as ♯ and newline as ↵ they are illegal in the 'description' part of TAP output
     local desc="[$start,$end] «${${BUFFER[$start,$end]//'#'/♯}//$'\n'/↵}»"
-    (( $+highlight_zone[4] )) && todo="# TODO $highlight_zone[4]"
-    for j in {$start..$end}; do
-      if
-	if [[ $highlight_zone[3] == NONE ]]; then
-	  (( $+observed_result[$j] ))
-	else
-	  [[ "$observed_result[$j]" != "$highlight_zone[3]" ]]
-	fi
-      then
-        print -r -- "not ok $i - $desc - expected ${(qqq)highlight_zone[3]}, observed ${(qqq)observed_result[$j]-NONE}. $todo"
-        continue 2
-      fi
-    done
-    print -r -- "ok $i - $desc${todo:+ - }$todo"
-    unset desc
-    unset start end
+    if
+      [[ $start != $exp_start ]] ||
+      [[ $end != $exp_end ]] ||
+      [[ $highlight_zone[3] != $expected_highlight_zone[3] ]]
+    then
+      print -r -- "not ok $i - $desc - expected ($exp_start $exp_end ${(qqq)expected_highlight_zone[3]}), observed ($start $end ${(qqq)highlight_zone[3]}). $todo"
+    else
+      print -r -- "ok $i - $desc${todo:+ - }$todo"
+    fi
+    unset expected_highlight_zone
+    unset exp_start exp_end
     unset todo
     unset highlight_zone
+    unset start end
+    unset desc
   done
+
+  if (( $#expected_region_highlight == $#region_highlight )); then
+    print -r -- "ok $i - cardinality check"
+  else
+    print -r -- "not ok $i - have $#expected_region_highlight expectations and $#region_highlight region_highlight entries"
+  fi
 }
 
 # Run a single test file.  The exit status is 1 if the test harness had

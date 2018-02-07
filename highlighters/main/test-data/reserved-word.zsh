@@ -31,6 +31,7 @@ BUFFER='repeat "1" do done'
 
 expected_region_highlight=(
   "1 6 reserved-word" # repeat
+  "8 10 default" # "1"
   "8 10 double-quoted-argument" # "1"
   "12 13 reserved-word" # do
   "15 18 reserved-word" # done

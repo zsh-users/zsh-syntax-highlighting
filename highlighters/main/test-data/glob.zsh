@@ -31,11 +31,11 @@ BUFFER=': foo* bar? *baz qux\?'
 
 expected_region_highlight=(
   "1 1 builtin" # :
-  "3 5 default" # foo
+  "3 6 default" # foo*
   "6 6 globbing" # *
-  "8 10 default" # bar
+  "8 11 default" # bar?
   "11 11 globbing" # ?
+  "13 16 default" # *baz
   "13 13 globbing" # *
-  "14 16 default" # baz
   "18 22 default" # qux\?
 )

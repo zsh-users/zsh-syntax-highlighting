@@ -32,15 +32,11 @@ BUFFER=': "$- $# $* $@ $?"'
 
 expected_region_highlight=(
   '1 1 builtin' # :
-  '3 3 double-quoted-argument' # "
+  '3 18 default' # "$- $# $* $@ $?"
+  '3 18 double-quoted-argument' # "$- $# $* $@ $?"
   '4 5 dollar-double-quoted-argument' # $-
-  '6 6 double-quoted-argument' # <space>
   '7 8 dollar-double-quoted-argument' # $#
-  '9 9 double-quoted-argument' # <space>
   '10 11 dollar-double-quoted-argument' # $*
-  '12 12 double-quoted-argument' # <space>
   '13 14 dollar-double-quoted-argument' # $@
-  '15 15 double-quoted-argument' # <space>
   '16 17 dollar-double-quoted-argument' # $?
-  '18 18 double-quoted-argument' # "
 )

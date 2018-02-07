@@ -30,6 +30,5 @@
 BUFFER=': x)'
 
 expected_region_highlight=(
-  "1 3 NONE"
   "4 4 bracket-error" # )
 )

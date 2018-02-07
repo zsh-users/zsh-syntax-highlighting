@@ -34,5 +34,10 @@ CURSOR=4
 MARK=12
 
 expected_region_highlight=(
-  "1 3 standout" # foo
+  "1 3 unknown-token" # foo
+  "5 7 default" # foo
+  "8 8 commandseparator" # \n
+  "9 11 unknown-token" # bar
+  "13 15 default" # bar
+  "1 15 standout" # foo foo\nbar bar
 )

@@ -32,8 +32,8 @@ BUFFER=': "$$ $$foo"'
 
 expected_region_highlight=(
   '1 1 builtin' # :
-  '3 3 double-quoted-argument' # "
+  '3 12 default' # "$$ $$foo"
+  '3 12 double-quoted-argument' # "$$ $$foo"
   '4 5 dollar-double-quoted-argument' # $$
   '7 8 dollar-double-quoted-argument' # $$
-  '9 12 double-quoted-argument' # foo"
 )

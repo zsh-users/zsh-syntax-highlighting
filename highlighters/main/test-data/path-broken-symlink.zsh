@@ -35,6 +35,7 @@ else
   CURSOR=5 # to make path_prefix ineligible
 
   expected_region_highlight=(
+    "1 1 builtin" # :
     "3 16 path" # broken-symlink
   )
 fi

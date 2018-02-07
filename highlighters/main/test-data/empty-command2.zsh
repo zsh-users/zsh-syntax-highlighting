@@ -33,6 +33,7 @@ touch ';'
 BUFFER='echo; ;'
 
 expected_region_highlight=(
+  "1 4 builtin" # echo
   "5 5 commandseparator" # ;
   "7 7 unknown-token" # ;
 )

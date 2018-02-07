@@ -34,6 +34,7 @@ expected_region_highlight=(
   '1 3 reserved-word' # for
   '5 5 default' # n
   '7 8 default' # in
+  '10 10 default' # *
   '10 10 globbing' # *
   '11 11 commandseparator' # ;
   '13 14 reserved-word' # do

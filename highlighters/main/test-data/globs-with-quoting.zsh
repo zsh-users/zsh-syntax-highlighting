@@ -32,6 +32,7 @@ BUFFER=$': "foo"*\'bar\'?"baz?"<17-29>"qu*ux"'
 
 expected_region_highlight=(
   '1 1 builtin' # :
+  '3 34 default' # "foo"*'bar'?"baz?"<17-29>"qu*ux"
   '3 7 double-quoted-argument' # "foo"
   '8 8 globbing' # *
   '9 13 single-quoted-argument' # 'bar'

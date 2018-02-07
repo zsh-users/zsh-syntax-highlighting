@@ -33,5 +33,5 @@ BUFFER='ls A/mu\ with\ spaces'
 
 expected_region_highlight=(
   "1 2  command" # ls
-  "4 19 path"    # A/mu\ with\ spaces
+  "4 21 path"    # A/mu\ with\ spaces
 )

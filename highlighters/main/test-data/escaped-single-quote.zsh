@@ -32,7 +32,7 @@ BUFFER=$': \'foo\'\\\'\'bar\'' # <<<: 'foo'\''bar'>>>
 
 expected_region_highlight=(
   '1 1 builtin' # :
+  '3 14 default' # 'foo'\''bar'
   '3 7 single-quoted-argument' # 'foo'
-  '8 9 default' # \'
   '10 14 single-quoted-argument' # 'bar'
 )

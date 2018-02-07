@@ -13,12 +13,13 @@ The value of that parameter is a list of strings of the form  `"$i $j $style"`.
 or `"$i $j $style $todo"`.
 Each string specifies the highlighting that `$BUFFER[$i,$j]` should have;
 that is, `$i` and `$j` specify a range, 1-indexed, inclusive of both endpoints.
-`$style` is either a key of `$ZSH_HIGHLIGHT_STYLES` or `NONE` to specify no
-highlighting should be observed.
+`$style` is a key of `$ZSH_HIGHLIGHT_STYLES`.
 If `$todo` exists, the test point is marked as TODO (the failure of that test
 point will not fail the test), and `$todo` is used as the explanation.
 If a test sets `$skip_test` to a non-empty string, the test will be skipped
 with the provided string as the reason.
+If a test sets `unsorted=1` the order of highlights in `$expected_region_highlight`
+need not match the order in `$region_highlight`.
 
 **Note**: `$region_highlight` uses the same `"$i $j $style"` syntax but
 interprets the indexes differently.
