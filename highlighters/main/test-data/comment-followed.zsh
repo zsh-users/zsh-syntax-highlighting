@@ -32,8 +32,7 @@ setopt interactivecomments
 BUFFER=$'# foo\ntrue'
 
 expected_region_highlight=(
-  '1 5 comment' # #
-  #'6 6 '"' # \n
-
+  '1 5 comment' # # foo
+  '6 6 commandseparator "issue #501"' # \n
   '7 10 builtin' # true
 )
