@@ -141,8 +141,8 @@ run_test_internal() {
     local -a highlight_zone; highlight_zone=( ${(z)expected_region_highlight[$i]} )
     local todo=
     integer start=$highlight_zone[1] end=$highlight_zone[2]
-    # Escape # as ♯ since the former is illegal in the 'description' part of TAP output
-    local desc="[$start,$end] «${BUFFER[$start,$end]//'#'/♯}»"
+    # Escape # as ♯ and newline as ↵ they are illegal in the 'description' part of TAP output
+    local desc="[$start,$end] «${${BUFFER[$start,$end]//'#'/♯}//$'\n'/↵}»"
     (( $+highlight_zone[4] )) && todo="# TODO $highlight_zone[4]"
     for j in {$start..$end}; do
       if
