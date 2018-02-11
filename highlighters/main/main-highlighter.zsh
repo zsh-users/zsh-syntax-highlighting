@@ -830,14 +830,12 @@ _zsh_highlight_main_highlighter_highlight_argument()
           _zsh_highlight_main_highlighter_highlight_dollar_quote $i
           (( i = REPLY ))
           highlights+=($reply)
-        elif [[ $arg[i+1] == [\^=~#+] ]]; then
-          while [[ $arg[i+1] == [\^=~#+] ]]; do
-            (( i += 1 ))
-          done
-          if [[ $arg[i+1] == [*@#?-$!] ]]; then
-            (( i += 1 ))
-          fi
-        elif [[ $arg[i+1] == [*@#?-$!] ]]; then
+          continue
+        fi
+        while [[ $arg[i+1] == [\^=~#+] ]]; do
+          (( i += 1 ))
+        done
+        if [[ $arg[i+1] == [*@#?-$!] ]]; then
           (( i += 1 ))
         fi;;
       *)
