@@ -1074,7 +1074,7 @@ _zsh_highlight_main__precmd_hook() {
   _zsh_highlight_main__command_type_cache=()
 }
 
-autoload -U add-zsh-hook
+autoload -Uz add-zsh-hook
 if add-zsh-hook precmd _zsh_highlight_main__precmd_hook 2>/dev/null; then
   # Initialize command type cache
   typeset -gA _zsh_highlight_main__command_type_cache

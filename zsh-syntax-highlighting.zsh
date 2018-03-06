@@ -55,7 +55,7 @@ fi
 
 # Use workaround for bug in ZSH?
 # zsh-users/zsh@48cadf4 http://www.zsh.org/mla/workers//2017/msg00034.html
-autoload -U is-at-least
+autoload -Uz is-at-least
 if is-at-least 5.4; then
   zsh_highlight__pat_static_bug=false
 else
@@ -421,7 +421,7 @@ _zsh_highlight_preexec_hook()
   typeset -g _ZSH_HIGHLIGHT_PRIOR_BUFFER=
   typeset -gi _ZSH_HIGHLIGHT_PRIOR_CURSOR=
 }
-autoload -U add-zsh-hook
+autoload -Uz add-zsh-hook
 add-zsh-hook preexec _zsh_highlight_preexec_hook 2>/dev/null || {
     print -r -- >&2 'zsh-syntax-highlighting: failed loading add-zsh-hook.'
   }
