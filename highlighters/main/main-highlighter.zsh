@@ -226,24 +226,10 @@ _zsh_highlight_highlighter_main_paint()
     return
   fi
 
-  ## Variable declarations and initializations
-  local start_pos=0 end_pos buf_offset=-$#PREBUFFER highlight_glob=true arg style
-  local in_array_assignment=false # true between 'a=(' and the matching ')'
   typeset -a ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR
   typeset -a ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
   typeset -a ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW
   local -a options_to_set # used in callees
-  local buf="$PREBUFFER$BUFFER"
-  integer len="${#buf}"
-
-  # "R" for round
-  # "Q" for square
-  # "Y" for curly
-  # "D" for do/done
-  # "$" for 'end' (matches 'foreach' always; also used with cshjunkiequotes in repeat/while)
-  # "?" for 'if'/'fi'; also checked by 'elif'/'else'
-  # ":" for 'then'
-  local braces_stack
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
     local right_brace_is_recognised_everywhere=false
@@ -285,7 +271,21 @@ _zsh_highlight_highlighter_main_paint()
     '!' # reserved word; unrelated to $histchars[1]
   )
 
+  integer start_pos=0 end_pos buf_offset=-$#PREBUFFER
+  local buf="$PREBUFFER$BUFFER" highlight_glob=true arg style
+  local in_array_assignment=false # true between 'a=(' and the matching ')'
+  integer len=$#buf
   local -a match mbegin mend
+
+  # "R" for round
+  # "Q" for square
+  # "Y" for curly
+  # "S" for $( )
+  # "D" for do/done
+  # "$" for 'end' (matches 'foreach' always; also used with cshjunkiequotes in repeat/while)
+  # "?" for 'if'/'fi'; also checked by 'elif'/'else'
+  # ":" for 'then'
+  local braces_stack
 
   # State machine
   #
