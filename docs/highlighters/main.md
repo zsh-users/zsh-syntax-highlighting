@@ -32,6 +32,7 @@ This highlighter defines the following styles:
 * `path_prefix_pathseparator` - path separators in prefixes of existing filenames (`/`); if unset, `path_prefix` is used (default)
 * `globbing` - globbing expressions (`*.txt`)
 * `history-expansion` - history expansion expressions (`!foo` and `^foo^bar`)
+* `command-substitution` - command substitutions (`$(echo foo)`)
 * `single-hyphen-option` - single-hyphen options (`-o`)
 * `double-hyphen-option` - double-hyphen options (`--option`)
 * `back-quoted-argument` - backtick command substitution (`` `foo` ``)

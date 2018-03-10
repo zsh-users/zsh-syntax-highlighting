@@ -40,6 +40,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]:=}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
+: ${ZSH_HIGHLIGHT_STYLES[command-substitution]:=fg=magenta}
 : ${ZSH_HIGHLIGHT_STYLES[single-hyphen-option]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[double-hyphen-option]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[back-quoted-argument]:=none}
@@ -653,7 +654,12 @@ _zsh_highlight_main_highlighter_highlight_list()
                           style=reserved-word
                           braces_stack='R'"$braces_stack"
                         elif [[ $arg == $'\x29' ]]; then
-                          # end of subshell
+                          # end of subshell or command substitution
+                          if _zsh_highlight_main__stack_pop 'S'; then
+                            REPLY=$start_pos
+                            reply=($list_highlights)
+                            return
+                          fi
                           _zsh_highlight_main__stack_pop 'R' reserved-word
                         else
                           if _zsh_highlight_main_highlighter_check_path; then
@@ -679,6 +685,11 @@ _zsh_highlight_main_highlighter_highlight_list()
                    in_array_assignment=false
                    next_word+=':start:'
                  else
+                   if _zsh_highlight_main__stack_pop 'S'; then
+                     REPLY=$start_pos
+                     reply=($list_highlights)
+                     return
+                   fi
                    _zsh_highlight_main__stack_pop 'R' reserved-word
                  fi;;
         $'\x28\x29') # possibly a function definition
@@ -829,8 +840,8 @@ _zsh_highlight_main_highlighter_check_path()
 # This command will at least highlight start_pos to end_pos with the default style
 _zsh_highlight_main_highlighter_highlight_argument()
 {
-  local base_style=default i path_eligible=1 style
-  local -a highlights reply
+  local base_style=default i path_eligible=1 start style
+  local -a highlights
 
   local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
@@ -869,6 +880,13 @@ _zsh_highlight_main_highlighter_highlight_argument()
           _zsh_highlight_main_highlighter_highlight_dollar_quote $i
           (( i = REPLY ))
           highlights+=($reply)
+          continue
+       elif [[ $arg[i+1] == $'\x28' ]]; then
+          start=$i
+          (( i += 2 ))
+          _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $arg[i,end_pos]
+          (( i += REPLY ))
+          highlights+=($(( start_pos + start - 1)) $(( start_pos + i )) command-substitution $reply)
           continue
         fi
         while [[ $arg[i+1] == [\^=~#+] ]]; do
@@ -969,7 +987,12 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
               (( k += 1 )) # highlight both dollar signs
               (( i += 1 )) # don't consider the second one as introducing another parameter expansion
             elif [[ $arg[i+1] == $'\x28' ]]; then
-              # Highlight just the '$'.
+              (( i += 2 ))
+              saved_reply=($reply)
+              _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $arg[i,end_pos]
+              (( i += REPLY ))
+              reply=($saved_reply $j $(( start_pos + i )) command-substitution $reply)
+              continue
             else
               continue
             fi

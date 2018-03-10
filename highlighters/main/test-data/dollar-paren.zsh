@@ -34,5 +34,6 @@ expected_region_highlight=(
   '1 1 builtin' # :
   '3 8 default' # "$(:)"
   '3 8 double-quoted-argument' # "$(:)"
-  '4 4 dollar-double-quoted-argument' # $
+  '4 7 command-substitution' # $(:)
+  '6 6 builtin' # :
 )
