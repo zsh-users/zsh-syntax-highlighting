@@ -271,8 +271,16 @@ _zsh_highlight_highlighter_main_paint()
     '!' # reserved word; unrelated to $histchars[1]
   )
 
-  integer start_pos=0 end_pos buf_offset=-$#PREBUFFER
-  local buf="$PREBUFFER$BUFFER" highlight_glob=true arg style
+  _zsh_highlight_main_highlighter_highlight_list -$#PREBUFFER '' "$PREBUFFER$BUFFER"
+}
+
+# $1 is the offset of $3 from the parent buffer. Added to the returned highlights.
+# $2 is the initial braces_stack (for a closing paren).
+# $3 is the buffer to highlight.
+_zsh_highlight_main_highlighter_highlight_list()
+{
+  integer start_pos=0 end_pos buf_offset=$1
+  local buf=$3 highlight_glob=true arg style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   integer len=$#buf
   local -a match mbegin mend
@@ -285,7 +293,7 @@ _zsh_highlight_highlighter_main_paint()
   # "$" for 'end' (matches 'foreach' always; also used with cshjunkiequotes in repeat/while)
   # "?" for 'if'/'fi'; also checked by 'elif'/'else'
   # ":" for 'then'
-  local braces_stack
+  local braces_stack=$2
 
   # State machine
   #
