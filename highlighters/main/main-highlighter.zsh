@@ -229,7 +229,6 @@ _zsh_highlight_highlighter_main_paint()
   local -a options_to_set # used in callees
   local buf="$PREBUFFER$BUFFER"
   integer len="${#buf}"
-  integer pure_buf_len=$(( len - ${#PREBUFFER} ))   # == $#BUFFER, used e.g. in *_check_path
 
   # "R" for round
   # "Q" for square
@@ -788,7 +787,7 @@ _zsh_highlight_main_highlighter_check_path()
   [[ ! -d ${expanded_path:h} ]] && return 1
 
   # If this word ends the buffer, check if it's the prefix of a valid path.
-  if [[ ${BUFFER[1]} != "-" && $pure_buf_len == $end_pos ]] &&
+  if [[ ${BUFFER[1]} != "-" && $len == $end_pos ]] &&
      [[ $WIDGET != zle-line-finish ]]; then
     local -a tmp
     tmp=( ${expanded_path}*(N) )
