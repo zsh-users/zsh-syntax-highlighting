@@ -198,13 +198,18 @@ _zsh_highlight_main__resolve_alias() {
 # the style according to $2; otherwise, set style=unknown-token.
 #
 # $1: character expected to be at the top of $braces_stack
-# $2: assignment to execute it if matches
+# $2: optional assignment to style it if matches
+# return value is 0 if there is a match else 1
 _zsh_highlight_main__stack_pop() {
   if [[ $braces_stack[1] == $1 ]]; then
     braces_stack=${braces_stack:1}
-    eval "$2"
+    if (( $+2 )); then
+      style=$2
+    fi
+    return 0
   else
     style=unknown-token
+    return 1
   fi
 }
 
@@ -512,7 +517,7 @@ _zsh_highlight_highlighter_main_paint()
                             ;;
                           ($'\x7d')
                             # We're at command word, so no need to check $right_brace_is_recognised_everywhere
-                            _zsh_highlight_main__stack_pop 'Y' style=reserved-word
+                            _zsh_highlight_main__stack_pop 'Y' reserved-word
                             if [[ $style == reserved-word ]]; then
                               next_word+=':always:'
                             fi
@@ -521,13 +526,13 @@ _zsh_highlight_highlighter_main_paint()
                             braces_stack='D'"$braces_stack"
                             ;;
                           ('done')
-                            _zsh_highlight_main__stack_pop 'D' style=reserved-word
+                            _zsh_highlight_main__stack_pop 'D' reserved-word
                             ;;
                           ('if')
                             braces_stack=':?'"$braces_stack"
                             ;;
                           ('then')
-                            _zsh_highlight_main__stack_pop ':' style=reserved-word
+                            _zsh_highlight_main__stack_pop ':' reserved-word
                             ;;
                           ('elif')
                             if [[ ${braces_stack[1]} == '?' ]]; then
@@ -544,13 +549,13 @@ _zsh_highlight_highlighter_main_paint()
                             fi
                             ;;
                           ('fi')
-                            _zsh_highlight_main__stack_pop '?' ""
+                            _zsh_highlight_main__stack_pop '?'
                             ;;
                           ('foreach')
                             braces_stack='$'"$braces_stack"
                             ;;
                           ('end')
-                            _zsh_highlight_main__stack_pop '$' style=reserved-word
+                            _zsh_highlight_main__stack_pop '$' reserved-word
                             ;;
                         esac
                         ;;
@@ -633,7 +638,7 @@ _zsh_highlight_highlighter_main_paint()
                           braces_stack='R'"$braces_stack"
                         elif [[ $arg == $'\x29' ]]; then
                           # end of subshell
-                          _zsh_highlight_main__stack_pop 'R' style=reserved-word
+                          _zsh_highlight_main__stack_pop 'R' reserved-word
                         else
                           if _zsh_highlight_main_highlighter_check_path; then
                             style=$REPLY
@@ -658,7 +663,7 @@ _zsh_highlight_highlighter_main_paint()
                    in_array_assignment=false
                    next_word+=':start:'
                  else
-                   _zsh_highlight_main__stack_pop 'R' style=reserved-word
+                   _zsh_highlight_main__stack_pop 'R' reserved-word
                  fi;;
         $'\x28\x29') # possibly a function definition
                  if [[ $zsyh_user_options[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
@@ -673,7 +678,7 @@ _zsh_highlight_highlighter_main_paint()
                    #
                    #     Additionally, `tt(})' is recognized in any position if neither the
                    #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set.
-                   _zsh_highlight_main__stack_pop 'Y' style=reserved-word
+                   _zsh_highlight_main__stack_pop 'Y' reserved-word
                    if [[ $style == reserved-word ]]; then
                      next_word+=':always:'
                    fi
