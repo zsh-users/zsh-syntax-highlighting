@@ -68,10 +68,9 @@ _zsh_highlight_main_add_region_highlight() {
   local reply
   shift 2
 
-  # The calculation was relative to $PREBUFFER$BUFFER, but region_highlight is
-  # relative to $BUFFER.
-  (( start -= $#PREBUFFER ))
-  (( end -= $#PREBUFFER ))
+  # The calculation was relative to $buf but region_highlight is relative to $BUFFER.
+  (( start += buf_offset ))
+  (( end += buf_offset ))
 
   (( start >= end )) && { print -r -- >&2 "zsh-syntax-highlighting: BUG: _zsh_highlight_main_add_region_highlight: start($start) >= end($end)"; return }
   (( end <= 0 )) && return
@@ -228,7 +227,7 @@ _zsh_highlight_highlighter_main_paint()
   fi
 
   ## Variable declarations and initializations
-  local start_pos=0 end_pos highlight_glob=true arg style
+  local start_pos=0 end_pos buf_offset=-$#PREBUFFER highlight_glob=true arg style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   typeset -a ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR
   typeset -a ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
