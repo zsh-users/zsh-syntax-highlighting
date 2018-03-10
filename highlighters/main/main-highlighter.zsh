@@ -65,19 +65,13 @@ _zsh_highlight_highlighter_main_predicate()
 # Helper to deal with tokens crossing line boundaries.
 _zsh_highlight_main_add_region_highlight() {
   integer start=$1 end=$2
-  local reply
   shift 2
 
   # The calculation was relative to $buf but region_highlight is relative to $BUFFER.
   (( start += buf_offset ))
   (( end += buf_offset ))
 
-  (( start >= end )) && { print -r -- >&2 "zsh-syntax-highlighting: BUG: _zsh_highlight_main_add_region_highlight: start($start) >= end($end)"; return }
-  (( end <= 0 )) && return
-  (( start < 0 )) && start=0 # having start<0 is normal with e.g. multiline strings
-
-  _zsh_highlight_main_calculate_fallback $1
-  _zsh_highlight_add_highlight $start $end $reply
+  list_highlights+=($start $end $1)
 }
 
 _zsh_highlight_main_add_many_region_highlights() {
@@ -229,7 +223,8 @@ _zsh_highlight_highlighter_main_paint()
   typeset -a ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR
   typeset -a ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS
   typeset -a ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW
-  local -a options_to_set # used in callees
+  local -a options_to_set reply # used in callees
+  local REPLY
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
     local right_brace_is_recognised_everywhere=false
@@ -272,18 +267,32 @@ _zsh_highlight_highlighter_main_paint()
   )
 
   _zsh_highlight_main_highlighter_highlight_list -$#PREBUFFER '' "$PREBUFFER$BUFFER"
+
+  # end is a reserved word
+  local start end_ style
+  for start end_ style in $reply; do
+    (( start >= end_ )) && { print -r -- >&2 "zsh-syntax-highlighting: BUG: _zsh_highlight_highlighter_main_paint: start($start) >= end($end_)"; return }
+    (( end_ <= 0 )) && continue
+    (( start < 0 )) && start=0 # having start<0 is normal with e.g. multiline strings
+    _zsh_highlight_main_calculate_fallback $style
+    _zsh_highlight_add_highlight $start $end_ $reply
+  done
 }
 
 # $1 is the offset of $3 from the parent buffer. Added to the returned highlights.
 # $2 is the initial braces_stack (for a closing paren).
 # $3 is the buffer to highlight.
+# Returns:
+# $REPLY: $buf[REPLY] is the last character parsed.
+# $reply is an array of region_highlight additions.
 _zsh_highlight_main_highlighter_highlight_list()
 {
   integer start_pos=0 end_pos buf_offset=$1
   local buf=$3 highlight_glob=true arg style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   integer len=$#buf
-  local -a match mbegin mend
+  local -a match mbegin mend list_highlights
+  list_highlights=()
 
   # "R" for round
   # "Q" for square
@@ -741,6 +750,9 @@ _zsh_highlight_main_highlighter_highlight_list()
       # Stall $this_word.
     fi
   done
+  REPLY=$(( end_pos - 1 ))
+  reply=($list_highlights)
+  return
 }
 
 # Check if $arg is variable assignment
