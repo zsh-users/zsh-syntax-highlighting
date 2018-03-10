@@ -41,6 +41,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[command-substitution]:=fg=magenta}
+: ${ZSH_HIGHLIGHT_STYLES[process-substitution]:=fg=magenta}
 : ${ZSH_HIGHLIGHT_STYLES[single-hyphen-option]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[double-hyphen-option]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[back-quoted-argument]:=none}
@@ -896,6 +897,16 @@ _zsh_highlight_main_highlighter_highlight_argument()
         if [[ $arg[i+1] == [*@#?$!-] ]]; then
           (( i += 1 ))
         fi;;
+      [\<\>])
+        if [[ $arg[i+1] == $'\x28' ]]; then # \x28 = open paren
+          start=$i
+          (( i += 2 ))
+          _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+          (( i += REPLY ))
+          highlights+=($(( start_pos + start - 1)) $(( start_pos + i )) process-substitution $reply)
+          continue
+        fi
+        ;|
       *)
         if $highlight_glob && [[ ${arg[$i]} =~ ^[*?] || ${arg:$i-1} =~ ^\<[0-9]*-[0-9]*\> ]]; then
           highlights+=($(( start_pos + i - 1 )) $(( start_pos + i + $#MATCH - 1)) globbing)

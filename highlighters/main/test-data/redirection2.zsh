@@ -31,7 +31,9 @@ BUFFER='ls >(wc) | nl'
 
 expected_region_highlight=(
   "1 2 command" # ls
-  "4 8 process-substitution 'issue #494'" # >(wc)
+  "4 8 default" # >(wc)
+  "4 8 process-substitution" # >(wc)
+  "6 7 command" # wc
   "10 10 commandseparator" # |
   "12 13 command" # nl
 )

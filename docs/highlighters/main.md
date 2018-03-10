@@ -33,6 +33,7 @@ This highlighter defines the following styles:
 * `globbing` - globbing expressions (`*.txt`)
 * `history-expansion` - history expansion expressions (`!foo` and `^foo^bar`)
 * `command-substitution` - command substitutions (`$(echo foo)`)
+* `process-substitution` - process substitutions (`<(echo foo)`)
 * `single-hyphen-option` - single-hyphen options (`-o`)
 * `double-hyphen-option` - double-hyphen options (`--option`)
 * `back-quoted-argument` - backtick command substitution (`` `foo` ``)
