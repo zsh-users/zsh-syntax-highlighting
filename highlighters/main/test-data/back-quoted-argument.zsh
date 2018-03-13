@@ -27,16 +27,25 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-# 42 is in the command position in a nested subshell.
 BUFFER='echo `echo \`42\`` "is `echo equal` to" `echo 6 times 9'
 
 expected_region_highlight=(
   "1 4 builtin" # echo
   "6 18 default" # `echo \`42\``
   "6 18 back-quoted-argument" # `echo \`42\``
+  "7 10 builtin" # echo
+  "12 17 default" # \`42\`
+  "12 17 back-quoted-argument" # \`42\`
+  "14 15 unknown-token" # 42
   "20 39 default" # "is `echo equal` to"
   "20 39 double-quoted-argument" # "is `echo equal` to"
   "24 35 back-quoted-argument" # `echo equal`
+  "25 28 builtin" # echo
+  "30 34 default" # equal
   "41 55 default" # `echo 6 times 9
   "41 55 back-quoted-argument-unclosed" # `echo 6 times 9
+  "42 45 builtin" # echo
+  "47 47 default" # 6
+  "49 53 default" # times
+  "55 55 default" # 9
 )

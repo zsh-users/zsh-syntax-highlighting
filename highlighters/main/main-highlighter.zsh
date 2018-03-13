@@ -1084,21 +1084,67 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
   REPLY=$i
 }
 
-# Highlight backtick subshells
+# Highlight backtick substitutions
 _zsh_highlight_main_highlighter_highlight_backtick()
 {
-  local arg1=$1 i=$1 q=\` style
+  # buf is the contents of the backticks with a layer of backslashes removed.
+  # last is the index of arg for the start of the string to be copied into buf.
+  #     It is either one past the beginning backtick or one past the last backslash.
+  # offset is a count of consumed \ (the delta between buf and arg).
+  # offsets is an array indexed by buf offset of when the delta between buf and arg changes.
+  #     It is sparse, so search backwards to the last value
+  # unclosed is an array of one highlight to append to reply if this back-quoted-argument
+  #     is closed and there is an unclosed back-quoted-argument in buf.
+  local buf highlight style=back-quoted-argument-unclosed
+  local -i arg1=$1 end_ i=$1 last offset=0 start subshell_has_end=0
+  local -a highlight_zone highlights offsets unclosed
   reply=()
-  while i=$arg[(ib:i+1:)$q]; [[ $arg[i-1] == '\' && $i -lt $(( end_pos - start_pos )) ]]; do done
 
-  if [[ $arg[i] == '`' ]]; then
-    style=back-quoted-argument
-  else
-    # If unclosed, i points past the end
-    (( i-- ))
-    style=back-quoted-argument-unclosed
-  fi
-  reply=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style)
+  last=$(( arg1 + 1 ))
+  # Remove one layer of backslashes and find the end
+  while i=$arg[(ib:i+1:)[\\\\\`]]; do # find the next \ or `
+    if (( i > end_pos - start_pos )); then
+      buf=$buf$arg[last,i]
+      offsets[i-arg1-offset]='' # So we never index past the end
+      (( i-- ))
+      subshell_has_end=$(( has_end && (start_pos + i == len) ))
+      break
+    fi
+
+    if [[ $arg[i] == '\' ]]; then
+      (( i++ ))
+      # POSIX XCU 2.6.3
+      if [[ $arg[i] == ('$'|'`'|'\') ]]; then
+        buf=$buf$arg[last,i-2]
+        (( offset++ ))
+        # offsets is relative to buf, so adjust by -arg1
+        offsets[i-arg1-offset]=$offset
+      else
+        buf=$buf$arg[last,i-1]
+      fi
+    else # it's an unquoted ` and this is the end
+      style=back-quoted-argument
+      buf=$buf$arg[last,i-1]
+      offsets[i-arg1-offset]='' # So we never index past the end
+      break
+    fi
+    last=$i
+  done
+
+  _zsh_highlight_main_highlighter_highlight_list 0 '' $subshell_has_end $buf
+
+  # Munge the reply to account for removed backslashes
+  for start end_ highlight in $reply; do
+    start=$(( start_pos + arg1 + start + offsets[(Rb:start:)?*] ))
+    end_=$(( start_pos + arg1 + end_ + offsets[(Rb:end_:)?*] ))
+    highlights+=($start $end_ $highlight)
+    if [[ $highlight == back-quoted-argument-unclosed && $style == back-quoted-argument ]]; then
+      # An inner backtick command substitution is unclosed, but this level is closed
+      unclosed=($(( start_pos + i - 1)) $(( start_pos + i )) unknown-token)
+    fi
+  done
+
+  reply=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style $highlights $unclosed)
   REPLY=$i
 }
 
