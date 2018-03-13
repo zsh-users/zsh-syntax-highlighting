@@ -65,10 +65,30 @@ _zsh_highlight_highlighter_main_predicate()
 # Helper to deal with tokens crossing line boundaries.
 _zsh_highlight_main_add_region_highlight() {
   integer start=$1 end=$2
+  local reply
   shift 2
 
-  # Automate inheritance.
-  typeset -A fallback_of; fallback_of=(
+  # The calculation was relative to $PREBUFFER$BUFFER, but region_highlight is
+  # relative to $BUFFER.
+  (( start -= $#PREBUFFER ))
+  (( end -= $#PREBUFFER ))
+
+  (( start >= end )) && { print -r -- >&2 "zsh-syntax-highlighting: BUG: _zsh_highlight_main_add_region_highlight: start($start) >= end($end)"; return }
+  (( end <= 0 )) && return
+  (( start < 0 )) && start=0 # having start<0 is normal with e.g. multiline strings
+
+  _zsh_highlight_main_calculate_fallback $1
+  _zsh_highlight_add_highlight $start $end $reply
+}
+
+_zsh_highlight_main_add_many_region_highlights() {
+  for 1 2 3; do
+    _zsh_highlight_main_add_region_highlight $1 $2 $3
+  done
+}
+
+_zsh_highlight_main_calculate_fallback() {
+  local -A fallback_of; fallback_of=(
       alias arg0
       suffix-alias arg0
       builtin arg0
@@ -90,26 +110,11 @@ _zsh_highlight_main_add_region_highlight() {
       back-quoted-argument{-unclosed,}
   )
   local needle=$1 value
+  reply=($1)
   while [[ -n ${value::=$fallback_of[(k)$needle]} ]]; do
     unset "fallback_of[$needle]" # paranoia against infinite loops
-    argv+=($value)
+    reply+=($value)
     needle=$value
-  done
-
-  # The calculation was relative to $PREBUFFER$BUFFER, but region_highlight is
-  # relative to $BUFFER.
-  (( start -= $#PREBUFFER ))
-  (( end -= $#PREBUFFER ))
-
-  (( start >= end )) && { print -r -- >&2 "zsh-syntax-highlighting: BUG: _zsh_highlight_main_add_region_highlight: start($start) >= end($end)"; return }
-  (( end <= 0 )) && return
-  (( start < 0 )) && start=0 # having start<0 is normal with e.g. multiline strings
-  _zsh_highlight_add_highlight $start $end "$@"
-}
-
-_zsh_highlight_main_add_many_region_highlights() {
-  for 1 2 3; do
-    _zsh_highlight_main_add_region_highlight $1 $2 $3
   done
 }
 
