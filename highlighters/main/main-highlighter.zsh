@@ -67,37 +67,34 @@ _zsh_highlight_main_add_region_highlight() {
   integer start=$1 end=$2
   shift 2
 
-  if (( $+argv[2] )); then
-    # Caller specified inheritance explicitly.
-  else
-    # Automate inheritance.
-    typeset -A fallback_of; fallback_of=(
-        alias arg0
-        suffix-alias arg0
-        builtin arg0
-        function arg0
-        command arg0
-        precommand arg0
-        hashed-command arg0
+  # Automate inheritance.
+  typeset -A fallback_of; fallback_of=(
+      alias arg0
+      suffix-alias arg0
+      builtin arg0
+      function arg0
+      command arg0
+      precommand arg0
+      hashed-command arg0
+      arg0_\* arg0
 
-        path_prefix path
-        # The path separator fallback won't ever be used, due to the optimisation
-        # in _zsh_highlight_main_highlighter_highlight_path_separators().
-        path_pathseparator path
-        path_prefix_pathseparator path_prefix
+      path_prefix path
+      # The path separator fallback won't ever be used, due to the optimisation
+      # in _zsh_highlight_main_highlighter_highlight_path_separators().
+      path_pathseparator path
+      path_prefix_pathseparator path_prefix
 
-        single-quoted-argument{-unclosed,}
-        double-quoted-argument{-unclosed,}
-        dollar-quoted-argument{-unclosed,}
-        back-quoted-argument{-unclosed,}
-    )
-    local needle=$1 value
-    while [[ -n ${value::=$fallback_of[$needle]} ]]; do
-      unset "fallback_of[$needle]" # paranoia against infinite loops
-      argv+=($value)
-      needle=$value
-    done
-  fi
+      single-quoted-argument{-unclosed,}
+      double-quoted-argument{-unclosed,}
+      dollar-quoted-argument{-unclosed,}
+      back-quoted-argument{-unclosed,}
+  )
+  local needle=$1 value
+  while [[ -n ${value::=$fallback_of[(k)$needle]} ]]; do
+    unset "fallback_of[$needle]" # paranoia against infinite loops
+    argv+=($value)
+    needle=$value
+  done
 
   # The calculation was relative to $PREBUFFER$BUFFER, but region_highlight is
   # relative to $BUFFER.
@@ -640,7 +637,7 @@ _zsh_highlight_highlighter_main_paint()
                           fi
                         fi
                         ;;
-        *)              _zsh_highlight_main_add_region_highlight $start_pos $end_pos arg0_$res arg0
+        *)              _zsh_highlight_main_add_region_highlight $start_pos $end_pos arg0_$res
                         already_added=1
                         ;;
       esac
