@@ -842,7 +842,7 @@ _zsh_highlight_main_highlighter_check_path()
 # This command will at least highlight start_pos to end_pos with the default style
 _zsh_highlight_main_highlighter_highlight_argument()
 {
-  local base_style=default i path_eligible=1 start style
+  local base_style=default i=1 path_eligible=1 start style
   local -a highlights
 
   local -a match mbegin mend
@@ -857,9 +857,16 @@ _zsh_highlight_main_highlighter_highlight_argument()
       fi
       path_eligible=0
       ;;
+    '=')
+      if [[ $arg[2] == $'\x28' ]]; then
+        (( i += 2 ))
+        _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+        (( i += REPLY ))
+        highlights+=($start_pos $(( start_pos + i )) process-substitution $reply)
+      fi
   esac
 
-  for (( i = 1 ; i <= end_pos - start_pos ; i += 1 )); do
+  for (( ; i <= end_pos - start_pos ; i += 1 )); do
     case "$arg[$i]" in
       "\\") (( i += 1 )); continue;;
       "'")
