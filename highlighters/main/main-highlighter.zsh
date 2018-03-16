@@ -88,7 +88,7 @@ _zsh_highlight_main_add_region_highlight() {
 
         single-quoted-argument{-unclosed,}
         double-quoted-argument{-unclosed,}
-        dollar-single-quoted-argument{-unclosed,}
+        dollar-quoted-argument{-unclosed,}
         back-quoted-argument{-unclosed,}
     )
     local needle=$1 value
