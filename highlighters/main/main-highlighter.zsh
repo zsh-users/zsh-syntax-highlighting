@@ -267,7 +267,7 @@ _zsh_highlight_highlighter_main_paint()
     '!' # reserved word; unrelated to $histchars[1]
   )
 
-  _zsh_highlight_main_highlighter_highlight_list -$#PREBUFFER '' "$PREBUFFER$BUFFER"
+  _zsh_highlight_main_highlighter_highlight_list -$#PREBUFFER '' 1 "$PREBUFFER$BUFFER"
 
   # end is a reserved word
   local start end_ style
@@ -280,16 +280,17 @@ _zsh_highlight_highlighter_main_paint()
   done
 }
 
-# $1 is the offset of $3 from the parent buffer. Added to the returned highlights.
+# $1 is the offset of $4 from the parent buffer. Added to the returned highlights.
 # $2 is the initial braces_stack (for a closing paren).
-# $3 is the buffer to highlight.
+# $3 is 1 if $4 contains the end of $BUFFER, else 0.
+# $4 is the buffer to highlight.
 # Returns:
 # $REPLY: $buf[REPLY] is the last character parsed.
 # $reply is an array of region_highlight additions.
 _zsh_highlight_main_highlighter_highlight_list()
 {
-  integer start_pos=0 end_pos buf_offset=$1
-  local buf=$3 highlight_glob=true arg style
+  integer start_pos=0 end_pos buf_offset=$1 has_end=$3
+  local buf=$4 highlight_glob=true arg style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   integer len=$#buf
   local -a match mbegin mend list_highlights
@@ -825,7 +826,7 @@ _zsh_highlight_main_highlighter_check_path()
   [[ ! -d ${expanded_path:h} ]] && return 1
 
   # If this word ends the buffer, check if it's the prefix of a valid path.
-  if [[ ${BUFFER[1]} != "-" && $len == $end_pos ]] &&
+  if (( has_end && (len == end_pos) )) &&
      [[ $WIDGET != zle-line-finish ]]; then
     local -a tmp
     tmp=( ${expanded_path}*(N) )
@@ -884,7 +885,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
        elif [[ $arg[i+1] == $'\x28' ]]; then
           start=$i
           (( i += 2 ))
-          _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $arg[i,end_pos]
+          _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
           (( i += REPLY ))
           highlights+=($(( start_pos + start - 1)) $(( start_pos + i )) command-substitution $reply)
           continue
@@ -989,7 +990,7 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
             elif [[ $arg[i+1] == $'\x28' ]]; then
               (( i += 2 ))
               saved_reply=($reply)
-              _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $arg[i,end_pos]
+              _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
               (( i += REPLY ))
               reply=($saved_reply $j $(( start_pos + i )) command-substitution $reply)
               continue
