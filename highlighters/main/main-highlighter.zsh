@@ -664,7 +664,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                           fi
                           _zsh_highlight_main__stack_pop 'R' reserved-word
                         else
-                          if _zsh_highlight_main_highlighter_check_path; then
+                          if _zsh_highlight_main_highlighter_check_path $arg; then
                             style=$REPLY
                           else
                             style=unknown-token
@@ -789,12 +789,12 @@ _zsh_highlight_main_highlighter_highlight_path_separators()
   done
 }
 
-# Check if $arg is a path.
+# Check if $1 is a path.
 # If yes, return 0 and in $REPLY the style to use.
 # Else, return non-zero (and the contents of $REPLY is undefined).
 _zsh_highlight_main_highlighter_check_path()
 {
-  _zsh_highlight_main_highlighter_expand_path $arg;
+  _zsh_highlight_main_highlighter_expand_path $1
   local expanded_path="$REPLY" tmp_path
 
   REPLY=path
@@ -823,7 +823,7 @@ _zsh_highlight_main_highlighter_check_path()
     [[ -e "$cdpath_dir/$expanded_path" ]] && return 0
   done
 
-  # If dirname($arg) doesn't exist, neither does $arg.
+  # If dirname($1) doesn't exist, neither does $1.
   [[ ! -d ${expanded_path:h} ]] && return 1
 
   # If this word ends the buffer, check if it's the prefix of a valid path.
@@ -928,7 +928,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
     esac
   done
 
-  if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path; then
+  if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path $arg; then
     base_style=$REPLY
     _zsh_highlight_main_highlighter_highlight_path_separators $base_style
     highlights+=($reply)
