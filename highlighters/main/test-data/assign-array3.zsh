@@ -35,4 +35,5 @@ expected_region_highlight=(
   "10 14 default" # world
   "15 15 assign" # )
   "17 20 assign" # b=42
+  "19 20 default" # 42
 )

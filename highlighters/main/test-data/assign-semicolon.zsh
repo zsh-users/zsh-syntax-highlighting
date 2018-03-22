@@ -31,6 +31,7 @@ BUFFER='A=1; echo hello world'
 
 expected_region_highlight=(
   "1 3 assign" # A=1
+  "3 3 default" # 1
   "4 4 commandseparator" # ;
   "6 9 builtin" # echo
   "11 15 default" # hello

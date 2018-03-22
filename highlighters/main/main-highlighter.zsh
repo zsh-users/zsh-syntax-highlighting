@@ -610,6 +610,8 @@ _zsh_highlight_main_highlighter_highlight_list()
         hashed)         style=hashed-command;;
         none)           if _zsh_highlight_main_highlighter_check_assign; then
                           style=assign
+                          _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
+                          already_added=1
                           local i=$(( arg[(i)=] + 1 ))
                           if [[ $arg[i] == '(' ]]; then
                             in_array_assignment=true
@@ -617,6 +619,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                             # assignment to a scalar parameter.
                             # (For array assignments, the command doesn't start until the ")" token.)
                             next_word+=':start:'
+                            if (( start_pos + i <= end_pos )); then
+                              highlight_glob=false _zsh_highlight_main_highlighter_highlight_argument $i
+                            fi
                           fi
                         elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
                           style=history-expansion

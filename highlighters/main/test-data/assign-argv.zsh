@@ -27,9 +27,12 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+touch foo
 BUFFER='42=foo 43+=bar'
 
 expected_region_highlight=(
   "1 6 assign" # 42=foo
+  "4 6 path" # foo
   "8 14 assign" # 43+=bar
+  "12 14 default" # bar
 )
