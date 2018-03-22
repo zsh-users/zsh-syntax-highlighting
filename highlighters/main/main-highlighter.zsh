@@ -722,7 +722,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                  elif (( in_redirection == 2 )); then
                    style=redirection
                  else
-                   _zsh_highlight_main_highlighter_highlight_argument
+                   _zsh_highlight_main_highlighter_highlight_argument 1
                    already_added=1
                  fi
                  ;;
@@ -838,19 +838,19 @@ _zsh_highlight_main_highlighter_check_path()
   return 1
 }
 
-# Highlight an argument and possibly special chars in quotes
-# This command will at least highlight start_pos to end_pos with the default style
+# Highlight an argument and possibly special chars in quotes starting at $1 in $arg
+# This command will at least highlight $1 to end_pos with the default style
 _zsh_highlight_main_highlighter_highlight_argument()
 {
-  local base_style=default i=1 path_eligible=1 start style
+  local base_style=default i=$1 path_eligible=1 start style
   local -a highlights
 
   local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
 
-  case "$arg[1]" in
+  case "$arg[i]" in
     '-')
-      if [[ $arg[2] == - ]]; then
+      if [[ $arg[i+1] == - ]]; then
         base_style=double-hyphen-option
       else
         base_style=single-hyphen-option
@@ -858,11 +858,11 @@ _zsh_highlight_main_highlighter_highlight_argument()
       path_eligible=0
       ;;
     '=')
-      if [[ $arg[2] == $'\x28' ]]; then
+      if [[ $arg[i+1] == $'\x28' ]]; then
         (( i += 2 ))
         _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
         (( i += REPLY ))
-        highlights+=($start_pos $(( start_pos + i )) process-substitution $reply)
+        highlights+=($(( start_pos + $1 - 1 )) $(( start_pos + i )) process-substitution $reply)
       fi
   esac
 
@@ -928,13 +928,13 @@ _zsh_highlight_main_highlighter_highlight_argument()
     esac
   done
 
-  if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path $arg; then
+  if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path $arg[$1,end_pos]; then
     base_style=$REPLY
     _zsh_highlight_main_highlighter_highlight_path_separators $base_style
     highlights+=($reply)
   fi
 
-  highlights=($start_pos $end_pos $base_style $highlights)
+  highlights=($(( start_pos + $1 - 1 )) $end_pos $base_style $highlights)
   _zsh_highlight_main_add_many_region_highlights $highlights
 }
 
