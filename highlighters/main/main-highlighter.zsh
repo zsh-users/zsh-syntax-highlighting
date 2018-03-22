@@ -610,7 +610,8 @@ _zsh_highlight_main_highlighter_highlight_list()
         hashed)         style=hashed-command;;
         none)           if _zsh_highlight_main_highlighter_check_assign; then
                           style=assign
-                          if [[ $arg[-1] == '(' ]]; then
+                          local i=$(( arg[(i)=] + 1 ))
+                          if [[ $arg[i] == '(' ]]; then
                             in_array_assignment=true
                           else
                             # assignment to a scalar parameter.
