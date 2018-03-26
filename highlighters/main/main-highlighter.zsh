@@ -701,6 +701,17 @@ _zsh_highlight_main_highlighter_highlight_list()
                           ('end')
                             _zsh_highlight_main__stack_pop '$' reserved-word
                             ;;
+                         ('repeat')
+                           # skip the repeat-count word
+                           in_redirection=2
+                           # The redirection mechanism assumes $this_word describes the word
+                           # following the redirection.  Make it so.
+                           #
+                           # That word can be a command word with shortloops (`repeat 2 ls`)
+                           # or a command separator (`repeat 2; ls` or `repeat 2; do ls; done`).
+                           #
+                           # The repeat-count word will be handled like a redirection target.
+                           this_word=':start::regular:'
                         esac
                         ;;
         'suffix alias') style=suffix-alias;;
@@ -853,17 +864,6 @@ _zsh_highlight_main_highlighter_highlight_list()
     elif
        [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]]; then
       next_word=':start:'
-    elif [[ $arg == "repeat" && $this_word == *':start:'* ]]; then
-      # skip the repeat-count word
-      in_redirection=2
-      # The redirection mechanism assumes $this_word describes the word
-      # following the redirection.  Make it so.
-      #
-      # That word can be a command word with shortloops (`repeat 2 ls`)
-      # or a command separator (`repeat 2; ls` or `repeat 2; do ls; done`).
-      #
-      # The repeat-count word will be handled like a redirection target.
-      this_word=':start::regular:'
     fi
     start_pos=$end_pos
     if (( in_redirection == 0 )); then
