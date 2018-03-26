@@ -638,11 +638,12 @@ _zsh_highlight_main_highlighter_highlight_list()
    fi
 
    # The Great Fork: is this a command word?  Is this a non-command word?
-   if [[ $this_word == *':always:'* && $arg == 'always' ]]; then
+   if (( in_redirection )); then
+   elif [[ $this_word == *':always:'* && $arg == 'always' ]]; then
      # try-always construct
      style=reserved-word # de facto a reserved word, although not de jure
      next_word=':start:'
-   elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
+   elif [[ $this_word == *':start:'* ]]; then # $arg is the command word
      if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
       [[ $res != alias ]] && style=precommand
       flags_with_argument=${precommand_options[$arg]%:*}
