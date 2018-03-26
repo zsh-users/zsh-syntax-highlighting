@@ -498,16 +498,6 @@ _zsh_highlight_main_highlighter_highlight_list()
       continue
     fi
 
-    # Analyse the current word.
-    if _zsh_highlight_main__is_redirection $arg ; then
-      if (( in_redirection )); then
-        _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
-        already_added=1
-      else
-        in_redirection=2
-      fi
-    fi
-
     # Expand aliases.
     # TODO: this should be done iteratively, e.g., 'alias x=y y=z z=w\n x'
     #       And then the entire 'alias' branch of the 'case' statement should
@@ -527,6 +517,16 @@ _zsh_highlight_main_highlighter_highlight_list()
                 ${interactive_comments+${(zZ+c+)REPLY}} )
         arg=$reply[1]
       }
+    fi
+
+    # Analyse the current word.
+    if _zsh_highlight_main__is_redirection $arg ; then
+      if (( in_redirection )); then
+        _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
+        already_added=1
+      else
+        in_redirection=2
+      fi
     fi
 
     # Expand parameters.
