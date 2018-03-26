@@ -384,7 +384,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   # $in_redirection.  The value of $next_word from the iteration that processed
   # the operator is discarded.
   #
-  local this_word=':start:' next_word
+  local this_word next_word=':start:'
   integer in_redirection
   # Processing buffer
   local proc_buf="$buf"
@@ -398,15 +398,13 @@ _zsh_highlight_main_highlighter_highlight_list()
     # Save an unmunged copy of the current word.
     arg_raw="$arg"
 
-    # Initialize $next_word.
-    if (( in_redirection )); then
-      (( --in_redirection ))
-    fi
+    # Initialize this_word and next_word.
     if (( in_redirection == 0 )); then
-      # Initialize $next_word to its default value.
+      this_word=$next_word
       next_word=':regular:'
     else
       # Stall $next_word.
+      (( --in_redirection ))
     fi
 
     # Initialize per-"simple command" [zshmisc(1)] variables:
@@ -493,7 +491,8 @@ _zsh_highlight_main_highlighter_highlight_list()
         style=unknown-token # prematurely terminated
       fi
       _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-      already_added=1
+      # Stall this arg
+      in_redirection=1
       start_pos=$end_pos
       continue
     fi
@@ -864,12 +863,6 @@ _zsh_highlight_main_highlighter_highlight_list()
       next_word=':start:'
     fi
     start_pos=$end_pos
-    if (( in_redirection == 0 )); then
-      # This is the default/common codepath.
-      this_word=$next_word
-    else
-      # Stall $this_word.
-    fi
   done
   REPLY=$(( end_pos - 1 ))
   reply=($list_highlights)
