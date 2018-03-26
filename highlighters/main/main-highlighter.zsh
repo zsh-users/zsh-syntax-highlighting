@@ -569,6 +569,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         already_added=1
       else
         in_redirection=2
+        style=redirection
       fi
     fi
 
@@ -751,8 +752,6 @@ _zsh_highlight_main_highlighter_highlight_list()
                           else
                             style=unknown-token
                           fi
-                        elif (( in_redirection == 2 )); then
-                          style=redirection
                         elif [[ $arg[1,2] == '((' ]]; then
                           # Arithmetic evaluation.
                           #
@@ -841,8 +840,6 @@ _zsh_highlight_main_highlighter_highlight_list()
                    else
                      style=unknown-token
                    fi
-                 elif (( in_redirection == 2 )); then
-                   style=redirection
                  else
                    _zsh_highlight_main_highlighter_highlight_argument 1
                    already_added=1
