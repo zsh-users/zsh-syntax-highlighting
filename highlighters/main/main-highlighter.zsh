@@ -498,25 +498,27 @@ _zsh_highlight_main_highlighter_highlight_list()
       continue
     fi
 
-    # Expand aliases.
-    # TODO: this should be done iteratively, e.g., 'alias x=y y=z z=w\n x'
-    #       And then the entire 'alias' branch of the 'case' statement should
-    #       be done here.
-    # TODO: path expansion should happen _after_ alias expansion
-    _zsh_highlight_main_highlighter_expand_path $arg
-    _zsh_highlight_main__type "$REPLY"
-    local res="$REPLY"
-    if [[ $res == "alias" ]]; then
-      _zsh_highlight_main__resolve_alias $arg
-      () {
-        # Use a temporary array to ensure the subscript is interpreted as
-        # an array subscript, not as a scalar subscript
-        local -a reply
-        # TODO: the ${interactive_comments+set} path needs to skip comments; see test-data/alias-comment1.zsh
-        reply=( ${interactive_comments-${(z)REPLY}}
-                ${interactive_comments+${(zZ+c+)REPLY}} )
-        arg=$reply[1]
-      }
+    if [[ $this_word == *:start:* ]] && ! (( in_redirection )); then
+      # Expand aliases.
+      # TODO: this should be done iteratively, e.g., 'alias x=y y=z z=w\n x'
+      #       And then the entire 'alias' branch of the 'case' statement should
+      #       be done here.
+      # TODO: path expansion should happen _after_ alias expansion
+      _zsh_highlight_main_highlighter_expand_path $arg
+      _zsh_highlight_main__type "$REPLY"
+      local res="$REPLY"
+      if [[ $res == "alias" ]]; then
+        _zsh_highlight_main__resolve_alias $arg
+        () {
+          # Use a temporary array to ensure the subscript is interpreted as
+          # an array subscript, not as a scalar subscript
+          local -a reply
+          # TODO: the ${interactive_comments+set} path needs to skip comments; see test-data/alias-comment1.zsh
+          reply=( ${interactive_comments-${(z)REPLY}}
+                  ${interactive_comments+${(zZ+c+)REPLY}} )
+          arg=$reply[1]
+        }
+      fi
     fi
 
     # Analyse the current word.
