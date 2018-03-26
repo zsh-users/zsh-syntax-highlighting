@@ -610,13 +610,6 @@ _zsh_highlight_main_highlighter_highlight_list()
       fi
     }
 
-    # Special-case the first word after 'sudo'.
-    if (( ! in_redirection )); then
-      if [[ $this_word == *':sudo_opt:'* ]] && [[ $arg != -* ]]; then
-        this_word=${this_word//:sudo_opt:/}
-      fi
-    fi
-
     # Parse the sudo command line
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]]; then
