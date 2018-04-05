@@ -37,3 +37,7 @@ expected_region_highlight=(
   '8 11 builtin' # echo
   '13 15 default' # bar
 )
+
+if [[ ${(z):-'$('} == '$( ' ]]; then # ignore zsh 5.0.8 bug
+  expected_region_highlight[2]='3 16 default' # foo$(echo bar
+fi

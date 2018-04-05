@@ -41,3 +41,7 @@ expected_region_highlight=(
   '19 22 builtin' # echo
   '24 26 default' # foo
 )
+
+if [[ ${(z):-'$('} == '$( ' ]]; then # ignore zsh 5.0.8 bug
+  expected_region_highlight[6]='17 27 default' # =(echo foo
+fi
