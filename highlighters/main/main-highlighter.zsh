@@ -288,6 +288,7 @@ _zsh_highlight_highlighter_main_paint()
 # Returns:
 # $REPLY: $buf[REPLY] is the last character parsed.
 # $reply is an array of region_highlight additions.
+# exit code is 0 if the braces_stack is empty, 1 otherwise.
 _zsh_highlight_main_highlighter_highlight_list()
 {
   integer start_pos=0 end_pos buf_offset=$1 has_end=$3
@@ -670,7 +671,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                           if _zsh_highlight_main__stack_pop 'S'; then
                             REPLY=$start_pos
                             reply=($list_highlights)
-                            return
+                            return 0
                           fi
                           _zsh_highlight_main__stack_pop 'R' reserved-word
                         else
@@ -700,7 +701,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                    if _zsh_highlight_main__stack_pop 'S'; then
                      REPLY=$start_pos
                      reply=($list_highlights)
-                     return
+                     return 0
                    fi
                    _zsh_highlight_main__stack_pop 'R' reserved-word
                  fi;;
@@ -775,7 +776,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   done
   REPLY=$(( end_pos - 1 ))
   reply=($list_highlights)
-  return
+  return $(( $#braces_stack > 0 ))
 }
 
 # Check if $arg is variable assignment
