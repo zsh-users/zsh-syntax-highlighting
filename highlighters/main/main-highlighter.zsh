@@ -620,7 +620,11 @@ _zsh_highlight_main_highlighter_highlight_list()
                             # (For array assignments, the command doesn't start until the ")" token.)
                             next_word+=':start:'
                             if (( start_pos + i <= end_pos )); then
-                              highlight_glob=false _zsh_highlight_main_highlighter_highlight_argument $i
+                              () {
+                                local highlight_glob=false
+                                [[ $zsyh_user_options[globassign] == on ]] && highlight_glob=true
+                                _zsh_highlight_main_highlighter_highlight_argument $i
+                              }
                             fi
                           fi
                         elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
