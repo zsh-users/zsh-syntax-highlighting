@@ -34,8 +34,10 @@ expected_region_highlight=(
   '1 1 builtin' # :
   '3 19 double-hyphen-option' # --foo=<(echo bar)
   '9 19 process-substitution' # <(echo bar)
+  '9 10 process-substitution-delimiter' # <(
   '11 14 builtin' # echo
   '16 18 default' # bar
+  '19 19 process-substitution-delimiter' # )
   '21 26 default' # "<(:)"
   '21 26 double-quoted-argument' # "<(:)"
 )

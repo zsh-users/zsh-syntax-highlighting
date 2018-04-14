@@ -33,17 +33,24 @@ expected_region_highlight=(
   "1 4 builtin" # echo
   "6 18 default" # `echo \`42\``
   "6 18 back-quoted-argument" # `echo \`42\``
+  "6 6 back-quoted-argument-delimiter" # `
   "7 10 builtin" # echo
   "12 17 default" # \`42\`
   "12 17 back-quoted-argument" # \`42\`
+  "12 13 back-quoted-argument-delimiter" # \`
   "14 15 unknown-token" # 42
+  "16 17 back-quoted-argument-delimiter" # \`
+  "18 18 back-quoted-argument-delimiter" # `
   "20 39 default" # "is `echo equal` to"
   "20 39 double-quoted-argument" # "is `echo equal` to"
   "24 35 back-quoted-argument" # `echo equal`
+  "24 24 back-quoted-argument-delimiter" # `
   "25 28 builtin" # echo
   "30 34 default" # equal
+  "35 35 back-quoted-argument-delimiter" # `
   "41 55 default" # `echo 6 times 9
   "41 55 back-quoted-argument-unclosed" # `echo 6 times 9
+  "41 41 back-quoted-argument-delimiter" # `
   "42 45 builtin" # echo
   "47 47 default" # 6
   "49 53 default" # times

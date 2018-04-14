@@ -34,7 +34,9 @@ expected_region_highlight=(
   '1 15 assign' # foo=$(echo bar)
   '5 15 default' # $(echo bar)
   '5 15 command-substitution' # $(echo bar)
+  '5 6 command-substitution-delimiter' # $(
   '7 10 builtin' # echo
   '12 14 default' # bar
+  '15 15 command-substitution-delimiter' # )
   '17 17 builtin' # :
 )

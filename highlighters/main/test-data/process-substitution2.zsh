@@ -34,14 +34,17 @@ expected_region_highlight=(
   '1 4 builtin' # echo
   '6 9 default' # =(:)
   '6 9 process-substitution' # =(:)
+  '6 7 process-substitution-delimiter' # =(
   '8 8 builtin' # :
+  '9 9 process-substitution-delimiter' # )
   '11 15 default' # a=(:)
   '17 26 default' # =(echo foo
   '17 26 process-substitution' # =(echo foo
+  '17 18 process-substitution-delimiter' # =(
   '19 22 builtin' # echo
   '24 26 default' # foo
 )
 
 if [[ ${(z):-'$('} == '$( ' ]]; then # ignore zsh 5.0.8 bug
-  expected_region_highlight[6]='17 27 default' # =(echo foo
+  expected_region_highlight[8]='17 27 default' # =(echo foo
 fi

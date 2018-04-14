@@ -35,5 +35,7 @@ expected_region_highlight=(
   '3 8 default' # "$(:)"
   '3 8 double-quoted-argument' # "$(:)"
   '4 7 command-substitution' # $(:)
+  '4 5 command-substitution-delimiter' # $(
   '6 6 builtin' # :
+  '7 7 command-substitution-delimiter' # )
 )

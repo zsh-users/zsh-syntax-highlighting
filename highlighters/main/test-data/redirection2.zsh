@@ -33,7 +33,9 @@ expected_region_highlight=(
   "1 2 command" # ls
   "4 8 default" # >(wc)
   "4 8 process-substitution" # >(wc)
+  "4 5 process-substitution-delimiter" # >(
   "6 7 command" # wc
+  "8 8 process-substitution-delimiter" # )
   "10 10 commandseparator" # |
   "12 13 command" # nl
 )

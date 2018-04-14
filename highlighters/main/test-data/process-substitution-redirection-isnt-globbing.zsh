@@ -34,6 +34,8 @@ expected_region_highlight=(
   '1 1 builtin' # :
   '3 9 default' # =(<foo)
   '3 9 process-substitution' # =(<foo)
+  '3 4 process-substitution-delimiter' # =(
   '5 5 redirection' # <foo
   '6 8 default' # foo
+  '9 9 process-substitution-delimiter' # )
 )

@@ -40,11 +40,14 @@
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]:=}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
 : ${ZSH_HIGHLIGHT_STYLES[history-expansion]:=fg=blue}
-: ${ZSH_HIGHLIGHT_STYLES[command-substitution]:=fg=magenta}
-: ${ZSH_HIGHLIGHT_STYLES[process-substitution]:=fg=magenta}
+: ${ZSH_HIGHLIGHT_STYLES[command-substitution]:=none}
+: ${ZSH_HIGHLIGHT_STYLES[command-substitution-delimiter]:=fg=magenta}
+: ${ZSH_HIGHLIGHT_STYLES[process-substitution]:=none}
+: ${ZSH_HIGHLIGHT_STYLES[process-substitution-delimiter]:=fg=magenta}
 : ${ZSH_HIGHLIGHT_STYLES[single-hyphen-option]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[double-hyphen-option]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[back-quoted-argument]:=none}
+: ${ZSH_HIGHLIGHT_STYLES[back-quoted-argument-delimiter]:=fg=magenta}
 : ${ZSH_HIGHLIGHT_STYLES[single-quoted-argument]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[double-quoted-argument]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]:=fg=yellow}
@@ -103,6 +106,10 @@ _zsh_highlight_main_calculate_fallback() {
       double-quoted-argument{-unclosed,}
       dollar-quoted-argument{-unclosed,}
       back-quoted-argument{-unclosed,}
+
+      command-substitution{-delimiter,}
+      process-substitution{-delimiter,}
+      back-quoted-argument{-delimiter,}
   )
   local needle=$1 value
   reply=($1)
@@ -853,7 +860,7 @@ _zsh_highlight_main_highlighter_check_path()
 # This command will at least highlight $1 to end_pos with the default style
 _zsh_highlight_main_highlighter_highlight_argument()
 {
-  local base_style=default i=$1 path_eligible=1 start style
+  local base_style=default i=$1 path_eligible=1 ret start style
   local -a highlights
 
   local -a match mbegin mend
@@ -872,8 +879,16 @@ _zsh_highlight_main_highlighter_highlight_argument()
       if [[ $arg[i+1] == $'\x28' ]]; then
         (( i += 2 ))
         _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+        ret=$?
         (( i += REPLY ))
-        highlights+=($(( start_pos + $1 - 1 )) $(( start_pos + i )) process-substitution $reply)
+        highlights+=(
+          $(( start_pos + $1 - 1 )) $(( start_pos + i )) process-substitution
+          $(( start_pos + $1 - 1 )) $(( start_pos + $1 + 1 )) process-substitution-delimiter
+          $reply
+        )
+        if (( ret == 0 )); then
+          highlights+=($(( start_pos + i - 1 )) $(( start_pos + i )) process-substitution-delimiter)
+        fi
       fi
   esac
 
@@ -907,8 +922,16 @@ _zsh_highlight_main_highlighter_highlight_argument()
           start=$i
           (( i += 2 ))
           _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+          ret=$?
           (( i += REPLY ))
-          highlights+=($(( start_pos + start - 1)) $(( start_pos + i )) command-substitution $reply)
+          highlights+=(
+            $(( start_pos + start - 1)) $(( start_pos + i )) command-substitution
+            $(( start_pos + start - 1)) $(( start_pos + start + 1)) command-substitution-delimiter
+            $reply
+          )
+          if (( ret == 0 )); then
+            highlights+=($(( start_pos + i - 1)) $(( start_pos + i )) command-substitution-delimiter)
+          fi
           continue
         fi
         while [[ $arg[i+1] == [\^=~#+] ]]; do
@@ -922,8 +945,16 @@ _zsh_highlight_main_highlighter_highlight_argument()
           start=$i
           (( i += 2 ))
           _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+          ret=$?
           (( i += REPLY ))
-          highlights+=($(( start_pos + start - 1)) $(( start_pos + i )) process-substitution $reply)
+          highlights+=(
+            $(( start_pos + start - 1)) $(( start_pos + i )) process-substitution
+            $(( start_pos + start - 1)) $(( start_pos + start + 1 )) process-substitution-delimiter
+            $reply
+          )
+          if (( ret == 0 )); then
+            highlights+=($(( start_pos + i - 1)) $(( start_pos + i )) process-substitution-delimiter)
+          fi
           continue
         fi
         ;|
@@ -988,7 +1019,7 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
 {
   local -a match mbegin mend saved_reply
   local MATCH; integer MBEGIN MEND
-  local i j k style
+  local i j k ret style
   reply=()
 
   for (( i = $1 + 1 ; i <= end_pos - start_pos ; i += 1 )) ; do
@@ -1022,8 +1053,17 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
               (( i += 2 ))
               saved_reply=($reply)
               _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+              ret=$?
               (( i += REPLY ))
-              reply=($saved_reply $j $(( start_pos + i )) command-substitution $reply)
+              reply=(
+                $saved_reply
+                $j $(( start_pos + i )) command-substitution
+                $j $(( j + 2 )) command-substitution-delimiter
+                $reply
+              )
+              if (( ret == 0 )); then
+                reply+=($(( start_pos + i - 1 )) $(( start_pos + i )) command-substitution-delimiter)
+              fi
               continue
             else
               continue
@@ -1124,11 +1164,9 @@ _zsh_highlight_main_highlighter_highlight_backtick()
   # offset is a count of consumed \ (the delta between buf and arg).
   # offsets is an array indexed by buf offset of when the delta between buf and arg changes.
   #     It is sparse, so search backwards to the last value
-  # unclosed is an array of one highlight to append to reply if this back-quoted-argument
-  #     is closed and there is an unclosed back-quoted-argument in buf.
-  local buf highlight style=back-quoted-argument-unclosed
+  local buf highlight style=back-quoted-argument-unclosed style_end
   local -i arg1=$1 end_ i=$1 last offset=0 start subshell_has_end=0
-  local -a highlight_zone highlights offsets unclosed
+  local -a highlight_zone highlights offsets
   reply=()
 
   last=$(( arg1 + 1 ))
@@ -1155,6 +1193,7 @@ _zsh_highlight_main_highlighter_highlight_backtick()
       fi
     else # it's an unquoted ` and this is the end
       style=back-quoted-argument
+      style_end=back-quoted-argument-delimiter
       buf=$buf$arg[last,i-1]
       offsets[i-arg1-offset]='' # So we never index past the end
       break
@@ -1171,11 +1210,18 @@ _zsh_highlight_main_highlighter_highlight_backtick()
     highlights+=($start $end_ $highlight)
     if [[ $highlight == back-quoted-argument-unclosed && $style == back-quoted-argument ]]; then
       # An inner backtick command substitution is unclosed, but this level is closed
-      unclosed=($(( start_pos + i - 1)) $(( start_pos + i )) unknown-token)
+      style_end=unknown-token
     fi
   done
 
-  reply=($(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style $highlights $unclosed)
+  reply=(
+    $(( start_pos + arg1 - 1 )) $(( start_pos + i )) $style
+    $(( start_pos + arg1 - 1 )) $(( start_pos + arg1 )) back-quoted-argument-delimiter
+    $highlights
+  )
+  if (( $#style_end )); then
+    reply+=($(( start_pos + i - 1)) $(( start_pos + i )) $style_end)
+  fi
   REPLY=$i
 }
 

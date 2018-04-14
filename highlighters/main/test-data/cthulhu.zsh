@@ -36,27 +36,35 @@ expected_region_highlight=(
   '1 4 builtin' # echo
   '6 113 default' # Ph\'ng`echo lui "mg"\`echo lw\'nafh \\\`echo Cthu"lhu\\\` R\\'ly$(echo eh wag\\\`echo h\'nag\\\`'l' fht)agn`
   '12 113 back-quoted-argument' # `echo lui "mg"\`echo lw\'nafh \\\`echo Cthu"lhu\\\` R\\'ly$(echo eh wag\\\`echo h\'nag\\\`'l' fht)agn`
+  '12 12 back-quoted-argument-delimiter' # `
   '13 16 builtin' # echo
   '18 20 default' # lui
   '22 112 default' # "mg"\`echo lw\'nafh \\\`echo Cthu"lhu\\\` R\\'ly$(echo eh wag\\\`echo h\'nag\\\`'l' fht)agn
   '22 25 double-quoted-argument' # "mg"
   '26 112 back-quoted-argument-unclosed' # \`echo lw\'nafh \\\`echo Cthu"lhu\\\` R\\'ly$(echo eh wag\\\`echo h\'nag\\\`'l' fht)agn
+  '26 27 back-quoted-argument-delimiter' # \`
   '28 31 builtin' # echo
   '33 40 default' # lw\'nafh
   '42 62 default' # \\\`echo Cthu"lhu\\\`
   '42 62 back-quoted-argument' # \\\`echo Cthu"lhu\\\`
+  '42 45 back-quoted-argument-delimiter' # \\\`
   '46 49 builtin' # echo
   '51 58 default' # Cthu"lhu
   '55 58 double-quoted-argument-unclosed' # "lhu
+  '59 62 back-quoted-argument-delimiter' # \\\`
   '64 112 default' # R\\'ly$(echo eh wag\\\`echo h\'nag\\\`'l' fht)agn
   '70 109 command-substitution' # $(echo eh wag\\\`echo h\'nag\\\`'l' fht)
+  '70 71 command-substitution-delimiter' # $(
   '72 75 builtin' # echo
   '77 78 default' # eh
   '80 104 default' # wag\\\`echo h\'nag\\\`'l'
   '83 101 back-quoted-argument' # \\\`echo h\'nag\\\`
+  '83 86 back-quoted-argument-delimiter' # \\\`
   '87 90 builtin' # echo
   '92 97 default' # h\'nag
+  '98 101 back-quoted-argument-delimiter' # \\\`
   '102 104 single-quoted-argument' # 'l'
   '106 108 default' # fht
+  '109 109 command-substitution-delimiter' # )
   '113 113 unknown-token' # `
 )
