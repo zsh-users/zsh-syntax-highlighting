@@ -49,7 +49,7 @@ This highlighter defines the following styles:
 * `assign` - parameter assignments (`x=foo` and `x=( )`)
 * `redirection` - redirection operators (`<`, `>`, etc)
 * `comment` - comments, when `setopt INTERACTIVE_COMMENTS` is in effect (`echo # foo`)
-* `arg0` - a command word other than one of those enumrated above (other than a command, precommand, alias, function, or shell builtin command).
+* `arg0` - a command word other than one of those enumerated above (other than a command, precommand, alias, function, or shell builtin command).
 * `default` - everything else
 
 To override one of those styles, change its entry in `ZSH_HIGHLIGHT_STYLES`,

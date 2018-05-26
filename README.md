@@ -8,8 +8,8 @@ zsh-syntax-highlighting [![Build Status][build-status-image]][build-status-travi
 [fish]: http://www.fishshell.com/
 [zsh]: http://www.zsh.org/
 
-This package provides syntax highlighing for the shell zsh.  It enables
-highlighing of commands whilst they are typed at a zsh prompt into an
+This package provides syntax highlighting for the shell zsh.  It enables
+highlighting of commands whilst they are typed at a zsh prompt into an
 interactive terminal.  This helps in reviewing commands before running
 them, particularly in catching syntax errors.
 
