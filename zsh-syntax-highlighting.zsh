@@ -373,7 +373,7 @@ _zsh_highlight_load_highlighters()
 
   # Load highlighters from highlighters directory and check they define required functions.
   local highlighter highlighter_dir
-  for highlighter_dir ($1/*/); do
+  for highlighter_dir ($1/*/(/)); do
     highlighter="${highlighter_dir:t}"
     [[ -f "$highlighter_dir${highlighter}-highlighter.zsh" ]] &&
       . "$highlighter_dir${highlighter}-highlighter.zsh"
