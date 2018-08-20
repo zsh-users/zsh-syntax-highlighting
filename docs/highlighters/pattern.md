@@ -14,6 +14,8 @@ To use this highlighter, associate patterns with styles in the
 
 The syntax for values is the same as the syntax of "types of highlighting" of
 the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`
-manual page][zshzle-Character-Highlighting].
+manual page][zshzle-Character-Highlighting]. Note: if you would like to define this
+variable before you source zsh-syntax-highlighting, you will need to declare it first with:
+`typeset -gA ZSH_HIGHLIGHT_PATTERNS`.
 
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
