@@ -27,7 +27,11 @@ To activate an highlighter, add it to the `ZSH_HIGHLIGHT_HIGHLIGHTERS` array in
     ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
 By default, `$ZSH_HIGHLIGHT_HIGHLIGHTERS` is unset and only the `main`
-highlighter is active.
+highlighter is active. 
+
+If you would like to set this variable before
+sourcing zsh-syntax-highlighting, initialize it first with: 
+`typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS`
 
 
 How to tweak highlighters
