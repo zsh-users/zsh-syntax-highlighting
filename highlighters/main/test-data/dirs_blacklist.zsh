@@ -34,7 +34,7 @@ X_ZSH_HIGHLIGHT_DIRS_BLACKLIST=($PWD/foo)
 
 expected_region_highlight=(
   '1 1 builtin' # :
-  '3 9 path' # foo/bar
-  "11 $(( 14 + $#PWD )) path" # $PWD/foo
+  '3 9 default' # foo/bar
+  "11 $(( 14 + $#PWD )) default" # $PWD/foo
   "$(( 16 + $#PWD )) $(( 20 + $#PWD )) default" # foo/b
 )
