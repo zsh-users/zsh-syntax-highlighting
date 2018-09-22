@@ -761,8 +761,6 @@ _zsh_highlight_main_highlighter_check_path()
   REPLY=path
 
   [[ -z $expanded_path ]] && return 1
-  [[ -L $expanded_path ]] && return 0
-  [[ -e $expanded_path ]] && return 0
 
   # Check if this is a blacklisted path
   if [[ $expanded_path[1] == / ]]; then
@@ -776,6 +774,9 @@ _zsh_highlight_main_highlighter_check_path()
     [[ -n "${(M)X_ZSH_HIGHLIGHT_DIRS_BLACKLIST:#$tmp_path}" ]] && return 1
     tmp_path=$tmp_path:h
   done
+
+  [[ -L $expanded_path ]] && return 0
+  [[ -e $expanded_path ]] && return 0
 
   # Search the path in CDPATH
   local cdpath_dir
