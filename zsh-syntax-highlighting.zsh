@@ -363,7 +363,7 @@ _zsh_highlight_bind_widgets()
 #   1) Path to the highlighters directory.
 _zsh_highlight_load_highlighters()
 {
-  setopt localoptions noksharrays
+  setopt localoptions noksharrays bareglobqual
 
   # Check the directory exists.
   [[ -d "$1" ]] || {
