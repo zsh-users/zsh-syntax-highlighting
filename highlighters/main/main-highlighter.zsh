@@ -771,7 +771,7 @@ _zsh_highlight_main_highlighter_check_path()
   tmp_path=$tmp_path:a
 
   while [[ $tmp_path != / ]]; do
-    [[ -n "${(M)X_ZSH_HIGHLIGHT_DIRS_BLACKLIST:#$tmp_path}" ]] && return 1
+    [[ -n ${(M)X_ZSH_HIGHLIGHT_DIRS_BLACKLIST:#$tmp_path} ]] && return 1
     tmp_path=$tmp_path:h
   done
 
