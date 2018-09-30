@@ -384,7 +384,7 @@ _zsh_highlight_highlighter_main_paint()
       # - what's after main minus sign is: length of proc_buf without spaces at the beginning
       # - so what the line actually did, was computing length of the spaces!
       # - this can be done via (#b) flag, like below
-      if [[ "$proc_buf" = (#b)(#s)(([[:space:]]|\\[[:space:]])##)* ]]; then
+      if [[ "$proc_buf" = (#b)(#s)(([[:space:]]|\\$'\n')##)* ]]; then
           # The first, outer parenthesis
           integer offset="${#match[1]}"
       else
