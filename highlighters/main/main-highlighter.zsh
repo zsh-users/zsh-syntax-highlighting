@@ -795,6 +795,8 @@ _zsh_highlight_main_highlighter_highlight_list()
                    style=assign
                    in_array_assignment=false
                    next_word+=':start:'
+                 elif (( in_redirection )); then
+                   style=unknown-token
                  else
                    if _zsh_highlight_main__stack_pop 'S'; then
                      REPLY=$start_pos
@@ -804,11 +806,15 @@ _zsh_highlight_main_highlighter_highlight_list()
                    _zsh_highlight_main__stack_pop 'R' reserved-word
                  fi;;
         $'\x28\x29') # possibly a function definition
-                 if [[ $zsyh_user_options[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
-                 then
-                   next_word+=':start:'
+                 if (( in_redirection )) || $in_array_assignment; then
+                   style=unknown-token
+                 else
+                   if [[ $zsyh_user_options[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
+                   then
+                     next_word+=':start:'
+                   fi
+                   style=reserved-word
                  fi
-                 style=reserved-word
                  ;;
         *)       if false; then
                  elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
@@ -816,9 +822,13 @@ _zsh_highlight_main_highlighter_highlight_list()
                    #
                    #     Additionally, `tt(})' is recognized in any position if neither the
                    #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set.
-                   _zsh_highlight_main__stack_pop 'Y' reserved-word
-                   if [[ $style == reserved-word ]]; then
-                     next_word+=':always:'
+                   if (( in_redirection )) || $in_array_assignment; then
+                     style=unknown-token
+                   else
+                     _zsh_highlight_main__stack_pop 'Y' reserved-word
+                     if [[ $style == reserved-word ]]; then
+                       next_word+=':always:'
+                     fi
                    fi
                  elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
                    style=history-expansion
