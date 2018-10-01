@@ -631,12 +631,12 @@ _zsh_highlight_main_highlighter_highlight_list()
    fi
 
    # The Great Fork: is this a command word?  Is this a non-command word?
-   if (( in_redirection )); then
-   elif [[ $this_word == *':always:'* && $arg == 'always' ]]; then
+   if false; then
+   elif ! (( in_redirection)) && [[ $this_word == *':always:'* && $arg == 'always' ]]; then
      # try-always construct
      style=reserved-word # de facto a reserved word, although not de jure
      next_word=':start:'
-   elif [[ $this_word == *':start:'* ]]; then # $arg is the command word
+   elif ! (( in_redirection)) && [[ $this_word == *':start:'* ]]; then # $arg is the command word
      if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
       [[ $res != alias ]] && style=precommand
       flags_with_argument=${precommand_options[$arg]%:*}
@@ -788,10 +788,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                         ;;
       esac
      fi
-   fi
-   if [[ $style == unknown-token ]] && # not handled by the 'command word' codepath
-      { (( in_redirection )) || [[ $this_word == *':regular:'* ]] || [[ $this_word == *':sudo_opt:'* ]] || [[ $this_word == *':sudo_arg:'* ]] }
-   then # $arg is a non-command word
+   else # $arg is a non-command word
       case $arg in
         $'\x29') # subshell or end of array assignment
                  if $in_array_assignment; then
