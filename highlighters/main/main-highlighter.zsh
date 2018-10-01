@@ -650,7 +650,7 @@ _zsh_highlight_main_highlighter_highlight_list()
      next_word=':start:'
    elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
      if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
-      style=precommand
+      [[ $res != alias ]] && style=precommand
       flags_with_argument=${precommand_options[$arg]%:*}
       flags_sans_argument=${precommand_options[$arg]#*:}
       next_word=${next_word//:regular:/}
