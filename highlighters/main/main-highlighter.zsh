@@ -788,6 +788,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                         ;;
       esac
      fi
+     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} ]]; then
+      next_word=':start:'
+     fi
    else # $arg is a non-command word
       case $arg in
         $'\x29') # subshell or end of array assignment
@@ -854,9 +857,6 @@ _zsh_highlight_main_highlighter_highlight_list()
         next_word=':start:'
         highlight_glob=true
       fi
-    elif
-       [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]]; then
-      next_word=':start:'
     fi
   done
   REPLY=$(( end_pos - 1 ))
