@@ -409,16 +409,10 @@ _zsh_highlight_main_highlighter_highlight_list()
 
     # Initialize per-"simple command" [zshmisc(1)] variables:
     #
-    #   $already_added       (see next paragraph)
     #   $style               how to highlight $arg
     #   $in_array_assignment boolean flag for "between '(' and ')' of array assignment"
     #   $highlight_glob      boolean flag for "'noglob' is in effect"
     #
-    # $already_added is set to 1 to disable adding an entry to region_highlight
-    # for this iteration.  Currently, that is done for "" and $'' strings,
-    # which add the entry early so escape sequences within the string override
-    # the string's color.
-    integer already_added=0
     style=unknown-token
     if [[ $this_word == *':start:'* ]]; then
       in_array_assignment=false
@@ -565,11 +559,11 @@ _zsh_highlight_main_highlighter_highlight_list()
     if _zsh_highlight_main__is_redirection $arg ; then
       if (( in_redirection )); then
         _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
-        already_added=1
       else
         in_redirection=2
-        style=redirection
+        _zsh_highlight_main_add_region_highlight $start_pos $end_pos redirection
       fi
+      continue
     fi
 
     # Expand parameters.
@@ -722,9 +716,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         command)        style=command;;
         hashed)         style=hashed-command;;
         none)           if _zsh_highlight_main_highlighter_check_assign; then
-                          style=assign
-                          _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-                          already_added=1
+                          _zsh_highlight_main_add_region_highlight $start_pos $end_pos assign
                           local i=$(( arg[(i)=] + 1 ))
                           if [[ $arg[i] == '(' ]]; then
                             in_array_assignment=true
@@ -740,6 +732,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                               }
                             fi
                           fi
+                          continue
                         elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
                           style=history-expansion
                         elif [[ $arg[0,1] == $histchars[2,2] ]]; then
@@ -762,13 +755,11 @@ _zsh_highlight_main_highlighter_highlight_list()
                           #
                           # We highlight just the opening parentheses, as a reserved word; this
                           # is how [[ ... ]] is highlighted, too.
-                          style=reserved-word
-                          _zsh_highlight_main_add_region_highlight $start_pos $((start_pos + 2)) $style
-                          already_added=1
+                          _zsh_highlight_main_add_region_highlight $start_pos $((start_pos + 2)) reserved-word
                           if [[ $arg[-2,-1] == '))' ]]; then
-                            _zsh_highlight_main_add_region_highlight $((end_pos - 2)) $end_pos $style
-                            already_added=1
+                            _zsh_highlight_main_add_region_highlight $((end_pos - 2)) $end_pos reserved-word
                           fi
+                          continue
                         elif [[ $arg == '()' ]]; then
                           # anonymous function
                           style=reserved-word
@@ -793,12 +784,12 @@ _zsh_highlight_main_highlighter_highlight_list()
                         fi
                         ;;
         *)              _zsh_highlight_main_add_region_highlight $start_pos $end_pos arg0_$res
-                        already_added=1
+                        continue
                         ;;
       esac
      fi
    fi
-   if (( ! already_added )) && [[ $style == unknown-token ]] && # not handled by the 'command word' codepath
+   if [[ $style == unknown-token ]] && # not handled by the 'command word' codepath
       { (( in_redirection )) || [[ $this_word == *':regular:'* ]] || [[ $this_word == *':sudo_opt:'* ]] || [[ $this_word == *':sudo_arg:'* ]] }
    then # $arg is a non-command word
       case $arg in
@@ -842,14 +833,12 @@ _zsh_highlight_main_highlighter_highlight_list()
                    fi
                  else
                    _zsh_highlight_main_highlighter_highlight_argument 1
-                   already_added=1
+                   continue
                  fi
                  ;;
       esac
     fi
-    if ! (( already_added )); then
-      _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-    fi
+    _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
       if [[ $arg == ';' ]] && $in_array_assignment; then
         # literal newline inside an array assignment
