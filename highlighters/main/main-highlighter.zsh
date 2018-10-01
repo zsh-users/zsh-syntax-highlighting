@@ -829,7 +829,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                      style=unknown-token
                    fi
                  else
-                   _zsh_highlight_main_highlighter_highlight_argument 1
+                   _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 - in_redirection ))
                    continue
                  fi
                  ;;
@@ -926,9 +926,10 @@ _zsh_highlight_main_highlighter_check_path()
 
 # Highlight an argument and possibly special chars in quotes starting at $1 in $arg
 # This command will at least highlight $1 to end_pos with the default style
+# If $2 is set to 0, the argument cannot be highlighted as an option.
 _zsh_highlight_main_highlighter_highlight_argument()
 {
-  local base_style=default i=$1 path_eligible=1 ret start style
+  local base_style=default i=$1 option_eligible=${2:-1} path_eligible=1 ret start style
   local -a highlights
 
   local -a match mbegin mend
@@ -936,12 +937,14 @@ _zsh_highlight_main_highlighter_highlight_argument()
 
   case "$arg[i]" in
     '-')
-      if [[ $arg[i+1] == - ]]; then
-        base_style=double-hyphen-option
-      else
-        base_style=single-hyphen-option
+      if (( option_eligible )); then
+        if [[ $arg[i+1] == - ]]; then
+          base_style=double-hyphen-option
+        else
+          base_style=single-hyphen-option
+        fi
+        path_eligible=0
       fi
-      path_eligible=0
       ;;
     '=')
       if [[ $arg[i+1] == $'\x28' ]]; then
