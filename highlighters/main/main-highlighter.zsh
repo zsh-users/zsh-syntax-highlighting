@@ -631,7 +631,21 @@ _zsh_highlight_main_highlighter_highlight_list()
    fi
 
    # The Great Fork: is this a command word?  Is this a non-command word?
-   if false; then
+   if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+     if [[ $this_word == *':regular:'* ]]; then
+       # This highlights empty commands (semicolon follows nothing) as an error.
+       # Zsh accepts them, though.
+       style=commandseparator
+     else
+       style=unknown-token
+     fi
+     if [[ $arg == ';' ]] && $in_array_assignment; then
+       # literal newline inside an array assignment
+       next_word=':regular:'
+     else
+       next_word=':start:'
+       highlight_glob=true
+     fi
    elif ! (( in_redirection)) && [[ $this_word == *':always:'* && $arg == 'always' ]]; then
      # try-always construct
      style=reserved-word # de facto a reserved word, although not de jure
@@ -737,14 +751,6 @@ _zsh_highlight_main_highlighter_highlight_list()
                           style=history-expansion
                         elif [[ $arg[0,1] == $histchars[2,2] ]]; then
                           style=history-expansion
-                        elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
-                          if [[ $this_word == *':regular:'* ]]; then
-                            # This highlights empty commands (semicolon follows nothing) as an error.
-                            # Zsh accepts them, though.
-                            style=commandseparator
-                          else
-                            style=unknown-token
-                          fi
                         elif [[ $arg[1,2] == '((' ]]; then
                           # Arithmetic evaluation.
                           #
@@ -835,12 +841,6 @@ _zsh_highlight_main_highlighter_highlight_list()
                    fi
                  elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
                    style=history-expansion
-                 elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
-                   if [[ $this_word == *':regular:'* ]]; then
-                     style=commandseparator
-                   else
-                     style=unknown-token
-                   fi
                  else
                    _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 - in_redirection ))
                    continue
@@ -849,15 +849,6 @@ _zsh_highlight_main_highlighter_highlight_list()
       esac
     fi
     _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
-    if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
-      if [[ $arg == ';' ]] && $in_array_assignment; then
-        # literal newline inside an array assignment
-        next_word=':regular:'
-      else
-        next_word=':start:'
-        highlight_glob=true
-      fi
-    fi
   done
   REPLY=$(( end_pos - 1 ))
   reply=($list_highlights)
