@@ -330,7 +330,7 @@ _zsh_highlight_highlighter_main_paint()
 # exit code is 0 if the braces_stack is empty, 1 otherwise.
 _zsh_highlight_main_highlighter_highlight_list()
 {
-  integer start_pos=0 end_pos buf_offset=$1 has_end=$3
+  integer start_pos end_pos=0 buf_offset=$1 has_end=$3
   local buf=$4 highlight_glob=true arg arg_raw style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   integer len=$#buf
@@ -428,6 +428,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     fi
 
     # Compute the new $start_pos and $end_pos, skipping over whitespace in $buf.
+    start_pos=$end_pos
     if [[ $arg == ';' ]] ; then
       # We're looking for either a semicolon or a newline, whichever comes
       # first.  Both of these are rendered as a ";" (SEPER) by the ${(z)..}
@@ -493,7 +494,6 @@ _zsh_highlight_main_highlighter_highlight_list()
       _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
       # Stall this arg
       in_redirection=1
-      start_pos=$end_pos
       continue
     fi
 
@@ -862,7 +862,6 @@ _zsh_highlight_main_highlighter_highlight_list()
        [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]]; then
       next_word=':start:'
     fi
-    start_pos=$end_pos
   done
   REPLY=$(( end_pos - 1 ))
   reply=($list_highlights)
