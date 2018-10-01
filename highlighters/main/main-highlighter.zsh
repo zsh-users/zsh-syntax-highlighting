@@ -544,7 +544,7 @@ _zsh_highlight_main_highlighter_highlight_list()
           if (( insane_alias )); then
             style=unknown-token
           # Calling 'type' again; since __type memoizes the answer, this call is just a hash lookup.
-          elif _zsh_highlight_main__type "$arg" && [[ $REPLY == 'none' ]]; then
+          elif ! _zsh_highlight_main__type "$arg" || [[ $REPLY == 'none' ]]; then
             style=unknown-token
           else
             # The common case.
