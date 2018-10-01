@@ -500,8 +500,6 @@ _zsh_highlight_main_highlighter_highlight_list()
 
     if [[ $this_word == *:start:* ]] && ! (( in_redirection )); then
       # Expand aliases.
-      # TODO: the entire 'alias' branch of the 'case' statement should
-      #       be done here.
       _zsh_highlight_main__type "$arg"
       local res="$REPLY"
       if [[ $res == "alias" ]]; then
@@ -528,6 +526,34 @@ _zsh_highlight_main_highlighter_highlight_list()
         }
         _zsh_highlight_main_highlighter_expand_path $arg
         arg=$REPLY
+        () {
+          # Make sure to use $arg_raw here, rather than $arg.
+          integer insane_alias
+          case $arg_raw in
+            # Issue #263: aliases with '=' on their LHS.
+            #
+            # There are three cases:
+            #
+            # - Unsupported, breaks 'alias -L' output, but invokable:
+            ('='*) :;;
+            # - Unsupported, not invokable:
+            (*'='*) insane_alias=1;;
+            # - The common case:
+            (*) :;;
+          esac
+          if (( insane_alias )); then
+            style=unknown-token
+          # Calling 'type' again; since __type memoizes the answer, this call is just a hash lookup.
+          elif _zsh_highlight_main__type "$arg" && [[ $REPLY == 'none' ]]; then
+            style=unknown-token
+          else
+            # The common case.
+            style=alias
+            if (( ${+precommand_options[(re)"$arg"]} )) && (( ! ${+precommand_options[(re)"$arg_raw"]} )); then
+              precommand_options[$arg_raw]=$precommand_options[$arg]
+            fi
+          fi
+        }
       else
         _zsh_highlight_main_highlighter_expand_path $arg
         arg=$REPLY
@@ -685,35 +711,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                         esac
                         ;;
         'suffix alias') style=suffix-alias;;
-        alias)          () {
-                          # Make sure to use $arg_raw here, rather than $arg.
-                          integer insane_alias
-                          case $arg_raw in
-                            # Issue #263: aliases with '=' on their LHS.
-                            #
-                            # There are three cases:
-                            #
-                            # - Unsupported, breaks 'alias -L' output, but invokable:
-                            ('='*) :;;
-                            # - Unsupported, not invokable:
-                            (*'='*) insane_alias=1;;
-                            # - The common case:
-                            (*) :;;
-                          esac
-                          if (( insane_alias )); then
-                            style=unknown-token
-                          # Calling 'type' again; since __type memoizes the answer, this call is just a hash lookup.
-                          elif _zsh_highlight_main__type "$arg" && [[ $REPLY == 'none' ]]; then
-                            style=unknown-token
-                          else
-                            # The common case.
-                            style=alias
-                            if (( ${+precommand_options[(re)"$arg"]} )) && (( ! ${+precommand_options[(re)"$arg_raw"]} )); then
-                              precommand_options[$arg_raw]=$precommand_options[$arg]
-                            fi
-                          fi
-                        }
-                        ;;
+        alias)          :;;
         builtin)        style=builtin;;
         function)       style=function;;
         command)        style=command;;
