@@ -33,17 +33,17 @@ See also [repology's cross-distro index](https://repology.org/metapackage/zsh-sy
 
 Simply clone this repository and source the script:
 
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
-        echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+    echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
 
   Then, enable syntax highlighting in the current interactive shell:
 
-        source ./zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    source ./zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
   If `git` is not installed, download and extract a snapshot of the latest
   development tree from:
 
-        https://github.com/zsh-users/zsh-syntax-highlighting/archive/master.tar.gz
+    https://github.com/zsh-users/zsh-syntax-highlighting/archive/master.tar.gz
 
   Note the `source` command must be **at the end** of `~/.zshrc`.
 
@@ -69,15 +69,15 @@ your `.zshrc`.
 
 1. Clone this repository in oh-my-zsh's plugins directory:
 
-        git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+       git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 2. Activate the plugin in `~/.zshrc`:
 
-        plugins=( [plugins...] zsh-syntax-highlighting)
+       plugins=( [plugins...] zsh-syntax-highlighting)
 
 3. Source `~/.zshrc`  to take changes into account:
 
-        source ~/.zshrc
+       source ~/.zshrc
 
 #### [Prezto](https://github.com/sorin-ionescu/prezto)
 
