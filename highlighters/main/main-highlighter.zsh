@@ -612,12 +612,24 @@ _zsh_highlight_main_highlighter_highlight_list()
           # Flag that requires an argument
           this_word=${this_word//:start:/}
           next_word=':sudo_arg:'
-        elif [[ $arg == '-'* ]]; then
-          # Flag that requires no argument, or unknown flag.
-          # This prevents misbehavior with sudo -u -otherargument
+        elif [[ -n $flags_with_argument ]] &&
+             [[ $arg == '-'[$flags_sans_argument]#[$flags_with_argument]* ]]; then
+          # Argument attached in the same word
           this_word=${this_word//:start:/}
           next_word+=':start:'
           next_word+=':sudo_opt:'
+        elif [[ $arg == '-'[$flags_sans_argument]# ]]; then
+          # Flag that requires no argument
+          this_word=:sudo_opt:
+          next_word+=':start:'
+          next_word+=':sudo_opt:'
+        elif [[ $arg == '-'* ]]; then
+          # Unknown flag
+          this_word=:sudo_opt:
+          next_word+=':start:'
+          next_word+=':sudo_opt:'
+          _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
+          continue
         else
           # Not an option flag; nothing to do.  (If the command line is
           # syntactically valid, ${this_word//:sudo_opt:/} should be
