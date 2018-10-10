@@ -893,7 +893,7 @@ _zsh_highlight_main_highlighter_highlight_path_separators()
 # Else, return non-zero (and the contents of $REPLY is undefined).
 _zsh_highlight_main_highlighter_check_path()
 {
-  _zsh_highlight_main_highlighter_expand_path $1
+  _zsh_highlight_main_highlighter_expand_path "$1"
   local expanded_path="$REPLY" tmp_path
 
   REPLY=path
