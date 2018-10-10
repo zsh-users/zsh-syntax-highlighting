@@ -127,20 +127,43 @@ _zsh_highlight_main_calculate_fallback() {
 #
 # Takes a single argument.
 #
+# Uses the following caller variables: [[ $this_word == *':alias:'* ]]
+#
 # The result will be stored in REPLY.
 _zsh_highlight_main__type() {
+  # Our caller knows whether aliases are allowed at this point.  Compare:
+  #    % ls
+  #    % sudo ls
+  if [[ $this_word == *':alias:'* ]]; then
+    integer -r aliases_allowed=1
+  else
+    integer -r aliases_allowed=0
+  fi
+  # For the same reason, we won't cache replies of anything that exists as an
+  # alias at all, regardless of $aliases_allowed.
+  #
+  # ### We probably _should_ cache them in a cache that's keyed on the value of
+  # ### $aliases_allowed, on the assumption that aliases are the common case.
+  integer may_cache=1
+
+  # Cache lookup
   if (( $+_zsh_highlight_main__command_type_cache )); then
     REPLY=$_zsh_highlight_main__command_type_cache[(e)$1]
     if [[ -n "$REPLY" ]]; then
       return
     fi
   fi
+
+  # Main logic
   if (( $#options_to_set )); then
     setopt localoptions $options_to_set;
   fi
   unset REPLY
   if zmodload -e zsh/parameter; then
     if (( $+aliases[(e)$1] )); then
+      may_cache=0
+    fi
+    if (( $+aliases[(e)$1] )) && (( aliases_allowed )); then
       REPLY=alias
     elif (( $+saliases[(e)${1##*.}] )); then
       REPLY='suffix alias'
@@ -165,9 +188,21 @@ _zsh_highlight_main__type() {
   fi
   if ! (( $+REPLY )); then
     # Note that 'type -w' will run 'rehash' implicitly.
-    REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null)##*: }"
+    #
+    # We 'unalias' in a subshell, so the parent shell is not affected.
+    #
+    # The colon command is there just to avoid a command substitution that
+    # starts with an arithmetic expression [«((…))» as the first thing inside
+    # «$(…)»], which is area that has had some parsing bugs before 5.6
+    # (approximately).
+    REPLY="${$(:; (( aliases_allowed )) || unalias -- $1 2>/dev/null; LC_ALL=C builtin type -w -- $1 2>/dev/null)##*: }"
+    if [[ $REPLY == 'alias' ]]; then
+      may_cache=0
+    fi
   fi
-  if (( $+_zsh_highlight_main__command_type_cache )); then
+
+  # Cache population
+  if (( may_cache )) && (( $+_zsh_highlight_main__command_type_cache )); then
     _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
   fi
 }
@@ -319,6 +354,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   #
   # The states are:
   # - :start:      Command word
+  # - :alias:      :start: and alias expansion is allowed
   # - :sudo_opt:   A leading-dash option to sudo (such as "-u" or "-i")
   # - :sudo_arg:   The argument to a sudo leading-dash option that takes one,
   #                when given as a separate word; i.e., "foo" in "-u foo" (two
@@ -351,7 +387,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   # $in_redirection.  The value of $next_word from the iteration that processed
   # the operator is discarded.
   #
-  local this_word=':start:' next_word
+  local this_word=':start::alias:' next_word
   integer in_redirection
   # Processing buffer
   local proc_buf="$buf"
@@ -386,7 +422,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     # the string's color.
     integer already_added=0
     style=unknown-token
-    if [[ $this_word == *':start:'* ]]; then
+    if [[ $this_word == *':alias:'* ]]; then
       in_array_assignment=false
       if [[ $arg == 'noglob' ]]; then
         highlight_glob=false
@@ -485,9 +521,11 @@ _zsh_highlight_main_highlighter_highlight_list()
         case "$arg" in
           # Flag that requires an argument
           '-'[Cgprtu]) this_word=${this_word//:start:/};
+                       this_word=${this_word//:alias:/};
                        next_word=':sudo_arg:';;
           # This prevents misbehavior with sudo -u -otherargument
           '-'*)        this_word=${this_word//:start:/};
+                       this_word=${this_word//:alias:/};
                        next_word+=':start:';
                        next_word+=':sudo_opt:';;
           *)           ;;
@@ -502,18 +540,22 @@ _zsh_highlight_main_highlighter_highlight_list()
    if [[ $this_word == *':always:'* && $arg == 'always' ]]; then
      # try-always construct
      style=reserved-word # de facto a reserved word, although not de jure
-     next_word=':start:'
+     next_word=':start:' # :alias: will be added to $next_word when $this_word is \x7b.
    elif [[ $this_word == *':start:'* ]] && (( in_redirection == 0 )); then # $arg is the command word
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} ]]; then
       style=precommand
      elif [[ "$arg" = "sudo" ]] && { _zsh_highlight_main__type sudo; [[ -n $REPLY && $REPLY != "none" ]] }; then
       style=precommand
       next_word=${next_word//:regular:/}
+      next_word=${next_word//:alias:/}
       next_word+=':sudo_opt:'
       next_word+=':start:'
      else
       _zsh_highlight_main_highlighter_expand_path $arg
       local expanded_arg="$REPLY"
+      if [[ $arg != $expanded_arg ]]; then
+        this_word=${this_word//:alias:/}
+      fi
       _zsh_highlight_main__type ${expanded_arg}
       local res="$REPLY"
       () {
@@ -541,6 +583,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                         case $arg in
                           ($'\x7b')
                             braces_stack='Y'"$braces_stack"
+                            next_word+=':alias:'
                             ;;
                           ($'\x7d')
                             # We're at command word, so no need to check $right_brace_is_recognised_everywhere
@@ -627,6 +670,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                             # assignment to a scalar parameter.
                             # (For array assignments, the command doesn't start until the ")" token.)
                             next_word+=':start:'
+                            next_word+=':alias:'
                             if (( start_pos + i <= end_pos )); then
                               () {
                                 local highlight_glob=false
@@ -704,18 +748,21 @@ _zsh_highlight_main_highlighter_highlight_list()
                    style=assign
                    in_array_assignment=false
                    next_word+=':start:'
+                   next_word+=':alias:'
                  else
                    if _zsh_highlight_main__stack_pop 'S'; then
                      REPLY=$start_pos
                      reply=($list_highlights)
                      return 0
                    fi
+                   # TODO: next_word can only be a command separator now
                    _zsh_highlight_main__stack_pop 'R' reserved-word
                  fi;;
         $'\x28\x29') # possibly a function definition
                  if [[ $zsyh_user_options[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
                  then
                    next_word+=':start:'
+                   next_word+=':alias:'
                  fi
                  style=reserved-word
                  ;;
@@ -755,12 +802,18 @@ _zsh_highlight_main_highlighter_highlight_list()
         next_word=':regular:'
       else
         next_word=':start:'
+        next_word+=':alias:'
         highlight_glob=true
       fi
-    elif
-       [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]] ||
-       [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} && $this_word == *':start:'* ]]; then
+    elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} && $this_word == *':start:'* ]]; then
       next_word=':start:'
+      next_word+=':alias:'
+    elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_PRECOMMANDS:#"$arg"} && $this_word == *':start:'* ]]; then
+      next_word=':start:'
+      # Special-case two reserved words that _can_ be followed by aliases
+      if [[ $arg == ('noglob'|'nocorrect') ]]; then
+        next_word+=':alias:'
+      fi
     elif [[ $arg == "repeat" && $this_word == *':start:'* ]]; then
       # skip the repeat-count word
       in_redirection=2
@@ -771,7 +824,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       # or a command separator (`repeat 2; ls` or `repeat 2; do ls; done`).
       #
       # The repeat-count word will be handled like a redirection target.
-      this_word=':start::regular:'
+      this_word=':start::alias::regular:'
     fi
     start_pos=$end_pos
     if (( in_redirection == 0 )); then
