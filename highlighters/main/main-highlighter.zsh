@@ -195,7 +195,7 @@ _zsh_highlight_main__type() {
     # starts with an arithmetic expression [«((…))» as the first thing inside
     # «$(…)»], which is area that has had some parsing bugs before 5.6
     # (approximately).
-    REPLY="${$(:; (( aliases_allowed )) || unalias -- $1;LC_ALL=C builtin type -w -- $1 2>/dev/null)##*: }"
+    REPLY="${$(:; (( aliases_allowed )) || unalias -- $1 2>/dev/null; LC_ALL=C builtin type -w -- $1 2>/dev/null)##*: }"
     if [[ $REPLY == 'alias' ]]; then
       may_cache=0
     fi
