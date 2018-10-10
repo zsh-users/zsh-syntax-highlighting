@@ -127,20 +127,43 @@ _zsh_highlight_main_calculate_fallback() {
 #
 # Takes a single argument.
 #
+# Uses the following caller variables: [[ $this_word == *':alias:'* ]]
+#
 # The result will be stored in REPLY.
 _zsh_highlight_main__type() {
+  # Our caller knows whether aliases are allowed at this point.  Compare:
+  #    % ls
+  #    % sudo ls
+  if [[ $this_word == *':alias:'* ]]; then
+    integer -r aliases_allowed=1
+  else
+    integer -r aliases_allowed=0
+  fi
+  # For the same reason, we won't cache replies of anything that exists as an
+  # alias at all, regardless of $aliases_allowed.
+  #
+  # ### We probably _should_ cache them in a cache that's keyed on the value of
+  # ### $aliases_allowed, on the assumption that aliases are the common case.
+  integer may_cache=1
+
+  # Cache lookup
   if (( $+_zsh_highlight_main__command_type_cache )); then
     REPLY=$_zsh_highlight_main__command_type_cache[(e)$1]
     if [[ -n "$REPLY" ]]; then
       return
     fi
   fi
+
+  # Main logic
   if (( $#options_to_set )); then
     setopt localoptions $options_to_set;
   fi
   unset REPLY
   if zmodload -e zsh/parameter; then
     if (( $+aliases[(e)$1] )); then
+      may_cache=0
+    fi
+    if (( $+aliases[(e)$1] )) && (( aliases_allowed )); then
       REPLY=alias
     elif (( $+saliases[(e)${1##*.}] )); then
       REPLY='suffix alias'
@@ -165,9 +188,21 @@ _zsh_highlight_main__type() {
   fi
   if ! (( $+REPLY )); then
     # Note that 'type -w' will run 'rehash' implicitly.
-    REPLY="${$(LC_ALL=C builtin type -w -- $1 2>/dev/null)##*: }"
+    #
+    # We 'unalias' in a subshell, so the parent shell is not affected.
+    #
+    # The colon command is there just to avoid a command substitution that
+    # starts with an arithmetic expression [«((…))» as the first thing inside
+    # «$(…)»], which is area that has had some parsing bugs before 5.6
+    # (approximately).
+    REPLY="${$(:; (( aliases_allowed )) || unalias -- $1;LC_ALL=C builtin type -w -- $1 2>/dev/null)##*: }"
+    if [[ $REPLY == 'alias' ]]; then
+      may_cache=0
+    fi
   fi
-  if (( $+_zsh_highlight_main__command_type_cache )); then
+
+  # Cache population
+  if (( may_cache )) && (( $+_zsh_highlight_main__command_type_cache )); then
     _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
   fi
 }
