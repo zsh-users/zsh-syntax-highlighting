@@ -553,6 +553,9 @@ _zsh_highlight_main_highlighter_highlight_list()
      else
       _zsh_highlight_main_highlighter_expand_path $arg
       local expanded_arg="$REPLY"
+      if [[ $arg != $expanded_arg ]]; then
+        this_word=${this_word//:alias:/}
+      fi
       _zsh_highlight_main__type ${expanded_arg}
       local res="$REPLY"
       () {
