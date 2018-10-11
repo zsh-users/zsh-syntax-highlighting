@@ -608,17 +608,20 @@ _zsh_highlight_main_highlighter_highlight_list()
     if (( ! in_redirection )); then
       if [[ $this_word == *':sudo_opt:'* ]]; then
         if [[ -n $flags_with_argument ]] &&
-           [[ $arg == '-'[$flags_sans_argument]#[$flags_with_argument] ]]; then
+           { [[ -n $flags_sans_argument ]] && [[ $arg == '-'[$flags_sans_argument]#[$flags_with_argument] ]] ||
+             [[ $arg == '-'[$flags_with_argument] ]] }; then
           # Flag that requires an argument
           this_word=${this_word//:start:/}
           next_word=':sudo_arg:'
         elif [[ -n $flags_with_argument ]] &&
-             [[ $arg == '-'[$flags_sans_argument]#[$flags_with_argument]* ]]; then
+             { [[ -n $flags_sans_argument ]] && [[ $arg == '-'[$flags_sans_argument]#[$flags_with_argument]* ]] ||
+               [[ $arg == '-'[$flags_with_argument]* ]] }; then
           # Argument attached in the same word
           this_word=${this_word//:start:/}
           next_word+=':start:'
           next_word+=':sudo_opt:'
-        elif [[ $arg == '-'[$flags_sans_argument]# ]]; then
+        elif [[ -n $flags_sans_argument ]] &&
+             [[ $arg == '-'[$flags_sans_argument]# ]]; then
           # Flag that requires no argument
           this_word=:sudo_opt:
           next_word+=':start:'
