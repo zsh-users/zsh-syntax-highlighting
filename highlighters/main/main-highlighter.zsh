@@ -260,15 +260,18 @@ _zsh_highlight_highlighter_main_paint()
   # have a non-empty $flags_with_argument; see test-data/precommand4.zsh.
   local -A precommand_options
   precommand_options=(
-    'command' :pvV # as of zsh 5.4.2
-    'nice' n: # as of current POSIX spec
-    'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
+    # Precommand modifiers as of zsh 5.6.2 cf. zshmisc(1).
+    '-' ''
+    'builtin' ''
+    'command' :pvV
+    'exec' a:cl
+    'nocorrect' ''
+    'noglob' ''
+
     'doas' aCu:Lns # as of OpenBSD's doas(1) dated September 4, 2016
-    'builtin' '' # as of zsh 5.4.2
-    'exec' a:cl # as of zsh 5.4.2
-    'nocorrect' '' # as of zsh 5.4.2
-    'noglob' '' # as of zsh 5.4.2
+    'nice' n: # as of current POSIX spec
     'pkexec' '' # doesn't take short options; immune to #121 because it's usually not passed --option flags
+    'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
   )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
