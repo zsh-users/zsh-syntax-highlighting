@@ -107,6 +107,9 @@ _zsh_highlight_main_calculate_fallback() {
       dollar-quoted-argument{-unclosed,}
       back-quoted-argument{-unclosed,}
 
+      command-substitution{-quoted,,-unquoted,}
+      command-substitution-delimiter{-quoted,,-unquoted,}
+
       command-substitution{-delimiter,}
       process-substitution{-delimiter,}
       back-quoted-argument{-delimiter,}
@@ -1015,12 +1018,12 @@ _zsh_highlight_main_highlighter_highlight_argument()
           ret=$?
           (( i += REPLY ))
           highlights+=(
-            $(( start_pos + start - 1)) $(( start_pos + i )) command-substitution
-            $(( start_pos + start - 1)) $(( start_pos + start + 1)) command-substitution-delimiter
+            $(( start_pos + start - 1)) $(( start_pos + i )) command-substitution-unquoted
+            $(( start_pos + start - 1)) $(( start_pos + start + 1)) command-substitution-delimiter-unquoted
             $reply
           )
           if (( ret == 0 )); then
-            highlights+=($(( start_pos + i - 1)) $(( start_pos + i )) command-substitution-delimiter)
+            highlights+=($(( start_pos + i - 1)) $(( start_pos + i )) command-substitution-delimiter-unquoted)
           fi
           continue
         fi
@@ -1147,12 +1150,12 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
               (( i += REPLY ))
               reply=(
                 $saved_reply
-                $j $(( start_pos + i )) command-substitution
-                $j $(( j + 2 )) command-substitution-delimiter
+                $j $(( start_pos + i )) command-substitution-quoted
+                $j $(( j + 2 )) command-substitution-delimiter-quoted
                 $reply
               )
               if (( ret == 0 )); then
-                reply+=($(( start_pos + i - 1 )) $(( start_pos + i )) command-substitution-delimiter)
+                reply+=($(( start_pos + i - 1 )) $(( start_pos + i )) command-substitution-delimiter-quoted)
               fi
               continue
             else

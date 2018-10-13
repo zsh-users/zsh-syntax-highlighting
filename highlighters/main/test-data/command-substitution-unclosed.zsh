@@ -33,8 +33,8 @@ BUFFER=$': foo$(echo bar'
 expected_region_highlight=(
   '1 1 builtin' # :
   '3 15 default' # foo$(echo bar
-  '6 15 command-substitution' # $(echo bar
-  '6 7 command-substitution-delimiter' # $(
+  '6 15 command-substitution-unquoted' # $(echo bar
+  '6 7 command-substitution-delimiter-unquoted' # $(
   '8 11 builtin' # echo
   '13 15 default' # bar
 )
