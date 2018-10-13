@@ -1120,8 +1120,8 @@ _zsh_highlight_main_highlighter_highlight_single_quote()
 # Highlight special chars inside double-quoted strings
 _zsh_highlight_main_highlighter_highlight_double_quote()
 {
-  local -a match mbegin mend saved_reply
-  local MATCH; integer MBEGIN MEND
+  local -a breaks match mbegin mend saved_reply
+  local MATCH; integer last_break=$(( start_pos + $1 - 1 )) MBEGIN MEND
   local i j k ret style
   reply=()
 
@@ -1153,11 +1153,13 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
               (( k += 1 )) # highlight both dollar signs
               (( i += 1 )) # don't consider the second one as introducing another parameter expansion
             elif [[ $arg[i+1] == $'\x28' ]]; then
+              breaks+=( $last_break $(( start_pos + i - 1 )) )
               (( i += 2 ))
               saved_reply=($reply)
               _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
               ret=$?
               (( i += REPLY ))
+              last_break=$(( start_pos + i ))
               reply=(
                 $saved_reply
                 $j $(( start_pos + i )) command-substitution-quoted
@@ -1200,7 +1202,13 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
     (( i-- ))
     style=double-quoted-argument-unclosed
   fi
-  reply=($(( start_pos + $1 - 1)) $(( start_pos + i )) $style $reply)
+  (( last_break != start_pos + i )) && breaks+=( $last_break $(( start_pos + i )) )
+  saved_reply=($reply)
+  reply=()
+  for 1 2 in $breaks; do
+    reply+=($1 $2 $style)
+  done
+  reply+=($saved_reply)
   REPLY=$i
 }
 

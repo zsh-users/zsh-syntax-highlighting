@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2016 zsh-syntax-highlighting contributors
+# Copyright (c) 2018 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,22 +28,16 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER=': "$(:)" "foo$(:)bar'
+BUFFER='echo "foo$('
 
 expected_region_highlight=(
-  '1 1 builtin' # :
-  '3 8 default' # "$(:)"
-  '3 3 double-quoted-argument' # "$(:)"
-  '8 8 double-quoted-argument' # "$(:)"
-  '4 7 command-substitution-quoted' # $(:)
-  '4 5 command-substitution-delimiter-quoted' # $(
-  '6 6 builtin' # :
-  '7 7 command-substitution-delimiter-quoted' # )
-  '10 20 default' # "foo$(:)bar
-  '10 13 double-quoted-argument-unclosed' # "foo
-  '18 20 double-quoted-argument-unclosed' # bar
-  '14 17 command-substitution-quoted' # $(:)
-  '14 15 command-substitution-delimiter-quoted' # $(
-  '16 16 builtin' # :
-  '17 17 command-substitution-delimiter-quoted' # )
+  '1 4 builtin' # echo
+  '6 11 default' # "foo$(
+  '6 9 double-quoted-argument-unclosed' # "foo
+  '10 11 command-substitution-quoted' # $(
+  '10 11 command-substitution-delimiter-quoted' # $(
 )
+
+if [[ ${(z):-'$('} == '$( ' ]]; then # ignore zsh 5.0.8 bug
+  expected_region_highlight[2]='6 12 default' # "foo$(
+fi
