@@ -347,8 +347,8 @@ then
     # see "User-defined widgets" in zshall.
     () {
       local -h -r WIDGET=zle-line-finish
-      _zsh_highlight "$@"
-    } "$@"
+      _zsh_highlight
+    }
   }
   _zsh_highlight_bind_widgets(){}
   if [[ -o zle ]]; then
