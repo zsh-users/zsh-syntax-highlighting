@@ -400,9 +400,11 @@ _zsh_highlight_main_highlighter_highlight_list()
   else
     args=(${(z)buf})
   fi
-  for arg in $args; do
+  while (( $#args )); do
     # Save an unmunged copy of the current word.
+    arg=$args[1]
     arg_raw="$arg"
+    shift args
 
     # Initialize this_word and next_word.
     if (( in_redirection == 0 )); then
