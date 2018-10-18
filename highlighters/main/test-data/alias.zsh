@@ -29,10 +29,7 @@
 
 alias alias1="unused expansion"
 alias -s alias2="echo"
-if set -o | grep -q aliasfuncdef; then
-  setopt alias_func_def # 5.4+
-fi
-alias1() {} # to check that it's highlighted as an alias, not as a function
+function alias1() {} # to check that it's highlighted as an alias, not as a function
 
 BUFFER='x.alias2; alias1'
 
@@ -50,5 +47,5 @@ if zmodload -e zsh/parameter || [[ "$(type -w x.alias2)" == *suffix* ]]; then
 fi
 expected_region_highlight+=(
   "9 9 commandseparator" # ;
-  "11 16 alias" # alias1
+  "11 16 alias 'issue #558'" # alias1
 )
