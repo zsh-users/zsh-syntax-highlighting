@@ -27,7 +27,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-alias alias1="unused expansion"
+alias alias1="ls"
 alias -s alias2="echo"
 function alias1() {} # to check that it's highlighted as an alias, not as a function
 
@@ -47,5 +47,5 @@ if zmodload -e zsh/parameter || [[ "$(type -w x.alias2)" == *suffix* ]]; then
 fi
 expected_region_highlight+=(
   "9 9 commandseparator" # ;
-  "11 16 alias 'issue #558'" # alias1
+  "11 16 alias" # alias1
 )
