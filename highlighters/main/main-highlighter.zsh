@@ -455,60 +455,62 @@ _zsh_highlight_main_highlighter_highlight_list()
       fi
     fi
 
-    # Compute the new $start_pos and $end_pos, skipping over whitespace in $buf.
-    start_pos=$end_pos
-    if [[ $arg == ';' ]] ; then
-      # We're looking for either a semicolon or a newline, whichever comes
-      # first.  Both of these are rendered as a ";" (SEPER) by the ${(z)..}
-      # flag.
-      #
-      # We can't use the (Z+n+) flag because that elides the end-of-command
-      # token altogether, so 'echo foo\necho bar' (two commands) becomes
-      # indistinguishable from 'echo foo echo bar' (one command with three
-      # words for arguments).
-      local needle=$'[;\n]'
-      integer offset=$(( ${proc_buf[(i)$needle]} - 1 ))
-      (( start_pos += offset ))
-      (( end_pos = start_pos + $#arg ))
-    else
-      # The line was:
-      #
-      # integer offset=$(((len-start_pos)-${#${proc_buf##([[:space:]]|\\[[:space:]])#}}))
-      #
-      # - len-start_pos is length of current proc_buf; basically: initial length minus where
-      #   we are, and proc_buf is chopped to the "where we are" (compare the "previous value
-      #   of start_pos" below, and the len-(start_pos-offset) = len-start_pos+offset)
-      # - what's after main minus sign is: length of proc_buf without spaces at the beginning
-      # - so what the line actually did, was computing length of the spaces!
-      # - this can be done via (#b) flag, like below
-      if [[ "$proc_buf" = (#b)(#s)(([[:space:]]|\\$'\n')##)* ]]; then
-          # The first, outer parenthesis
-          integer offset="${#match[1]}"
+    if true; then
+      # Compute the new $start_pos and $end_pos, skipping over whitespace in $buf.
+      start_pos=$end_pos
+      if [[ $arg == ';' ]] ; then
+        # We're looking for either a semicolon or a newline, whichever comes
+        # first.  Both of these are rendered as a ";" (SEPER) by the ${(z)..}
+        # flag.
+        #
+        # We can't use the (Z+n+) flag because that elides the end-of-command
+        # token altogether, so 'echo foo\necho bar' (two commands) becomes
+        # indistinguishable from 'echo foo echo bar' (one command with three
+        # words for arguments).
+        local needle=$'[;\n]'
+        integer offset=$(( ${proc_buf[(i)$needle]} - 1 ))
+        (( start_pos += offset ))
+        (( end_pos = start_pos + $#arg ))
       else
-          integer offset=0
+        # The line was:
+        #
+        # integer offset=$(((len-start_pos)-${#${proc_buf##([[:space:]]|\\[[:space:]])#}}))
+        #
+        # - len-start_pos is length of current proc_buf; basically: initial length minus where
+        #   we are, and proc_buf is chopped to the "where we are" (compare the "previous value
+        #   of start_pos" below, and the len-(start_pos-offset) = len-start_pos+offset)
+        # - what's after main minus sign is: length of proc_buf without spaces at the beginning
+        # - so what the line actually did, was computing length of the spaces!
+        # - this can be done via (#b) flag, like below
+        if [[ "$proc_buf" = (#b)(#s)(([[:space:]]|\\$'\n')##)* ]]; then
+            # The first, outer parenthesis
+            integer offset="${#match[1]}"
+        else
+            integer offset=0
+        fi
+        ((start_pos+=offset))
+        ((end_pos=$start_pos+${#arg}))
       fi
-      ((start_pos+=offset))
-      ((end_pos=$start_pos+${#arg}))
-    fi
 
-    # Compute the new $proc_buf. We advance it
-    # (chop off characters from the beginning)
-    # beyond what end_pos points to, by skipping
-    # as many characters as end_pos was advanced.
-    #
-    # end_pos was advanced by $offset (via start_pos)
-    # and by $#arg. Note the `start_pos=$end_pos`
-    # below.
-    #
-    # As for the [,len]. We could use [,len-start_pos+offset]
-    # here, but to make it easier on eyes, we use len and
-    # rely on the fact that Zsh simply handles that. The
-    # length of proc_buf is len-start_pos+offset because
-    # we're chopping it to match current start_pos, so its
-    # length matches the previous value of start_pos.
-    #
-    # Why [,-1] is slower than [,length] isn't clear.
-    proc_buf="${proc_buf[offset + $#arg + 1,len]}"
+      # Compute the new $proc_buf. We advance it
+      # (chop off characters from the beginning)
+      # beyond what end_pos points to, by skipping
+      # as many characters as end_pos was advanced.
+      #
+      # end_pos was advanced by $offset (via start_pos)
+      # and by $#arg. Note the `start_pos=$end_pos`
+      # below.
+      #
+      # As for the [,len]. We could use [,len-start_pos+offset]
+      # here, but to make it easier on eyes, we use len and
+      # rely on the fact that Zsh simply handles that. The
+      # length of proc_buf is len-start_pos+offset because
+      # we're chopping it to match current start_pos, so its
+      # length matches the previous value of start_pos.
+      #
+      # Why [,-1] is slower than [,length] isn't clear.
+      proc_buf="${proc_buf[offset + $#arg + 1,len]}"
+    fi
 
     # Handle the INTERACTIVE_COMMENTS option.
     #
@@ -531,55 +533,55 @@ _zsh_highlight_main_highlighter_highlight_list()
       local res="$REPLY"
       if [[ $res == "alias" ]]; then
         () {
-          local -A seen_arg
-          while [[ $REPLY == alias ]]; do
-            seen_arg[$arg]=1
-            _zsh_highlight_main__resolve_alias $arg
-            # Use a temporary array to ensure the subscript is interpreted as
-            # an array subscript, not as a scalar subscript
-            local -a reply
-            # TODO: the ${interactive_comments+set} path needs to skip comments; see test-data/alias-comment1.zsh
-            reply=( ${interactive_comments-${(z)REPLY}}
-                    ${interactive_comments+${(zZ+c+)REPLY}} )
-            # Avoid looping forever on alias a=b b=c c=b, but allow alias foo='foo bar'
-            [[ $arg == $reply[1] ]] && break
-            arg=$reply[1]
-            if (( $+seen_arg[$arg] )); then
-              res=none
-              break
-            fi
-            _zsh_highlight_main__type "$arg"
-          done
+        local -A seen_arg
+        while [[ $REPLY == alias ]]; do
+        seen_arg[$arg]=1
+        _zsh_highlight_main__resolve_alias $arg
+        # Use a temporary array to ensure the subscript is interpreted as
+        # an array subscript, not as a scalar subscript
+        local -a reply
+        # TODO: the ${interactive_comments+set} path needs to skip comments; see test-data/alias-comment1.zsh
+        reply=( ${interactive_comments-${(z)REPLY}}
+                ${interactive_comments+${(zZ+c+)REPLY}} )
+        # Avoid looping forever on alias a=b b=c c=b, but allow alias foo='foo bar'
+        [[ $arg == $reply[1] ]] && break
+        arg=$reply[1]
+        if (( $+seen_arg[$arg] )); then
+          res=none
+          break
+        fi
+        _zsh_highlight_main__type "$arg"
+        done
         }
         _zsh_highlight_main_highlighter_expand_path $arg
         arg=$REPLY
         () {
-          # Make sure to use $arg_raw here, rather than $arg.
-          integer insane_alias
-          case $arg_raw in
-            # Issue #263: aliases with '=' on their LHS.
-            #
-            # There are three cases:
-            #
-            # - Unsupported, breaks 'alias -L' output, but invokable:
-            ('='*) :;;
-            # - Unsupported, not invokable:
-            (*'='*) insane_alias=1;;
-            # - The common case:
-            (*) :;;
-          esac
-          if (( insane_alias )); then
-            style=unknown-token
-          # Calling 'type' again; since __type memoizes the answer, this call is just a hash lookup.
-          elif ! _zsh_highlight_main__type "$arg" || [[ $REPLY == 'none' ]]; then
-            style=unknown-token
-          else
-            # The common case.
-            style=alias
-            if (( ${+precommand_options[(re)"$arg"]} )) && (( ! ${+precommand_options[(re)"$arg_raw"]} )); then
-              precommand_options[$arg_raw]=$precommand_options[$arg]
-            fi
+        # Make sure to use $arg_raw here, rather than $arg.
+        integer insane_alias
+        case $arg_raw in
+          # Issue #263: aliases with '=' on their LHS.
+          #
+          # There are three cases:
+          #
+          # - Unsupported, breaks 'alias -L' output, but invokable:
+          ('='*) :;;
+          # - Unsupported, not invokable:
+          (*'='*) insane_alias=1;;
+          # - The common case:
+          (*) :;;
+        esac
+        if (( insane_alias )); then
+          style=unknown-token
+        # Calling 'type' again; since __type memoizes the answer, this call is just a hash lookup.
+        elif ! _zsh_highlight_main__type "$arg" || [[ $REPLY == 'none' ]]; then
+          style=unknown-token
+        else
+          # The common case.
+          style=alias
+          if (( ${+precommand_options[(re)"$arg"]} )) && (( ! ${+precommand_options[(re)"$arg_raw"]} )); then
+            precommand_options[$arg_raw]=$precommand_options[$arg]
           fi
+        fi
         }
       else
         _zsh_highlight_main_highlighter_expand_path $arg
