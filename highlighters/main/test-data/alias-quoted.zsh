@@ -35,5 +35,5 @@ expected_region_highlight=(
   '1 3 unknown-token' # "a"
   '5 7 default' # foo
   '8 8 commandseparator' # ;
-  '10 12 command "issue #544' # \ls
+  '10 12 command' # \ls
 )

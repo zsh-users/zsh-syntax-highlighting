@@ -1,5 +1,6 @@
+#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2016 zsh-syntax-highlighting contributors
+# Copyright (c) 2018 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -27,12 +28,15 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-# see alias-comment2.zsh
-setopt interactivecomments
-alias x=$'# foo\npwd'
-BUFFER='x'
+alias sdu='sudo -u'
+sudo(){}
+
+BUFFER='sdu phy1729 echo foo'
 
 expected_region_highlight=(
-  '1 1 alias' # x
-  '1 1 comment' # x (#)
+  '1 3 alias' # sdu
+  '1 3 precommand' # sdu (sudo)
+  '5 11 default' # phy1729
+  '13 16 commmand "issue #540"' # echo (not builtin)
+  '18 20 default' # foo
 )

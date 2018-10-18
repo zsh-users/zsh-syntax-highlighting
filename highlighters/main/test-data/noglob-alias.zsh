@@ -32,5 +32,6 @@ BUFFER='x ls'
 
 expected_region_highlight=(
   "1 1 alias" # x
+  "1 1 precommand" # x (command)
   "3 4 command" # ls
 )

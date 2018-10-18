@@ -34,5 +34,6 @@ BUFFER='echo bar'
 
 expected_region_highlight=(
   '1 4 alias' # echo
+  '1 4 builtin' # echo
   '6 8 default' # bar
 )

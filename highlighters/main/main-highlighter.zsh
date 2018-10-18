@@ -72,6 +72,9 @@ _zsh_highlight_main_add_region_highlight() {
   integer start=$1 end=$2
   shift 2
 
+  (( highlighted_alias )) && return
+  (( in_alias )) && highlighted_alias=1
+
   # The calculation was relative to $buf but region_highlight is relative to $BUFFER.
   (( start += buf_offset ))
   (( end += buf_offset ))
@@ -363,10 +366,18 @@ _zsh_highlight_highlighter_main_paint()
 _zsh_highlight_main_highlighter_highlight_list()
 {
   integer start_pos end_pos=0 buf_offset=$1 has_end=$3
-  local buf=$4 highlight_glob=true arg arg_raw style
+  # last_alias is the last alias arg (lhs) expanded (if in an alias).
+  #     This allows for expanding alias ls='ls -l' while avoiding loops.
+  local arg buf=$4 highlight_glob=true last_alias style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
-  integer len=$#buf
+  # highlighted_alias is 1 when the alias arg has been highlighted with a non-alias style.
+  #     E.g. alias x=ls;  x has been highlighted as alias AND command.
+  # in_alias is equal to the number of shifts needed until arg=args[1] pops an
+  #     arg from BUFFER and not added by an alias.
+  integer highlighted_alias=0 in_alias=0 len=$#buf
   local -a match mbegin mend list_highlights
+  # seen_alias is a map of aliases already seen to avoid loops like alias a=b b=a
+  local -A seen_alias
   list_highlights=()
 
   # "R" for round
@@ -427,10 +438,12 @@ _zsh_highlight_main_highlighter_highlight_list()
     args=(${(z)buf})
   fi
   while (( $#args )); do
-    # Save an unmunged copy of the current word.
     arg=$args[1]
-    arg_raw="$arg"
     shift args
+    if (( in_alias )); then
+      (( in_alias-- ))
+      (( in_alias == 0 )) && highlighted_alias=0 last_alias= seen_alias=()
+    fi
 
     # Initialize this_word and next_word.
     if (( in_redirection == 0 )); then
@@ -455,7 +468,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       fi
     fi
 
-    if true; then
+    if (( in_alias == 0 )); then
       # Compute the new $start_pos and $end_pos, skipping over whitespace in $buf.
       start_pos=$end_pos
       if [[ $arg == ';' ]] ; then
@@ -531,34 +544,20 @@ _zsh_highlight_main_highlighter_highlight_list()
       # Expand aliases.
       _zsh_highlight_main__type "$arg"
       local res="$REPLY"
-      if [[ $res == "alias" ]]; then
-        () {
-        local -A seen_alias
-        while [[ $REPLY == alias ]]; do
+      if [[ $res == "alias" ]] && [[ $last_alias != $arg ]]; then
+        # Avoid looping forever on alias a=b b=c c=b, but allow alias foo='foo bar'
+        if (( $+seen_alias[$arg] )); then
+          _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
+          continue
+        fi
         seen_alias[$arg]=1
+        last_alias=$arg
         _zsh_highlight_main__resolve_alias $arg
-        # Use a temporary array to ensure the subscript is interpreted as
-        # an array subscript, not as a scalar subscript
         local -a alias_args
-        # TODO: the ${interactive_comments+set} path needs to skip comments; see test-data/alias-comment1.zsh
+        # Elision is desired in case alias x=''
         alias_args=( ${interactive_comments-${(z)REPLY}}
                      ${interactive_comments+${(zZ+c+)REPLY}} )
-        # Avoid looping forever on alias a=b b=c c=b, but allow alias foo='foo bar'
-        [[ $arg == $alias_args[1] ]] && break
-        arg=$alias_args[1]
-        if (( $+seen_alias[$arg] )); then
-          res=none
-          break
-        fi
-        _zsh_highlight_main__type "$arg"
-        done
-        }
-        _zsh_highlight_main_highlighter_expand_path $arg
-        arg=$REPLY
-        () {
-        # Make sure to use $arg_raw here, rather than $arg.
-        integer insane_alias
-        case $arg_raw in
+        case $arg in
           # Issue #263: aliases with '=' on their LHS.
           #
           # There are three cases:
@@ -566,27 +565,29 @@ _zsh_highlight_main_highlighter_highlight_list()
           # - Unsupported, breaks 'alias -L' output, but invokable:
           ('='*) :;;
           # - Unsupported, not invokable:
-          (*'='*) insane_alias=1;;
+          (*'='*)
+            _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
+            continue
+            ;;
           # - The common case:
           (*) :;;
         esac
-        if (( insane_alias )); then
-          style=unknown-token
-        # Calling 'type' again; since __type memoizes the answer, this call is just a hash lookup.
-        elif ! _zsh_highlight_main__type "$arg" || [[ $REPLY == 'none' ]]; then
-          style=unknown-token
+        args=( $alias_args $args )
+        if (( in_alias == 0 )); then
+          _zsh_highlight_main_add_region_highlight $start_pos $end_pos alias
+          # Add one because we will in_alias-- on the next loop iteration so
+          # this iteration should be considered in in_alias as well
+          (( in_alias += $#alias_args + 1 ))
         else
-          # The common case.
-          style=alias
-          if (( ${+precommand_options[(re)"$arg"]} )) && (( ! ${+precommand_options[(re)"$arg_raw"]} )); then
-            precommand_options[$arg_raw]=$precommand_options[$arg]
-          fi
+          # This arg is already included in the count, so no need to + 1.
+          (( in_alias += $#alias_args ))
         fi
-        }
+        (( in_redirection++ )) # Stall this arg
+        continue
       else
         _zsh_highlight_main_highlighter_expand_path $arg
         arg=$REPLY
-        _zsh_highlight_main__type "$arg"
+        _zsh_highlight_main__type "$arg" 0
         res="$REPLY"
       fi
     fi
@@ -635,7 +636,7 @@ _zsh_highlight_main_highlighter_highlight_list()
             arg=${(P)MATCH}
             ;;
         esac
-        _zsh_highlight_main__type "$arg"
+        _zsh_highlight_main__type "$arg" 0
         res=$REPLY
       fi
     }
@@ -703,7 +704,7 @@ _zsh_highlight_main_highlighter_highlight_list()
      next_word=':start:'
    elif ! (( in_redirection)) && [[ $this_word == *':start:'* ]]; then # $arg is the command word
      if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
-      [[ $res != alias ]] && style=precommand
+      style=precommand
       flags_with_argument=${precommand_options[$arg]%:*}
       flags_sans_argument=${precommand_options[$arg]#*:}
       next_word=${next_word//:regular:/}
