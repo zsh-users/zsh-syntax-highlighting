@@ -533,20 +533,20 @@ _zsh_highlight_main_highlighter_highlight_list()
       local res="$REPLY"
       if [[ $res == "alias" ]]; then
         () {
-        local -A seen_arg
+        local -A seen_alias
         while [[ $REPLY == alias ]]; do
-        seen_arg[$arg]=1
+        seen_alias[$arg]=1
         _zsh_highlight_main__resolve_alias $arg
         # Use a temporary array to ensure the subscript is interpreted as
         # an array subscript, not as a scalar subscript
-        local -a reply
+        local -a alias_args
         # TODO: the ${interactive_comments+set} path needs to skip comments; see test-data/alias-comment1.zsh
-        reply=( ${interactive_comments-${(z)REPLY}}
-                ${interactive_comments+${(zZ+c+)REPLY}} )
+        alias_args=( ${interactive_comments-${(z)REPLY}}
+                     ${interactive_comments+${(zZ+c+)REPLY}} )
         # Avoid looping forever on alias a=b b=c c=b, but allow alias foo='foo bar'
-        [[ $arg == $reply[1] ]] && break
-        arg=$reply[1]
-        if (( $+seen_arg[$arg] )); then
+        [[ $arg == $alias_args[1] ]] && break
+        arg=$alias_args[1]
+        if (( $+seen_alias[$arg] )); then
           res=none
           break
         fi
