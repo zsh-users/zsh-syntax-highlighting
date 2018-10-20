@@ -881,7 +881,8 @@ _zsh_highlight_main_highlighter_highlight_list()
     fi
     _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
   done
-  REPLY=$(( end_pos - 1 ))
+  [[ "$proc_buf" = (#b)(#s)(([[:space:]]|\\$'\n')#) ]]
+  REPLY=$(( end_pos + ${#match[1]} - 1 ))
   reply=($list_highlights)
   return $(( $#braces_stack > 0 ))
 }

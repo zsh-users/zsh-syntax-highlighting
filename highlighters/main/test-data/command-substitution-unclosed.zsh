@@ -41,4 +41,5 @@ expected_region_highlight=(
 
 if [[ ${(z):-'$('} == '$( ' ]]; then # ignore zsh 5.0.8 bug
   expected_region_highlight[2]='3 16 default' # foo$(echo bar
+  expected_region_highlight[3]='6 16 command-substitution-unquoted' # $(echo bar
 fi
