@@ -55,6 +55,7 @@ This highlighter defines the following styles:
 * `dollar-double-quoted-argument` - parameter expansion inside double quotes (`$foo` inside `""`)
 * `back-double-quoted-argument` -  backslash escape sequences inside double-quoted arguments (`\"` in `"foo\"bar"`)
 * `back-dollar-quoted-argument` -  backslash escape sequences inside dollar-quoted arguments (`\x` in `$'\x48'`)
+* `function-definition` - function name(s) when defining a function (`f` and `g` in `f g () { : }`)
 * `assign` - parameter assignments (`x=foo` and `x=( )`)
 * `redirection` - redirection operators (`<`, `>`, etc)
 * `comment` - comments, when `setopt INTERACTIVE_COMMENTS` is in effect (`echo # foo`)

@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2016 zsh-syntax-highlighting contributors
+# Copyright (c) 2018 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,12 +28,13 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER='f g h () pwd'
+BUFFER='function >/dev/null { pwd }'
 
 expected_region_highlight=(
-  '1 1 function-definition' # f
-  '3 3 function-definition' # g
-  '5 5 function-definition' # h
-  '7 8 reserved-word' # ()
-  '10 12 builtin' # pwd
+  '1 8 reserved-word' # function
+  '10 10 redirection' # >
+  '11 19 path' # /dev/null
+  '21 21 reserved-word' # {
+  '23 25 builtin' # pwd
+  '27 27 reserved-word' # }
 )

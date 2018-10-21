@@ -406,6 +406,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   # - :regular:    "Not a command word", and command delimiters are permitted.
   #                Mainly used to detect premature termination of commands.
   # - :always:     The word 'always' in the «{ foo } always { bar }» syntax.
+  # - :function:   Function names after 'function' or before '()'
   #
   # When the kind of a word is not yet known, $this_word / $next_word may contain
   # multiple states.  For example, after "sudo -i", the next word may be either
@@ -682,8 +683,25 @@ _zsh_highlight_main_highlighter_highlight_list()
      # try-always construct
      style=reserved-word # de facto a reserved word, although not de jure
      next_word=':start:'
+   elif [[ $this_word == *:function:* ]]; then
+     if [[ $arg == '()' ]]; then
+       style=reserved-word
+       next_word=':start:'
+     elif [[ $arg == $'\x7b' ]]; then
+       style=reserved-word
+       next_word=':start:'
+       braces_stack='Y'"$braces_stack"
+     else
+       style=function-definition
+       next_word=':function:'
+     fi
    elif [[ $this_word == *':start:'* ]]; then # $arg is the command word
-     if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
+     if [[ $res != reserved && $arg != '()' && ( $args[1] == '()' ||
+           # TODO: Function names can be absurd; this handles the more common cases without invoking Cthulhu.
+           ( $zsyh_user_options[multifuncdef] == on && $args[(r)*[^[:alnum:]_-]*] == '()' ) ) ]]; then
+       style=function-definition
+       next_word=:function:
+     elif (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
       style=precommand
       flags_with_argument=${precommand_options[$arg]%:*}
       flags_sans_argument=${precommand_options[$arg]#*:}
@@ -756,6 +774,10 @@ _zsh_highlight_main_highlighter_highlight_list()
                            #
                            # The repeat-count word will be handled like a redirection target.
                            this_word=':start::regular:'
+                           ;;
+                        ('function')
+                           next_word=':function:'
+                           ;;
                         esac
                         ;;
         'suffix alias') style=suffix-alias;;
@@ -849,16 +871,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                    fi
                    _zsh_highlight_main__stack_pop 'R' reserved-word
                  fi;;
-        $'\x28\x29') # possibly a function definition
-                 if (( in_redirection )) || $in_array_assignment; then
-                   style=unknown-token
-                 else
-                   if [[ $zsyh_user_options[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
-                   then
-                     next_word+=':start:'
-                   fi
-                   style=reserved-word
-                 fi
+        '()')
+                 # Function definition was handled above
+                 style=unknown-token
                  ;;
         *)       if false; then
                  elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
