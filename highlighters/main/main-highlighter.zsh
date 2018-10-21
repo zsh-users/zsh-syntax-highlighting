@@ -383,6 +383,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   # "R" for round
   # "Q" for square
   # "Y" for curly
+  # "T" for [[ ]]
   # "S" for $( )
   # "D" for do/done
   # "$" for 'end' (matches 'foreach' always; also used with cshjunkiequotes in repeat/while)
@@ -655,7 +656,10 @@ _zsh_highlight_main_highlighter_highlight_list()
 
    # The Great Fork: is this a command word?  Is this a non-command word?
    if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
-     if [[ $this_word == *':regular:'* ]]; then
+     if _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
+       # Missing closing square bracket(s)
+       style=unknown-token
+     elif [[ $this_word == *':regular:'* ]]; then
        # This highlights empty commands (semicolon follows nothing) as an error.
        # Zsh accepts them, though.
        style=commandseparator
@@ -697,6 +701,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                             if [[ $style == reserved-word ]]; then
                               next_word+=':always:'
                             fi
+                            ;;
+                          ($'\x5b\x5b')
+                            braces_stack='T'"$braces_stack"
                             ;;
                           ('do')
                             braces_stack='D'"$braces_stack"
@@ -748,7 +755,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                         ;;
         'suffix alias') style=suffix-alias;;
         alias)          :;;
-        builtin)        style=builtin;;
+        builtin)        style=builtin
+                        [[ $arg == $'\x5b' ]] && braces_stack='Q'"$braces_stack"
+                        ;;
         function)       style=function;;
         command)        style=command;;
         hashed)         style=hashed-command;;
@@ -864,6 +873,10 @@ _zsh_highlight_main_highlighter_highlight_list()
                    fi
                  elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
                    style=history-expansion
+                 elif [[ $arg == $'\x5d\x5d' ]] && _zsh_highlight_main__stack_pop 'T' reserved-word; then
+                   :
+                 elif [[ $arg == $'\x5d' ]] && _zsh_highlight_main__stack_pop 'Q' builtin; then
+                   :
                  else
                    _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 - in_redirection ))
                    continue
