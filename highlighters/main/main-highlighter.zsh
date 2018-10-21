@@ -365,7 +365,7 @@ _zsh_highlight_highlighter_main_paint()
 # exit code is 0 if the braces_stack is empty, 1 otherwise.
 _zsh_highlight_main_highlighter_highlight_list()
 {
-  integer start_pos end_pos=0 buf_offset=$1 has_end=$3
+  integer start_pos end_pos=0 buf_offset=$1 has_end=$3 seen_dashdash=0
   # last_alias is the last alias arg (lhs) expanded (if in an alias).
   #     This allows for expanding alias ls='ls -l' while avoiding loops.
   local arg buf=$4 highlight_glob=true last_alias style
@@ -684,6 +684,7 @@ _zsh_highlight_main_highlighter_highlight_list()
 
    # The Great Fork: is this a command word?  Is this a non-command word?
    if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+     seen_dashdash=0
      if [[ $this_word == *':regular:'* ]]; then
        # This highlights empty commands (semicolon follows nothing) as an error.
        # Zsh accepts them, though.
@@ -990,9 +991,13 @@ _zsh_highlight_main_highlighter_highlight_argument()
 
   case "$arg[i]" in
     '-')
-      if (( option_eligible )); then
+      if (( option_eligible && ! seen_dashdash )); then
         if [[ $arg[i+1] == - ]]; then
-          base_style=double-hyphen-option
+          if [[ $#arg == 2 ]]; then
+            seen_dashdash=1
+          else
+            base_style=double-hyphen-option
+          fi
         else
           base_style=single-hyphen-option
         fi
