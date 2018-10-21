@@ -518,7 +518,8 @@ _zsh_highlight_main_highlighter_highlight_list()
       local res="$REPLY"
       if [[ $res == "alias" ]] && [[ $last_alias != $arg ]]; then
         # Avoid looping forever on alias a=b b=c c=b, but allow alias foo='foo bar'
-        if (( $+seen_alias[$arg] )); then
+        # Also mark insane aliases as unknown-token (cf. #263).
+        if (( $+seen_alias[$arg] )) || [[ $arg == ?*=* ]]; then
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
           continue
         fi
@@ -529,21 +530,6 @@ _zsh_highlight_main_highlighter_highlight_list()
         # Elision is desired in case alias x=''
         alias_args=( ${interactive_comments-${(z)REPLY}}
                      ${interactive_comments+${(zZ+c+)REPLY}} )
-        case $arg in
-          # Issue #263: aliases with '=' on their LHS.
-          #
-          # There are three cases:
-          #
-          # - Unsupported, breaks 'alias -L' output, but invokable:
-          ('='*) :;;
-          # - Unsupported, not invokable:
-          (*'='*)
-            _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
-            continue
-            ;;
-          # - The common case:
-          (*) :;;
-        esac
         args=( $alias_args $args )
         if (( in_alias == 0 )); then
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos alias
