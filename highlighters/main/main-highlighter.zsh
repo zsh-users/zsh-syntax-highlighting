@@ -470,40 +470,11 @@ _zsh_highlight_main_highlighter_highlight_list()
 
     if (( in_alias == 0 )); then
       # Compute the new $start_pos and $end_pos, skipping over whitespace in $buf.
-      start_pos=$end_pos
-      if [[ $arg == ';' ]] ; then
-        # We're looking for either a semicolon or a newline, whichever comes
-        # first.  Both of these are rendered as a ";" (SEPER) by the ${(z)..}
-        # flag.
-        #
-        # We can't use the (Z+n+) flag because that elides the end-of-command
-        # token altogether, so 'echo foo\necho bar' (two commands) becomes
-        # indistinguishable from 'echo foo echo bar' (one command with three
-        # words for arguments).
-        local needle=$'[;\n]'
-        integer offset=$(( ${proc_buf[(i)$needle]} - 1 ))
-        (( start_pos += offset ))
-        (( end_pos = start_pos + $#arg ))
-      else
-        # The line was:
-        #
-        # integer offset=$(((len-start_pos)-${#${proc_buf##([[:space:]]|\\[[:space:]])#}}))
-        #
-        # - len-start_pos is length of current proc_buf; basically: initial length minus where
-        #   we are, and proc_buf is chopped to the "where we are" (compare the "previous value
-        #   of start_pos" below, and the len-(start_pos-offset) = len-start_pos+offset)
-        # - what's after main minus sign is: length of proc_buf without spaces at the beginning
-        # - so what the line actually did, was computing length of the spaces!
-        # - this can be done via (#b) flag, like below
-        if [[ "$proc_buf" = (#b)(#s)(([[:space:]]|\\$'\n')##)* ]]; then
-            # The first, outer parenthesis
-            integer offset="${#match[1]}"
-        else
-            integer offset=0
-        fi
-        ((start_pos+=offset))
-        ((end_pos=$start_pos+${#arg}))
-      fi
+      [[ "$proc_buf" = (#b)(#s)(([ $'\t']|\\$'\n')#)* ]]
+      # The first, outer parenthesis
+      integer offset="${#match[1]}"
+      (( start_pos = end_pos + offset ))
+      (( end_pos = start_pos + $#arg ))
 
       # Compute the new $proc_buf. We advance it
       # (chop off characters from the beginning)
