@@ -553,7 +553,7 @@ _zsh_highlight_main_highlighter_highlight_list()
 
     # Analyse the current word.
     if _zsh_highlight_main__is_redirection $arg ; then
-      if (( in_redirection && in_redirection != 2 )); then
+      if (( in_redirection == 1 )); then
         # The condition excludes the case that BUFFER='{foo}>&2' and we're on the '>&'.
         _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
       else
