@@ -543,8 +543,11 @@ _zsh_highlight_main_highlighter_highlight_list()
         _zsh_highlight_main__resolve_alias $arg
         local -a alias_args
         # Elision is desired in case alias x=''
-        alias_args=( ${interactive_comments-${(z)REPLY}}
-                     ${interactive_comments+${(zZ+c+)REPLY}} )
+        if [[ $zsyh_user_options[interactivecomments] == on ]]; then
+          alias_args=(${(zZ+c+)REPLY})
+        else
+          alias_args=(${(z)REPLY})
+        fi
         args=( $alias_args $args )
         if (( in_alias == 0 )); then
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos alias
