@@ -651,8 +651,8 @@ _zsh_highlight_main_highlighter_highlight_list()
 
    # The Great Fork: is this a command word?  Is this a non-command word?
    if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
-     if _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
-       # Missing closing square bracket(s)
+     if (( in_redirection )) || _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
+       # Unfinished redirection or missing closing square bracket(s)
        style=unknown-token
      elif [[ $this_word == *':regular:'* ]]; then
        # This highlights empty commands (semicolon follows nothing) as an error.
@@ -668,11 +668,21 @@ _zsh_highlight_main_highlighter_highlight_list()
        next_word=':start:'
        highlight_glob=true
      fi
-   elif ! (( in_redirection)) && [[ $this_word == *':always:'* && $arg == 'always' ]]; then
+   elif (( in_redirection )); then
+     if [[ $this_word == *:function:* ]]; then
+       this_word=':start:'
+     fi
+     if [[ $arg == ($'\x29'|'()') ]] || { [[ $arg == $'\x7d' ]] && $right_brace_is_recognised_everywhere }; then
+       style=unknown-token
+     else
+       _zsh_highlight_main_highlighter_highlight_argument 1 0
+       continue
+     fi
+   elif [[ $this_word == *':always:'* && $arg == 'always' ]]; then
      # try-always construct
      style=reserved-word # de facto a reserved word, although not de jure
      next_word=':start:'
-   elif ! (( in_redirection)) && [[ $this_word == *':start:'* ]]; then # $arg is the command word
+   elif [[ $this_word == *':start:'* ]]; then # $arg is the command word
      if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
       style=precommand
       flags_with_argument=${precommand_options[$arg]%:*}
@@ -831,8 +841,6 @@ _zsh_highlight_main_highlighter_highlight_list()
                    style=assign
                    in_array_assignment=false
                    next_word+=':start:'
-                 elif (( in_redirection )); then
-                   style=unknown-token
                  else
                    if _zsh_highlight_main__stack_pop 'S'; then
                      REPLY=$start_pos
@@ -858,7 +866,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                    #
                    #     Additionally, `tt(})' is recognized in any position if neither the
                    #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set.
-                   if (( in_redirection )) || $in_array_assignment; then
+                   if $in_array_assignment; then
                      style=unknown-token
                    else
                      _zsh_highlight_main__stack_pop 'Y' reserved-word
@@ -873,7 +881,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                  elif [[ $arg == $'\x5d' ]] && _zsh_highlight_main__stack_pop 'Q' builtin; then
                    :
                  else
-                   _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 != in_redirection ))
+                   _zsh_highlight_main_highlighter_highlight_argument 1 1
                    continue
                  fi
                  ;;
