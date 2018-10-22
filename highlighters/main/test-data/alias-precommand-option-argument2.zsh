@@ -36,7 +36,6 @@ BUFFER='sbu phy1729 echo foo'
 
 expected_region_highlight=(
   '1 3 alias' # sbu
-  '1 3 precommand' # sbu (sudo)
   '5 11 default' # phy1729
   '13 16 commmand "issue #540"' # echo (not builtin)
   '18 20 default' # foo

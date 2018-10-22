@@ -32,7 +32,6 @@ BUFFER='x foo echo bar'
 
 expected_region_highlight=(
   '1 1 alias' # x
-  '1 1 redirection' # x (>)
   '3 5 default' # foo
   '7 10 builtin' # echo
   '12 14 default' # bar

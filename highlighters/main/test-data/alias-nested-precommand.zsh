@@ -35,7 +35,6 @@ BUFFER='a -u phy1729 echo; :'
 
 expected_region_highlight=(
   '1 1 alias' # a
-  '1 1 precommand' # a (sudo)
   '3 4 single-hyphen-option' # -u
   '6 12 default' # phy1729
   '14 17 builtin' # echo

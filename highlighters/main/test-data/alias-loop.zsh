@@ -33,7 +33,6 @@ alias a=b b=c c=b
 BUFFER='a foo; :'
 
 expected_region_highlight=(
-  '1 1 alias' # a
   '1 1 unknown-token' # a (invalid alias loop)
   '3 5 default' # foo
   '6 6 commandseparator' # ;

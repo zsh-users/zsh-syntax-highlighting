@@ -32,6 +32,5 @@ alias x=/
 BUFFER=$'x'
 
 expected_region_highlight=(
-  '1 1 alias' # x
   '1 1 unknown-token "issue #202"' # x (/)
 )

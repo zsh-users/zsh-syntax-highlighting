@@ -73,8 +73,10 @@ _zsh_highlight_main_add_region_highlight() {
   integer start=$1 end=$2
   shift 2
 
-  (( highlighted_alias )) && return
-  (( in_alias )) && highlighted_alias=1
+  if (( in_alias )); then
+    [[ $1 == unknown-token ]] && alias_style=unknown-token
+    return
+  fi
 
   # The calculation was relative to $buf but region_highlight is relative to $BUFFER.
   (( start += buf_offset ))
@@ -377,15 +379,16 @@ _zsh_highlight_highlighter_main_paint()
 _zsh_highlight_main_highlighter_highlight_list()
 {
   integer start_pos end_pos=0 buf_offset=$1 has_end=$3
+  # alias_style is the style to apply to an alias once in_alias=0
+  #     Usually 'alias' but set to 'unknown-token' if any word expanded from
+  #     the alias would be highlighted as unknown-token
   # last_alias is the last alias arg (lhs) expanded (if in an alias).
   #     This allows for expanding alias ls='ls -l' while avoiding loops.
-  local arg buf=$4 highlight_glob=true last_alias style
+  local alias_style arg buf=$4 highlight_glob=true last_alias style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
-  # highlighted_alias is 1 when the alias arg has been highlighted with a non-alias style.
-  #     E.g. alias x=ls;  x has been highlighted as alias AND command.
   # in_alias is equal to the number of shifts needed until arg=args[1] pops an
   #     arg from BUFFER and not added by an alias.
-  integer highlighted_alias=0 in_alias=0 len=$#buf
+  integer in_alias=0 len=$#buf
   local -a match mbegin mend list_highlights
   # seen_alias is a map of aliases already seen to avoid loops like alias a=b b=a
   local -A seen_alias
@@ -458,7 +461,11 @@ _zsh_highlight_main_highlighter_highlight_list()
     shift args
     if (( in_alias )); then
       (( in_alias-- ))
-      (( in_alias == 0 )) && highlighted_alias=0 last_alias= seen_alias=()
+      if (( in_alias == 0 )); then
+        last_alias= seen_alias=()
+        # start_pos and end_pos are of the alias (previous $arg) here
+        _zsh_highlight_main_add_region_highlight $start_pos $end_pos $alias_style
+      fi
     fi
 
     # Initialize this_word and next_word.
@@ -535,6 +542,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         # Avoid looping forever on alias a=b b=c c=b, but allow alias foo='foo bar'
         # Also mark insane aliases as unknown-token (cf. #263).
         if (( $+seen_alias[$arg] )) || [[ $arg == ?*=* ]]; then
+          (( in_alias == 0 )) && in_alias=1
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
           continue
         fi
@@ -550,7 +558,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         fi
         args=( $alias_args $args )
         if (( in_alias == 0 )); then
-          _zsh_highlight_main_add_region_highlight $start_pos $end_pos alias
+          alias_style=alias
           # Add one because we will in_alias-- on the next loop iteration so
           # this iteration should be considered in in_alias as well
           (( in_alias += $#alias_args + 1 ))
@@ -909,6 +917,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     fi
     _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
   done
+  (( in_alias == 1 )) && in_alias=0 _zsh_highlight_main_add_region_highlight $start_pos $end_pos $alias_style
   [[ "$proc_buf" = (#b)(#s)(([[:space:]]|\\$'\n')#) ]]
   REPLY=$(( end_pos + ${#match[1]} - 1 ))
   reply=($list_highlights)

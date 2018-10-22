@@ -33,7 +33,6 @@ BUFFER='x file echo'
 
 expected_region_highlight=(
   '1 1 alias' # x
-  '1 1 builtin' # x (echo)
   '3 6 default' # file
   '8 11 builtin' # echo
 )

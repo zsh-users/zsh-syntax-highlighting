@@ -34,7 +34,6 @@ BUFFER='a foo; :'
 
 expected_region_highlight=(
   '1 1 alias' # a
-  '1 1 builtin' # a (:)
   '3 5 default' # foo
   '6 6 commandseparator' # ;
   '8 8 builtin' # :
