@@ -58,6 +58,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[assign]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[redirection]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[comment]:=fg=black,bold}
+: ${ZSH_HIGHLIGHT_STYLES[named-fd]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[arg0]:=fg=green}
 
 # Whether the highlighter should be called or not.
@@ -378,6 +379,8 @@ _zsh_highlight_main_highlighter_highlight_list()
   local -a match mbegin mend list_highlights
   # seen_alias is a map of aliases already seen to avoid loops like alias a=b b=a
   local -A seen_alias
+  # Pattern for parameter names
+  readonly parameter_name_pattern='([A-Za-z_][A-Za-z0-9_]*|[0-9]+)'
   list_highlights=()
 
   # "R" for round
@@ -552,12 +555,18 @@ _zsh_highlight_main_highlighter_highlight_list()
 
     # Analyse the current word.
     if _zsh_highlight_main__is_redirection $arg ; then
-      if (( in_redirection )); then
+      if (( in_redirection == 1 )); then
+        # The condition excludes the case that BUFFER='{foo}>&2' and we're on the '>&'.
         _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
       else
         in_redirection=2
         _zsh_highlight_main_add_region_highlight $start_pos $end_pos redirection
       fi
+      continue
+    elif [[ $arg == '{'${~parameter_name_pattern}'}' ]] && _zsh_highlight_main__is_redirection $args[1]; then
+      # named file descriptor: {foo}>&2
+      in_redirection=3
+      _zsh_highlight_main_add_region_highlight $start_pos $end_pos named-fd
       continue
     fi
 
@@ -580,7 +589,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         parameter_name=${arg:1}
       fi
       if [[ $res == none ]] && zmodload -e zsh/parameter &&
-         [[ ${parameter_name} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
+         [[ ${parameter_name} =~ ^${~parameter_name_pattern}$ ]] &&
          (( ${+parameters[(e)${MATCH}]} )) && [[ ${parameters[(e)$MATCH]} != *special* ]]
          then
         # Set $arg.
@@ -864,7 +873,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                  elif [[ $arg == $'\x5d' ]] && _zsh_highlight_main__stack_pop 'Q' builtin; then
                    :
                  else
-                   _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 - in_redirection ))
+                   _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 != in_redirection ))
                    continue
                  fi
                  ;;
