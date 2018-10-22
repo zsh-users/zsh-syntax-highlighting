@@ -379,6 +379,8 @@ _zsh_highlight_main_highlighter_highlight_list()
   local -a match mbegin mend list_highlights
   # seen_alias is a map of aliases already seen to avoid loops like alias a=b b=a
   local -A seen_alias
+  # Pattern for parameter names
+  readonly parameter_name_pattern='([A-Za-z_][A-Za-z0-9_]*|[0-9]+)'
   list_highlights=()
 
   # "R" for round
@@ -561,7 +563,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         _zsh_highlight_main_add_region_highlight $start_pos $end_pos redirection
       fi
       continue
-    elif [[ $arg == '{'*'}' ]] && _zsh_highlight_main__is_redirection $args[1]; then
+    elif [[ $arg == '{'${~parameter_name_pattern}'}' ]] && _zsh_highlight_main__is_redirection $args[1]; then
       # named file descriptor: {foo}>&2
       in_redirection=3
       _zsh_highlight_main_add_region_highlight $start_pos $end_pos named-fd
@@ -587,7 +589,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         parameter_name=${arg:1}
       fi
       if [[ $res == none ]] && zmodload -e zsh/parameter &&
-         [[ ${parameter_name} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+)$ ]] &&
+         [[ ${parameter_name} =~ ^${~parameter_name_pattern}$ ]] &&
          (( ${+parameters[(e)${MATCH}]} )) && [[ ${parameters[(e)$MATCH]} != *special* ]]
          then
         # Set $arg.
