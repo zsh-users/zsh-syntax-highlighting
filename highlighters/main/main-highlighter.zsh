@@ -845,7 +845,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                  ;;
         *)       if false; then
                  elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
-                   # Parsing rule: }
+                   # Parsing rule: {
                    #
                    #     Additionally, `tt(})' is recognized in any position if neither the
                    #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set.
