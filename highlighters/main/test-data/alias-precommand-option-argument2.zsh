@@ -28,15 +28,15 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-alias sde='sudo -e'
-alias seu='sde -u'
+alias sdb='sudo -b'
+alias sbu='sdb -u'
 sudo(){}
 
-BUFFER='seu phy1729 echo foo'
+BUFFER='sbu phy1729 echo foo'
 
 expected_region_highlight=(
-  '1 3 alias' # seu
-  '1 3 precommand' # seu (sudo)
+  '1 3 alias' # sbu
+  '1 3 precommand' # sbu (sudo)
   '5 11 default' # phy1729
   '13 16 commmand "issue #540"' # echo (not builtin)
   '18 20 default' # foo
