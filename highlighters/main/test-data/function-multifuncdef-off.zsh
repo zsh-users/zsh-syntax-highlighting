@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2016 zsh-syntax-highlighting contributors
+# Copyright (c) 2018 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,12 +28,15 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER='f g h () pwd'
+setopt no_multifuncdef
+
+BUFFER='foo bar () { : }'
 
 expected_region_highlight=(
-  '1 1 function-definition' # f
-  '3 3 function-definition' # g
-  '5 5 function-definition' # h
-  '7 8 reserved-word' # ()
-  '10 12 builtin' # pwd
+  '1 3 unknown-token' # foo
+  '5 7 default' # bar
+  '9 10 unknown-token' # ()
+  '12 12 default' # {
+  '14 14 default' # :
+  '16 16 unknown-token' # }
 )
