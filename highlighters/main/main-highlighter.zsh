@@ -689,11 +689,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       case $res in
         reserved)       # reserved word
                         style=reserved-word
-                        if [[ $arg == '!' && $this_word != *':start_of_pipeline:'* ]]; then
-                          style=unknown-token
-                        fi
-                        #
-                        # Match braces.
+                        # Match braces and handle special cases.
                         case $arg in
                           ($'\x7b')
                             braces_stack='Y'"$braces_stack"
@@ -754,6 +750,14 @@ _zsh_highlight_main_highlighter_highlight_list()
                             #
                             # The repeat-count word will be handled like a redirection target.
                             this_word=':start::regular:'
+                            ;;
+                          ('!')
+                            if [[ $this_word != *':start_of_pipeline:'* ]]; then
+                              style=unknown-token
+                            else
+                              # '!' reserved word at start of pipeline; style already set above
+                            fi
+                            ;;
                         esac
                         ;;
         'suffix alias') style=suffix-alias;;
