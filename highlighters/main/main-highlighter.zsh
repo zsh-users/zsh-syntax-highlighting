@@ -406,6 +406,8 @@ _zsh_highlight_main_highlighter_highlight_list()
   # - :regular:    "Not a command word", and command delimiters are permitted.
   #                Mainly used to detect premature termination of commands.
   # - :always:     The word 'always' in the «{ foo } always { bar }» syntax.
+  # - :test:       Between [[ and ]]
+  # - :end:        Must be a command separator; anything else is a syntax error.
   #
   # When the kind of a word is not yet known, $this_word / $next_word may contain
   # multiple states.  For example, after "sudo -i", the next word may be either
@@ -650,11 +652,26 @@ _zsh_highlight_main_highlighter_highlight_list()
    fi
 
    # The Great Fork: is this a command word?  Is this a non-command word?
-   if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+   if [[ $this_word == :test: ]]; then
+     next_word=:test:
+     if [[ $arg == $'\x5d\x5d' ]]; then
+       _zsh_highlight_main__stack_pop T reserved-word
+       next_word=:end:
+     elif [[ $arg == ('&&'|'||') ]]; then
+       style=reserved-word
+     elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+       style=unknown-token
+       next_word=:start:
+       highlight_glob=true
+     else
+       _zsh_highlight_main_highlighter_highlight_argument 1 1
+       continue
+     fi
+   elif [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
      if _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
        # Missing closing square bracket(s)
        style=unknown-token
-     elif [[ $this_word == *':regular:'* ]]; then
+     elif [[ $this_word == *':regular:'* || $this_word == *:end:* ]]; then
        # This highlights empty commands (semicolon follows nothing) as an error.
        # Zsh accepts them, though.
        style=commandseparator
@@ -668,6 +685,8 @@ _zsh_highlight_main_highlighter_highlight_list()
        next_word=':start:'
        highlight_glob=true
      fi
+   elif [[ $this_word == *:end:* ]]; then
+     style=unknown-token
    elif ! (( in_redirection)) && [[ $this_word == *':always:'* && $arg == 'always' ]]; then
      # try-always construct
      style=reserved-word # de facto a reserved word, although not de jure
@@ -699,6 +718,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                             ;;
                           ($'\x5b\x5b')
                             braces_stack='T'"$braces_stack"
+			    next_word=:test:
                             ;;
                           ('do')
                             braces_stack='D'"$braces_stack"
@@ -868,8 +888,6 @@ _zsh_highlight_main_highlighter_highlight_list()
                    fi
                  elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
                    style=history-expansion
-                 elif [[ $arg == $'\x5d\x5d' ]] && _zsh_highlight_main__stack_pop 'T' reserved-word; then
-                   :
                  elif [[ $arg == $'\x5d' ]] && _zsh_highlight_main__stack_pop 'Q' builtin; then
                    :
                  else
