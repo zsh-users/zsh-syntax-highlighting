@@ -841,7 +841,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                  if $in_array_assignment; then
                    style=assign
                    in_array_assignment=false
-                   next_word+=':start::start_of_pipeline:'
+                   next_word+=':start:'
                  elif (( in_redirection )); then
                    style=unknown-token
                  else
