@@ -743,17 +743,17 @@ _zsh_highlight_main_highlighter_highlight_list()
                           ('end')
                             _zsh_highlight_main__stack_pop '$' reserved-word
                             ;;
-                         ('repeat')
-                           # skip the repeat-count word
-                           in_redirection=2
-                           # The redirection mechanism assumes $this_word describes the word
-                           # following the redirection.  Make it so.
-                           #
-                           # That word can be a command word with shortloops (`repeat 2 ls`)
-                           # or a command separator (`repeat 2; ls` or `repeat 2; do ls; done`).
-                           #
-                           # The repeat-count word will be handled like a redirection target.
-                           this_word=':start::regular:'
+                          ('repeat')
+                            # skip the repeat-count word
+                            in_redirection=2
+                            # The redirection mechanism assumes $this_word describes the word
+                            # following the redirection.  Make it so.
+                            #
+                            # That word can be a command word with shortloops (`repeat 2 ls`)
+                            # or a command separator (`repeat 2; ls` or `repeat 2; do ls; done`).
+                            #
+                            # The repeat-count word will be handled like a redirection target.
+                            this_word=':start::regular:'
                         esac
                         ;;
         'suffix alias') style=suffix-alias;;
