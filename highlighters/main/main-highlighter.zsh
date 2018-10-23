@@ -398,6 +398,8 @@ _zsh_highlight_main_highlighter_highlight_list()
   #
   # The states are:
   # - :start:      Command word
+  # - :start_of_pipeline:      Start of a 'pipeline' as defined in zshmisc(1).
+  #                Only valid when :start: is present
   # - :sudo_opt:   A leading-dash option to a precommand, whether it takes an
   #                argument or not.  (Example: sudo's "-u" or "-i".)
   # - :sudo_arg:   The argument to a precommand's leading-dash option,
@@ -431,7 +433,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   # $in_redirection.  The value of $next_word from the iteration that processed
   # the operator is discarded.
   #
-  local this_word next_word=':start:'
+  local this_word next_word=':start::start_of_pipeline:'
   integer in_redirection
   # Processing buffer
   local proc_buf="$buf"
@@ -667,11 +669,14 @@ _zsh_highlight_main_highlighter_highlight_list()
      else
        next_word=':start:'
        highlight_glob=true
+       if [[ $arg != '|' && $arg != '|&' ]]; then
+         next_word+=':start_of_pipeline:'
+       fi
      fi
    elif ! (( in_redirection)) && [[ $this_word == *':always:'* && $arg == 'always' ]]; then
      # try-always construct
      style=reserved-word # de facto a reserved word, although not de jure
-     next_word=':start:'
+     next_word=':start:' # only left brace is allowed, apparently
    elif ! (( in_redirection)) && [[ $this_word == *':start:'* ]]; then # $arg is the command word
      if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
       style=precommand
@@ -684,8 +689,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       case $res in
         reserved)       # reserved word
                         style=reserved-word
-                        #
-                        # Match braces.
+                        # Match braces and handle special cases.
                         case $arg in
                           ($'\x7b')
                             braces_stack='Y'"$braces_stack"
@@ -735,17 +739,25 @@ _zsh_highlight_main_highlighter_highlight_list()
                           ('end')
                             _zsh_highlight_main__stack_pop '$' reserved-word
                             ;;
-                         ('repeat')
-                           # skip the repeat-count word
-                           in_redirection=2
-                           # The redirection mechanism assumes $this_word describes the word
-                           # following the redirection.  Make it so.
-                           #
-                           # That word can be a command word with shortloops (`repeat 2 ls`)
-                           # or a command separator (`repeat 2; ls` or `repeat 2; do ls; done`).
-                           #
-                           # The repeat-count word will be handled like a redirection target.
-                           this_word=':start::regular:'
+                          ('repeat')
+                            # skip the repeat-count word
+                            in_redirection=2
+                            # The redirection mechanism assumes $this_word describes the word
+                            # following the redirection.  Make it so.
+                            #
+                            # That word can be a command word with shortloops (`repeat 2 ls`)
+                            # or a command separator (`repeat 2; ls` or `repeat 2; do ls; done`).
+                            #
+                            # The repeat-count word will be handled like a redirection target.
+                            this_word=':start::regular:'
+                            ;;
+                          ('!')
+                            if [[ $this_word != *':start_of_pipeline:'* ]]; then
+                              style=unknown-token
+                            else
+                              # '!' reserved word at start of pipeline; style already set above
+                            fi
+                            ;;
                         esac
                         ;;
         'suffix alias') style=suffix-alias;;
@@ -764,6 +776,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                           else
                             # assignment to a scalar parameter.
                             # (For array assignments, the command doesn't start until the ")" token.)
+                            # 
+                            # Discard  :start_of_pipeline:, if present, as '!' is not valid
+                            # after assignments.
                             next_word+=':start:'
                             if (( start_pos + i <= end_pos )); then
                               () {
@@ -822,7 +837,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       esac
      fi
      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} ]]; then
-      next_word=':start:'
+      next_word=':start::start_of_pipeline:'
      fi
    else # $arg is a non-command word
       case $arg in
@@ -847,7 +862,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                  else
                    if [[ $zsyh_user_options[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
                    then
-                     next_word+=':start:'
+                     next_word+=':start::start_of_pipeline:'
                    fi
                    style=reserved-word
                  fi
