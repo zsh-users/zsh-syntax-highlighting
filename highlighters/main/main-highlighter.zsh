@@ -163,7 +163,7 @@ _zsh_highlight_main__type() {
     fi
     if (( $+aliases[(e)$1] )) && (( aliases_allowed )); then
       REPLY=alias
-    elif (( $+saliases[(e)${1##*.}] )); then
+    elif [[ $1 == *.* && -n ${1%.*} ]] && (( $+saliases[(e)${1##*.}] )); then
       REPLY='suffix alias'
     elif (( $reswords[(Ie)$1] )); then
       REPLY=reserved

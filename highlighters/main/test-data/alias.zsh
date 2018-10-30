@@ -31,7 +31,7 @@ alias alias1="ls"
 alias -s alias2="echo"
 function alias1() {} # to check that it's highlighted as an alias, not as a function
 
-BUFFER='x.alias2; alias1'
+BUFFER='x.alias2; alias1; alias2'
 
 # Set expected_region_highlight as a function of zsh version.
 #
@@ -49,4 +49,6 @@ expected_region_highlight+=(
   "9 9 commandseparator" # ;
   "11 16 alias" # alias1
   "11 16 command" # alias1 (ls)
+  "17 17 commandseparator" # ;
+  "19 24 unknown-token" # alias2
 )
