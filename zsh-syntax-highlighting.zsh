@@ -28,7 +28,7 @@
 # -------------------------------------------------------------------------------------------------
 
 # First of all, ensure predictable parsing.
-zsh_highlight__aliases=`builtin alias -Lm '[^+]*'`
+typeset zsh_highlight__aliases="$(builtin alias -Lm '[^+]*')"
 # In zsh <= 5.2, `alias -L` emits aliases that begin with a plus sign ('alias -- +foo=42')
 # them without a '--' guard, so they don't round trip.
 #
@@ -57,9 +57,9 @@ fi
 # zsh-users/zsh@48cadf4 http://www.zsh.org/mla/workers//2017/msg00034.html
 autoload -Uz is-at-least
 if is-at-least 5.4; then
-  zsh_highlight__pat_static_bug=false
+  typeset -g zsh_highlight__pat_static_bug=false
 else
-  zsh_highlight__pat_static_bug=true
+  typeset -g zsh_highlight__pat_static_bug=true
 fi
 
 # Array declaring active highlighters names.
