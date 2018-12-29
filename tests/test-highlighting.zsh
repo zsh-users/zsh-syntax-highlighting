@@ -86,6 +86,13 @@ _zsh_highlight_add_highlight()
 # Activate the highlighter.
 ZSH_HIGHLIGHT_HIGHLIGHTERS=($1)
 
+# In zsh<5.3, 'typeset -p arrayvar' emits two lines, so we use this wrapper instead.
+typeset_p() {
+	for 1 ; do
+		print -r -- "$1=( ${(@q-P)1} )"
+	done
+}
+
 # Runs a highlighting test
 # $1: data file
 run_test_internal() {
@@ -155,7 +162,7 @@ run_test_internal() {
   if (( $#expected_region_highlight == $#region_highlight )); then
     print -r -- "ok $i - cardinality check" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
   else
-    print -r -- "not ok $i - have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: «$(typeset -p expected_region_highlight)» «$(typeset -p region_highlight)»" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
+    print -r -- "not ok $i - have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: «$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
   fi
 }
 
