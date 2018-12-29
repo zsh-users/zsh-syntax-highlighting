@@ -93,6 +93,13 @@ typeset_p() {
 	done
 }
 
+# Escape # as ♯ and newline as ↵ they are illegal in the 'description' part of TAP output
+# The string to escape is «"$@"»; the result is returned in $REPLY.
+tap_escape() {
+  local s="$@"
+  REPLY="${${s//'#'/♯}//$'\n'/↵}"
+}
+
 # Runs a highlighting test
 # $1: data file
 run_test_internal() {
@@ -104,7 +111,7 @@ run_test_internal() {
   echo "# ${1:t:r}"
 
   # Load the data and prepare checking it.
-  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET skip_test unsorted=0
+  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET REPLY skip_test unsorted=0
   local expected_mismatch
   local -a expected_region_highlight region_highlight
   . "$srcdir"/"$1"
@@ -140,8 +147,8 @@ run_test_internal() {
     fi
     local -a highlight_zone; highlight_zone=( ${(z)region_highlight[i]} )
     integer start=$(( highlight_zone[1] + 1 )) end=$highlight_zone[2]
-    # Escape # as ♯ and newline as ↵ they are illegal in the 'description' part of TAP output
-    local desc="[$start,$end] «${${BUFFER[$start,$end]//'#'/♯}//$'\n'/↵}»"
+    local desc="[$start,$end] «${BUFFER[$start,$end]}»"
+    tap_escape $desc; desc=$REPLY
     if
       [[ $start != $exp_start ]] ||
       [[ $end != $exp_end ]] ||
@@ -162,7 +169,11 @@ run_test_internal() {
   if (( $#expected_region_highlight == $#region_highlight )); then
     print -r -- "ok $i - cardinality check" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
   else
-    print -r -- "not ok $i - have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: «$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
+    local details
+    details+="have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: "
+    details+="«$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»"
+    tap_escape $details; details=$REPLY
+    print -r -- "not ok $i - $details" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
   fi
 }
 
