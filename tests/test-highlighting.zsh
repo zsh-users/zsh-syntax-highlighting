@@ -153,9 +153,9 @@ run_test_internal() {
   done
 
   if (( $#expected_region_highlight == $#region_highlight )); then
-    print -r -- "ok $i - cardinality check" "${expected_mismatch:+" # TODO : $expected_mismatch"}"
+    print -r -- "ok $i - cardinality check" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
   else
-    print -r -- "not ok $i - have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: «$(typeset -p expected_region_highlight)» «$(typeset -p region_highlight)»" "${expected_mismatch:+" # TODO : $expected_mismatch"}"
+    print -r -- "not ok $i - have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: «$(typeset -p expected_region_highlight)» «$(typeset -p region_highlight)»" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
   fi
 }
 
