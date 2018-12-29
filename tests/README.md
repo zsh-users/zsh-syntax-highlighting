@@ -21,6 +21,11 @@ with the provided string as the reason.
 If a test sets `unsorted=1` the order of highlights in `$expected_region_highlight`
 need not match the order in `$region_highlight`.
 
+Normally, tests fail if `$expected_region_highlight` and `$region_highlight`
+have different numbers of elements.  Tests may set `$expected_mismatch` to an
+explanation string (like `$todo`) to avoid this and mark the cardinality check
+as todo.
+
 **Note**: `$region_highlight` uses the same `"$i $j $style"` syntax but
 interprets the indexes differently.
 

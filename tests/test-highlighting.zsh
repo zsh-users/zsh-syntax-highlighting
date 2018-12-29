@@ -98,6 +98,7 @@ run_test_internal() {
 
   # Load the data and prepare checking it.
   local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET skip_test unsorted=0
+  local expected_mismatch
   local -a expected_region_highlight region_highlight
   . "$srcdir"/"$1"
 
@@ -154,7 +155,7 @@ run_test_internal() {
   if (( $#expected_region_highlight == $#region_highlight )); then
     print -r -- "ok $i - cardinality check"
   else
-    print -r -- "not ok $i - have $#expected_region_highlight expectations and $#region_highlight region_highlight entries"
+    print -r -- "not ok $i - have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: «$(typeset -p expected_region_highlight)» «$(typeset -p region_highlight)»" "${expected_mismatch:+" # TODO : $expected_mismatch"}"
   fi
 }
 
