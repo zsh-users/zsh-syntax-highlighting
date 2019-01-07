@@ -68,7 +68,7 @@ print > >($results_filter | ${0:A:h}/tap-colorizer.zsh) -r -- "# global (driver)
 print > >($results_filter | ${0:A:h}/tap-colorizer.zsh) -r -- "1..1"
 alias -- +plus=plus
 alias -- _other=other
-original_alias_dash_L_output="$(alias -L)"
+local original_alias_dash_L_output="$(alias -L)"
 . ${0:h:h}/zsh-syntax-highlighting.zsh
 if [[ $original_alias_dash_L_output == $(alias -L) ]]; then
   print -r -- "ok 1 # 'alias -- +foo=bar' is preserved"
@@ -210,6 +210,7 @@ run_test() {
 # Process each test data file in test data directory.
 integer something_failed=0
 ZSH_HIGHLIGHT_STYLES=()
+local data_file
 for data_file in ${0:h:h}/highlighters/$1/test-data/*.zsh; do
   run_test "$data_file" | tee >($results_filter | ${0:A:h}/tap-colorizer.zsh) | grep -v '^not ok.*# TODO' | grep -Eq '^not ok|^ok.*# TODO' && (( something_failed=1 ))
   (( $pipestatus[1] )) && exit 2
