@@ -30,9 +30,8 @@
 
 BUFFER=$': %? %?foo'
 
-expected_mismatch="fallout of issue #596"
 expected_region_highlight=(
   '1 1 builtin' # :
   '3 4 default' # %?
-  '6 10 default "issue 596"' # %?foo
+  '6 10 default' # %?foo
 )

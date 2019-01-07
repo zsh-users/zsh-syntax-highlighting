@@ -984,6 +984,11 @@ _zsh_highlight_main_highlighter_highlight_argument()
   local MATCH; integer MBEGIN MEND
 
   case "$arg[i]" in
+    '%')
+      if [[ $arg[i+1] == '?' ]]; then
+        (( i += 2 ))
+      fi
+      ;;
     '-')
       if (( option_eligible )); then
         if [[ $arg[i+1] == - ]]; then
