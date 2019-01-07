@@ -31,6 +31,8 @@
 
 setopt NO_UNSET WARN_CREATE_GLOBAL
 
+local -r root=${0:h:h}
+
 # Check an highlighter was given as argument.
 [[ -n "$1" ]] || {
   echo >&2 "Bail out! You must provide the name of a valid highlighter as argument."
@@ -38,13 +40,13 @@ setopt NO_UNSET WARN_CREATE_GLOBAL
 }
 
 # Check the highlighter is valid.
-[[ -f ${0:h:h}/highlighters/$1/$1-highlighter.zsh ]] || {
+[[ -f $root/highlighters/$1/$1-highlighter.zsh ]] || {
   echo >&2 "Bail out! Could not find highlighter ${(qq)1}."
   exit 2
 }
 
 # Check the highlighter has test data.
-[[ -d ${0:h:h}/highlighters/$1/test-data ]] || {
+[[ -d $root/highlighters/$1/test-data ]] || {
   echo >&2 "Bail out! Highlighter ${(qq)1} has no test data."
   exit 2
 }
@@ -53,7 +55,7 @@ setopt NO_UNSET WARN_CREATE_GLOBAL
 local results_filter
 if [[ ${QUIET-} == y ]]; then
   if type -w perl >/dev/null; then
-    results_filter=${0:A:h}/tap-filter
+    results_filter=$root/tests/tap-filter
   else
     echo >&2 "Bail out! quiet mode not supported: perl not found"; exit 2
   fi
@@ -64,18 +66,18 @@ fi
 
 # Load the main script.
 # While here, test that it doesn't eat aliases.
-print > >($results_filter | ${0:A:h}/tap-colorizer.zsh) -r -- "# global (driver) tests"
-print > >($results_filter | ${0:A:h}/tap-colorizer.zsh) -r -- "1..1"
+print > >($results_filter | $root/tests/tap-colorizer.zsh) -r -- "# global (driver) tests"
+print > >($results_filter | $root/tests/tap-colorizer.zsh) -r -- "1..1"
 alias -- +plus=plus
 alias -- _other=other
 local original_alias_dash_L_output="$(alias -L)"
-. ${0:h:h}/zsh-syntax-highlighting.zsh
+. $root/zsh-syntax-highlighting.zsh
 if [[ $original_alias_dash_L_output == $(alias -L) ]]; then
   print -r -- "ok 1 # 'alias -- +foo=bar' is preserved"
 else
   print -r -- "not ok 1 # 'alias -- +foo=bar' is preserved"
   exit 1
-fi > >($results_filter | ${0:A:h}/tap-colorizer.zsh) 
+fi > >($results_filter | $root/tests/tap-colorizer.zsh)
 
 # Overwrite _zsh_highlight_add_highlight so we get the key itself instead of the style
 _zsh_highlight_add_highlight()
@@ -211,8 +213,8 @@ run_test() {
 integer something_failed=0
 ZSH_HIGHLIGHT_STYLES=()
 local data_file
-for data_file in ${0:h:h}/highlighters/$1/test-data/*.zsh; do
-  run_test "$data_file" | tee >($results_filter | ${0:A:h}/tap-colorizer.zsh) | grep -v '^not ok.*# TODO' | grep -Eq '^not ok|^ok.*# TODO' && (( something_failed=1 ))
+for data_file in $root/highlighters/$1/test-data/*.zsh; do
+  run_test "$data_file" | tee >($results_filter | $root/tests/tap-colorizer.zsh) | grep -v '^not ok.*# TODO' | grep -Eq '^not ok|^ok.*# TODO' && (( something_failed=1 ))
   (( $pipestatus[1] )) && exit 2
 done
 
