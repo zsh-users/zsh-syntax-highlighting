@@ -32,7 +32,10 @@
 setopt NO_UNSET WARN_CREATE_GLOBAL
 
 local -r root=${0:h:h}
+local -a anon_argv; anon_argv=("$@")
 
+(){
+set -- "${(@)anon_argv}"
 # Check an highlighter was given as argument.
 [[ -n "$1" ]] || {
   echo >&2 "Bail out! You must provide the name of a valid highlighter as argument."
@@ -219,3 +222,4 @@ for data_file in $root/highlighters/$1/test-data/*.zsh; do
 done
 
 exit $something_failed
+}
