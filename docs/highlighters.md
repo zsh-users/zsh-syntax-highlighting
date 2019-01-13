@@ -24,7 +24,9 @@ How to activate highlighters
 To activate an highlighter, add it to the `ZSH_HIGHLIGHT_HIGHLIGHTERS` array in
 `~/.zshrc`, for example:
 
-    ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+```zsh
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+```
 
 By default, `$ZSH_HIGHLIGHT_HIGHLIGHTERS` is unset and only the `main`
 highlighter is active.
@@ -58,10 +60,12 @@ To create your own `acme` highlighter:
   This function must return 0 when the highlighter needs to be called and
   non-zero otherwise, for example:
 
-        _zsh_highlight_highlighter_acme_predicate() {
-          # Call this highlighter in SVN working copies
-          [[ -d .svn ]]
-        }
+    ```zsh
+    _zsh_highlight_highlighter_acme_predicate() {
+      # Call this highlighter in SVN working copies
+      [[ -d .svn ]]
+    }
+    ```
 
 * Implement the `_zsh_highlight_highlighter_acme_paint` function.
   This function does the actual syntax highlighting, by calling
@@ -71,18 +75,22 @@ To create your own `acme` highlighter:
   `: ${ZSH_HIGHLIGHT_STYLES[key]:=value}`, being sure to prefix
   the key with your highlighter name and a colon. For example:
 
-        : ${ZSH_HIGHLIGHT_STYLES[acme:aurora]:=fg=green}
+    ```zsh
+    : ${ZSH_HIGHLIGHT_STYLES[acme:aurora]:=fg=green}
 
-        _zsh_highlight_highlighter_acme_paint() {
-          # Colorize the whole buffer with the 'aurora' style
-          _zsh_highlight_add_highlight 0 $#BUFFER acme:aurora
-        }
+    _zsh_highlight_highlighter_acme_paint() {
+      # Colorize the whole buffer with the 'aurora' style
+      _zsh_highlight_add_highlight 0 $#BUFFER acme:aurora
+    }
+    ```
 
   If you need to test which options the user has set, test `zsyh_user_options`
   with a sensible default if the option is not present in supported zsh
   versions. For example:
 
-        [[ ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]
+    ```zsh
+    [[ ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]
+    ```
 
   The option name must be all lowercase with no underscores and not an alias.
 
@@ -100,6 +108,8 @@ To create your own `acme` highlighter:
 
 * Activate your highlighter in `~/.zshrc`:
 
-        ZSH_HIGHLIGHT_HIGHLIGHTERS+=(acme)
+    ```zsh
+    ZSH_HIGHLIGHT_HIGHLIGHTERS+=(acme)
+    ```
 
 * [Write tests](../tests/README.md).
