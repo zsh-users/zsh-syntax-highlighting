@@ -16,11 +16,13 @@ This highlighter defines the following styles:
 To override one of those styles, change its entry in `ZSH_HIGHLIGHT_STYLES`,
 for example in `~/.zshrc`:
 
-    # To define styles for nested brackets up to level 4
-    ZSH_HIGHLIGHT_STYLES[bracket-level-1]='fg=blue,bold'
-    ZSH_HIGHLIGHT_STYLES[bracket-level-2]='fg=red,bold'
-    ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=yellow,bold'
-    ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=magenta,bold'
+```zsh
+# To define styles for nested brackets up to level 4
+ZSH_HIGHLIGHT_STYLES[bracket-level-1]='fg=blue,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-2]='fg=red,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=yellow,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=magenta,bold'
+```
 
 The syntax for values is the same as the syntax of "types of highlighting" of
 the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`

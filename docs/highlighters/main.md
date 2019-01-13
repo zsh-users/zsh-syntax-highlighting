@@ -65,17 +65,19 @@ This highlighter defines the following styles:
 To override one of those styles, change its entry in `ZSH_HIGHLIGHT_STYLES`,
 for example in `~/.zshrc`:
 
-    # Declare the variable
-    typeset -A ZSH_HIGHLIGHT_STYLES
+```zsh
+# Declare the variable
+typeset -A ZSH_HIGHLIGHT_STYLES
 
-    # To differentiate aliases from other command types
-    ZSH_HIGHLIGHT_STYLES[alias]='fg=magenta,bold'
-    
-    # To have paths colored instead of underlined
-    ZSH_HIGHLIGHT_STYLES[path]='fg=cyan'
-    
-    # To disable highlighting of globbing expressions
-    ZSH_HIGHLIGHT_STYLES[globbing]='none'
+# To differentiate aliases from other command types
+ZSH_HIGHLIGHT_STYLES[alias]='fg=magenta,bold'
+
+# To have paths colored instead of underlined
+ZSH_HIGHLIGHT_STYLES[path]='fg=cyan'
+
+# To disable highlighting of globbing expressions
+ZSH_HIGHLIGHT_STYLES[globbing]='none'
+```
 
 The syntax for values is the same as the syntax of "types of highlighting" of
 the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`
@@ -86,7 +88,9 @@ manual page][zshzle-Character-Highlighting].
 To avoid partial path lookups on a path, add the path to the `X_ZSH_HIGHLIGHT_DIRS_BLACKLIST` array.
 This interface is still experimental.
 
-    X_ZSH_HIGHLIGHT_DIRS_BLACKLIST+=(/mnt/slow_share)
+```zsh
+X_ZSH_HIGHLIGHT_DIRS_BLACKLIST+=(/mnt/slow_share)
+```
 
 ### Useless trivia
 
