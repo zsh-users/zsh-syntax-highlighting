@@ -24,7 +24,7 @@ How to install
 [fedora-package]: https://apps.fedoraproject.org/packages/zsh-syntax-highlighting
 [fedora-package-alt]: https://bodhi.fedoraproject.org/updates/?packages=zsh-syntax-highlighting
 [obs-repository]: https://software.opensuse.org//download.html?project=shells%3Azsh-users%3Azsh-syntax-highlighting&package=zsh-syntax-highlighting
-[void-package]: https://github.com/voidlinux/void-packages/tree/master/srcpkgs/zsh-syntax-highlighting
+[void-package]: https://github.com/void-linux/void-packages/tree/master/srcpkgs/zsh-syntax-highlighting
 
 See also [repology's cross-distro index](https://repology.org/metapackage/zsh-syntax-highlighting/versions)
 
