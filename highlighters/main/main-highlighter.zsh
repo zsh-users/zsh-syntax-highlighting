@@ -180,7 +180,7 @@ _zsh_highlight_main__type() {
     #
     # The first disjunct mimics the isrelative() C call from the zsh bug.
     elif {  [[ $1 != */* ]] || is-at-least 5.3 } &&
-         ! builtin type -w -- $1 >/dev/null 2>&1; then
+         ! (builtin type -w -- $1) >/dev/null 2>&1; then
       REPLY=none
     fi
   fi
