@@ -180,6 +180,8 @@ _zsh_highlight_main__type() {
     #
     # The first disjunct mimics the isrelative() C call from the zsh bug.
     elif {  [[ $1 != */* ]] || is-at-least 5.3 } &&
+         # Add a subshell to avoid a zsh upstream bug.
+         # ### Remove the subshell when we stop supporting zsh 5.7.1 (I assume 5.8 will have the bugfix).
          ! (builtin type -w -- $1) >/dev/null 2>&1; then
       REPLY=none
     fi
