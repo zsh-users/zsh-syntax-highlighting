@@ -3,6 +3,8 @@ sudo: required
 
 env:
   - ZSH=master
+  - ZSH=5.7.1
+  - ZSH=5.7
   - ZSH=5.6.2
   - ZSH=5.6.1
   - ZSH=5.6
