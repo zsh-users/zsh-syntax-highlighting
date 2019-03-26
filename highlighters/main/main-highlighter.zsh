@@ -313,6 +313,7 @@ _zsh_highlight_highlighter_main_paint()
     'nice' n: # as of current POSIX spec
     'pkexec' '' # doesn't take short options; immune to #121 because it's usually not passed --option flags
     'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
+    'stdbuf' i:o:e:
   )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
