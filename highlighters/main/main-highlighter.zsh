@@ -295,7 +295,8 @@ _zsh_highlight_highlighter_main_paint()
   # that wouldn't be followed by a colon in a getopts specification.
   local flags_sans_argument
   # $precommand_options maps precommand name to values of $flags_with_argument and
-  # $flags_sans_argument for that precommand, joined by a colon.
+  # $flags_sans_argument for that precommand, joined by a colon.  (The value is NOT
+  # a getopt(3) spec, although it resembles one.)
   #
   # Currently, setting $flags_sans_argument is only important for commands that
   # have a non-empty $flags_with_argument; see test-data/precommand4.zsh.
@@ -313,7 +314,7 @@ _zsh_highlight_highlighter_main_paint()
     'nice' n: # as of current POSIX spec
     'pkexec' '' # doesn't take short options; immune to #121 because it's usually not passed --option flags
     'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
-    'stdbuf' i:o:e:
+    'stdbuf' ioe:
   )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
