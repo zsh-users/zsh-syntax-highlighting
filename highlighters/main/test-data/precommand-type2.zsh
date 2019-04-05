@@ -30,7 +30,7 @@
 
 # Test the behaviour of a builtin that does not exist as a command.
 # The spaces in $BUFFER are to align precommand-type*.zsh test files.
-BUFFER=$'zstyle; builtin zstyle; builtin command zstyle; stdbuf zstyle'
+BUFFER=$'zstyle; builtin zstyle; builtin command zstyle; nice zstyle'
 
 # Verify that no $^path/zstyle(N) binary exists.
 if (disable zstyle; type zstyle >/dev/null); then
@@ -50,6 +50,6 @@ expected_region_highlight=(
   '41 46 unknown-token "issue #608"' # zstyle
   '47 47 commandseparator' # ;
 
-  '49 54 precommand' # stdbuf
-  '56 61 unknown-token "issue #608"' # zstyle
+  '49 52 precommand' # nice
+  '54 59 unknown-token "issue #608"' # zstyle
 )

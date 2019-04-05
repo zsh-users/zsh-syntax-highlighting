@@ -30,7 +30,7 @@
 
 # Test an external command that does not exist as a builtin.
 # The spaces in $BUFFER are to align precommand-type*.zsh test files.
-BUFFER=$'ls    ; builtin ls    ; builtin command ls    ; stdbuf ls    '
+BUFFER=$'ls    ; builtin ls    ; builtin command ls    ; nice ls    '
 
 # Verify that the 'ls' command isn't shadowed.
 if [[ $(type -w ls) != "ls: command" ]]; then
@@ -50,6 +50,6 @@ expected_region_highlight=(
   '41 42 command' # ls
   '47 47 commandseparator' # ;
 
-  '49 54 precommand' # stdbuf
-  '56 57 command' # ls
+  '49 52 precommand' # nice
+  '54 55 command' # ls
 )

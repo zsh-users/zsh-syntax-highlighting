@@ -30,7 +30,7 @@
 
 # Test the behaviour of a builtin that exists as a command as well.
 # The spaces in $BUFFER are to align precommand-type*.zsh test files.
-BUFFER=$'test  ; builtin test  ; builtin command test  ; stdbuf test  '
+BUFFER=$'test  ; builtin test  ; builtin command test  ; nice test  '
 
 # Our expectations assumes that a 'test' external command exists (in addition
 # to the 'test' builtin).  Let's verify that, using the EQUALS option (which
@@ -56,6 +56,6 @@ expected_region_highlight=(
   '41 44 command "issue #608"' # test
   '47 47 commandseparator' # ;
 
-  '49 54 precommand' # stdbuf
-  '56 59 command "issue #608"' # test
+  '49 52 precommand' # nice
+  '54 57 command "issue #608"' # test
 )
