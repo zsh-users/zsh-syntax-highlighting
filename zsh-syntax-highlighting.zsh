@@ -101,7 +101,7 @@ _zsh_highlight()
   typeset -r zsyh_user_options
 
   emulate -L zsh
-  setopt localoptions warncreateglobal
+  setopt localoptions warncreateglobal nobashrematch
   local REPLY # don't leak $REPLY into global scope
 
   # Do not highlight if there are more than 300 chars in the buffer. It's most
