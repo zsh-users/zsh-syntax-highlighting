@@ -33,5 +33,5 @@ BUFFER=$':;\n'
 expected_region_highlight=(
   '1 1 builtin' # :
   '2 2 commandseparator' # ;
-  '3 3 unknown-token "issue #616"' # \n
+  '3 3 issue-623 "issue #616"' # \n
 )
