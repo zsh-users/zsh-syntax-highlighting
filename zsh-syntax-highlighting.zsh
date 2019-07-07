@@ -85,6 +85,8 @@ _zsh_highlight()
 
   # Before we 'emulate -L', save the user's options
   local -A zsyh_user_options
+  # Retain 1-indexing of zsh arrays
+  setopt localoptions noksharrays
   if zmodload -e zsh/parameter; then
     zsyh_user_options=("${(@kv)options}")
   else
