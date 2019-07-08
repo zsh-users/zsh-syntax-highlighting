@@ -1238,7 +1238,7 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
   saved_reply=($reply)
   reply=()
   for 1 2 in $breaks; do
-    reply+=($1 $2 $style)
+    (( $1 != $2 )) && reply+=($1 $2 $style)
   done
   reply+=($saved_reply)
   REPLY=$i
