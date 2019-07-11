@@ -91,7 +91,7 @@ _zsh_highlight()
     local canonical_options onoff option raw_options
     raw_options=(${(f)"$(emulate -R zsh; set -o)"})
     canonical_options=(${${${(M)raw_options:#*off}%% *}#no} ${${(M)raw_options:#*on}%% *})
-    for option in $canonical_options; do
+    for option in $("${(kv)options[@]}"); do
       [[ -o $option ]]
       # This variable cannot be eliminated c.f. workers/42101.
       onoff=${${=:-off on}[2-$?]}
