@@ -28,15 +28,15 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-alias sdb='sudo -b'
-alias sbu='sdb -u'
+alias sudo_b='sudo -b'
+alias sudo_b_u='sudo_b -u'
 sudo(){}
 
-BUFFER='sbu phy1729 echo foo'
+BUFFER='sudo_b_u phy1729 echo foo'
 
 expected_region_highlight=(
-  '1 3 alias' # sbu
-  '5 11 default' # phy1729
-  '13 16 commmand "issue #540"' # echo (not builtin)
-  '18 20 default' # foo
+  '1 8 alias' # sudo_b_u
+  '10 16 default' # phy1729
+  '18 21 commmand "issue #540"' # echo (not builtin)
+  '23 25 default' # foo
 )
