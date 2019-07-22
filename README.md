@@ -1,3 +1,5 @@
+**This branch will be rebased from time to time.**
+
 zsh-syntax-highlighting [![Build Status][build-status-image]][build-status-travis]
 =======================
 

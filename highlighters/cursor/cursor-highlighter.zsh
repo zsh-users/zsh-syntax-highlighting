@@ -28,9 +28,6 @@
 # -------------------------------------------------------------------------------------------------
 
 
-# Define default styles.
-: ${ZSH_HIGHLIGHT_STYLES[cursor]:=standout}
-
 # Whether the cursor highlighter should be called or not.
 _zsh_highlight_highlighter_cursor_predicate()
 {

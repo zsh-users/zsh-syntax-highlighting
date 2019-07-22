@@ -44,6 +44,18 @@ page][zshzle-Character-Highlighting].
 
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 
+Styles may be set directly or by themes. If no theme is specified in
+`ZSH_HIGHLIGHT_THEME` the `default` theme will be loaded. Additional themes
+may be layered on top (overriding previous theme's settings) by calling
+`_zsh_highlight_load_theme`.  `_zsh_highlight_load_theme` takes either an
+absolute path to a theme file to load or a theme name. For a theme name the
+base theme from the themes directory is loaded and then the extensions of the
+theme that any active highlighter has are loaded. Names must not contain a `/`.
+
+The `default` theme is a colorful theme that preserves the defaults the
+highlighters originally had. The `error-only` theme is also available for
+highlighting only syntax errors.
+
 Some highlighters support additional configuration parameters; see each
 highlighter's documentation for details and examples.
 
@@ -70,13 +82,8 @@ To create your own `acme` highlighter:
 * Implement the `_zsh_highlight_highlighter_acme_paint` function.
   This function does the actual syntax highlighting, by calling
   `_zsh_highlight_add_highlight` with the start and end of the region to
-  be highlighted and the `ZSH_HIGHLIGHT_STYLES` key to use. Define the default
-  style for that key in the highlighter script outside of any function with
-  `: ${ZSH_HIGHLIGHT_STYLES[key]:=value}`, being sure to prefix
-  the key with your highlighter name and a colon. For example:
-
-    ```zsh
-    : ${ZSH_HIGHLIGHT_STYLES[acme:aurora]:=fg=green}
+  be highlighted and the `ZSH_HIGHLIGHT_STYLES` key to use. The key should
+  be prefixed with your highlighter name and a colon
 
     _zsh_highlight_highlighter_acme_paint() {
       # Colorize the whole buffer with the 'aurora' style
@@ -105,6 +112,15 @@ To create your own `acme` highlighter:
 
         These names are still supported for backwards compatibility;
         however, support for them will be removed in a a future major or minor release (v0.x.0 or v1.0.0).
+
+* Optionally extended the built-in themes in
+    `highlighters/${myhighlighter}/themes/${themename}`.
+
+  Define the theme's style for that key with `ZSH_HIGHLIGHT_STYLES[key]=value`,
+  being sure to prefix the key with your highlighter name and a colon. For
+  example:
+
+        ZSH_HIGHLIGHT_STYLES[myhighlighter:aurora]=fg=green
 
 * Activate your highlighter in `~/.zshrc`:
 

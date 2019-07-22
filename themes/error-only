@@ -1,0 +1,2 @@
+ZSH_HIGHLIGHT_STYLES[bracket-error]=fg=red,bold
+ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red,bold
