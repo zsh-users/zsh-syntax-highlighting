@@ -355,6 +355,12 @@ _zsh_highlight_highlighter_main_paint()
     '!' # reserved word; unrelated to $histchars[1]
   )
 
+  if (( $+X_ZSH_HIGHLIGHT_DIRS_BLACKLIST )); then
+    print >&2 'zsh-syntax-highlighting: X_ZSH_HIGHLIGHT_DIRS_BLACKLIST is deprecated. Please use ZSH_HIGHLIGHT_DIRS_BLACKLIST.'
+    ZSH_HIGHLIGHT_DIRS_BLACKLIST=($X_ZSH_HIGHLIGHT_DIRS_BLACKLIST)
+    unset X_ZSH_HIGHLIGHT_DIRS_BLACKLIST
+  fi
+
   _zsh_highlight_main_highlighter_highlight_list -$#PREBUFFER '' 1 "$PREBUFFER$BUFFER"
 
   # end is a reserved word
@@ -966,7 +972,7 @@ _zsh_highlight_main_highlighter_check_path()
   tmp_path=$tmp_path:a
 
   while [[ $tmp_path != / ]]; do
-    [[ -n ${(M)X_ZSH_HIGHLIGHT_DIRS_BLACKLIST:#$tmp_path} ]] && return 1
+    [[ -n ${(M)ZSH_HIGHLIGHT_DIRS_BLACKLIST:#$tmp_path} ]] && return 1
     tmp_path=$tmp_path:h
   done
 
@@ -1411,4 +1417,4 @@ else
   # Make sure the cache is unset
   unset _zsh_highlight_main__command_type_cache
 fi
-typeset -ga X_ZSH_HIGHLIGHT_DIRS_BLACKLIST
+typeset -ga ZSH_HIGHLIGHT_DIRS_BLACKLIST

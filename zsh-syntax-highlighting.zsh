@@ -432,6 +432,12 @@ zmodload zsh/parameter 2>/dev/null || true
 # Initialize the array of active highlighters if needed.
 [[ $#ZSH_HIGHLIGHT_HIGHLIGHTERS -eq 0 ]] && ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
 
+if (( $+X_ZSH_HIGHLIGHT_DIRS_BLACKLIST )); then
+  print >&2 'zsh-syntax-highlighting: X_ZSH_HIGHLIGHT_DIRS_BLACKLIST is deprecated. Please use ZSH_HIGHLIGHT_DIRS_BLACKLIST.'
+  ZSH_HIGHLIGHT_DIRS_BLACKLIST=($X_ZSH_HIGHLIGHT_DIRS_BLACKLIST)
+  unset X_ZSH_HIGHLIGHT_DIRS_BLACKLIST
+fi
+
 # Restore the aliases we unned
 eval "$zsh_highlight__aliases"
 builtin unset zsh_highlight__aliases

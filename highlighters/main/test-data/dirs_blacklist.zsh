@@ -30,7 +30,7 @@
 mkdir foo
 touch foo/bar
 BUFFER=": foo/bar $PWD/foo foo/b"
-X_ZSH_HIGHLIGHT_DIRS_BLACKLIST=($PWD/foo $PWD/bar)
+ZSH_HIGHLIGHT_DIRS_BLACKLIST=($PWD/foo $PWD/bar)
 
 expected_region_highlight=(
   '1 1 builtin' # :
