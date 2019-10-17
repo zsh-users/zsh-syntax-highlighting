@@ -157,24 +157,25 @@ _zsh_highlight()
     # Re-apply zle_highlight settings
 
     # region
-    if (( REGION_ACTIVE == 1 )); then
-      _zsh_highlight_apply_zle_highlight region standout "$MARK" "$CURSOR"
-    elif (( REGION_ACTIVE == 2 )); then
-      () {
+    () {
+      (( REGION_ACTIVE )) || return
+      integer min max
+      if (( MARK > CURSOR )) ; then
+	min=$CURSOR max=$MARK
+      else
+	min=$MARK max=$CURSOR
+      fi
+      if (( REGION_ACTIVE == 1 )); then
+	[[ $KEYMAP = vicmd ]] && (( max++ ))
+      elif (( REGION_ACTIVE == 2 )); then
         local needle=$'\n'
-        integer min max
-        if (( MARK > CURSOR )) ; then
-          min=$CURSOR max=$MARK
-        else
-          min=$MARK max=$CURSOR
-        fi
         # CURSOR and MARK are 0 indexed between letters like region_highlight
         # Do not include the newline in the highlight
         (( min = ${BUFFER[(Ib:min:)$needle]} ))
         (( max = ${BUFFER[(ib:max:)$needle]} - 1 ))
-        _zsh_highlight_apply_zle_highlight region standout "$min" "$max"
-      }
-    fi
+      fi
+      _zsh_highlight_apply_zle_highlight region standout "$min" "$max"
+    }
 
     # yank / paste (zsh-5.1.1 and newer)
     (( $+YANK_ACTIVE )) && (( YANK_ACTIVE )) && _zsh_highlight_apply_zle_highlight paste standout "$YANK_START" "$YANK_END"
