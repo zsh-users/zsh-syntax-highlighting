@@ -807,7 +807,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                             # Discard  :start_of_pipeline:, if present, as '!' is not valid
                             # after assignments.
                             next_word+=':start:'
-                            if (( start_pos + i <= end_pos )); then
+                            if (( i <= $#arg )); then
                               () {
                                 local highlight_glob=false
                                 [[ $zsyh_user_options[globassign] == on ]] && highlight_glob=true
@@ -1030,7 +1030,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
     '=')
       if [[ $arg[i+1] == $'\x28' ]]; then
         (( i += 2 ))
-        _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+        _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,-1]
         ret=$?
         (( i += REPLY ))
         highlights+=(
@@ -1044,7 +1044,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
       fi
   esac
 
-  for (( ; i <= end_pos - start_pos ; i += 1 )); do
+  for (( ; i <= $#arg ; i += 1 )); do
     case "$arg[$i]" in
       "\\") (( i += 1 )); continue;;
       "'")
@@ -1074,7 +1074,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
        elif [[ $arg[i+1] == $'\x28' ]]; then
           start=$i
           (( i += 2 ))
-          _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+          _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,-1]
           ret=$?
           (( i += REPLY ))
           highlights+=(
@@ -1097,7 +1097,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
         if [[ $arg[i+1] == $'\x28' ]]; then # \x28 = open paren
           start=$i
           (( i += 2 ))
-          _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+          _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,-1]
           ret=$?
           (( i += REPLY ))
           highlights+=(
@@ -1123,7 +1123,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
     esac
   done
 
-  if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path $arg[$1,end_pos]; then
+  if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path $arg[$1,-1]; then
     base_style=$REPLY
     _zsh_highlight_main_highlighter_highlight_path_separators $base_style
     highlights+=($reply)
@@ -1175,7 +1175,7 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
   local i j k ret style
   reply=()
 
-  for (( i = $1 + 1 ; i <= end_pos - start_pos ; i += 1 )) ; do
+  for (( i = $1 + 1 ; i <= $#arg ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
@@ -1206,7 +1206,7 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
               breaks+=( $last_break $(( start_pos + i - 1 )) )
               (( i += 2 ))
               saved_reply=($reply)
-              _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,end_pos]
+              _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,-1]
               ret=$?
               (( i += REPLY ))
               last_break=$(( start_pos + i ))
@@ -1272,13 +1272,13 @@ _zsh_highlight_main_highlighter_highlight_dollar_quote()
   integer c
   reply=()
 
-  for (( i = $1 + 2 ; i <= end_pos - start_pos ; i += 1 )) ; do
+  for (( i = $1 + 2 ; i <= $#arg ; i += 1 )) ; do
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
       "'") break;;
       "\\") style=back-dollar-quoted-argument
-            for (( c = i + 1 ; c <= end_pos - start_pos ; c += 1 )); do
+            for (( c = i + 1 ; c <= $#arg ; c += 1 )); do
               [[ "$arg[$c]" != ([0-9xXuUa-fA-F]) ]] && break
             done
             AA=$arg[$i+1,$c-1]
@@ -1333,7 +1333,7 @@ _zsh_highlight_main_highlighter_highlight_backtick()
   last=$(( arg1 + 1 ))
   # Remove one layer of backslashes and find the end
   while i=$arg[(ib:i+1:)[\\\\\`]]; do # find the next \ or `
-    if (( i > end_pos - start_pos )); then
+    if (( i > $#arg )); then
       buf=$buf$arg[last,i]
       offsets[i-arg1-offset]='' # So we never index past the end
       (( i-- ))
