@@ -171,14 +171,17 @@ run_test_internal() {
     unset desc
   done
 
-  if (( $#expected_region_highlight == $#region_highlight )); then
-    print -r -- "ok $i - cardinality check" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
+  if [[ -n $expected_mismatch ]]; then
+    tap_escape $expected_mismatch; expected_mismatch=$REPLY
+    print "ok $i - cardinality check" "# SKIP $expected_mismatch"
+  elif (( $#expected_region_highlight == $#region_highlight )); then
+    print -r -- "ok $i - cardinality check"
   else
     local details
     details+="have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: "
     details+="«$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»"
     tap_escape $details; details=$REPLY
-    print -r -- "not ok $i - cardinality check" "$details" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
+    print -r -- "not ok $i - cardinality check - $details"
   fi
 }
 
