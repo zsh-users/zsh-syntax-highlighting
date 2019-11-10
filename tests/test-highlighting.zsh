@@ -178,7 +178,7 @@ run_test_internal() {
     details+="have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: "
     details+="«$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»"
     tap_escape $details; details=$REPLY
-    print -r -- "not ok $i - $details" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
+    print -r -- "not ok $i - cardinality check" "$details" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
   fi
 }
 
