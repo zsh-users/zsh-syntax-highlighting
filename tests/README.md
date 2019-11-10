@@ -16,8 +16,10 @@ that is, `$i` and `$j` specify a range, 1-indexed, inclusive of both endpoints.
 `$style` is a key of `$ZSH_HIGHLIGHT_STYLES`.
 If `$todo` exists, the test point is marked as TODO (the failure of that test
 point will not fail the test), and `$todo` is used as the explanation.
+
 If a test sets `$skip_test` to a non-empty string, the test will be skipped
 with the provided string as the reason.
+
 If a test sets `unsorted=1` the order of highlights in `$expected_region_highlight`
 need not match the order in `$region_highlight`.
 
