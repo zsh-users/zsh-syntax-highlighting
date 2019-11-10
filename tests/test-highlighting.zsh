@@ -145,7 +145,10 @@ run_test_internal() {
     local -a expected_highlight_zone; expected_highlight_zone=( ${(z)expected_region_highlight[i]} )
     integer exp_start=$expected_highlight_zone[1] exp_end=$expected_highlight_zone[2]
     local todo=
-    (( $+expected_highlight_zone[4] )) && todo="# TODO $expected_highlight_zone[4]"
+    if (( $+expected_highlight_zone[4] )); then
+      todo="# TODO $expected_highlight_zone[4]"
+      : ${expected_mismatch:="cardinality check disabled whilst regular test points are expected to fail"}
+    fi
     if ! (( $+region_highlight[i] )); then
       print -r -- "not ok $i - unmatched expectation ($exp_start $exp_end $expected_highlight_zone[3])"
       continue

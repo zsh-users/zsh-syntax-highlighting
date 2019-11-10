@@ -24,6 +24,7 @@ need not match the order in `$region_highlight`.
 Normally, tests fail if `$expected_region_highlight` and `$region_highlight`
 have different numbers of elements.  Tests may set `$expected_mismatch` to an
 explanation string (like `$todo`) to avoid this and skip the cardinality check.
+`$expected_mismatch` is set implicitly if the `$todo` component is present.
 
 **Note**: `$region_highlight` uses the same `"$i $j $style"` syntax but
 interprets the indexes differently.
