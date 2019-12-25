@@ -311,12 +311,17 @@ _zsh_highlight_highlighter_main_paint()
     'exec' a:cl
     'nocorrect' ''
     'noglob' ''
+    'time' ''
 
     'doas' aCu:Lns # as of OpenBSD's doas(1) dated September 4, 2016
     'nice' n: # as of current POSIX spec
     'pkexec' '' # doesn't take short options; immune to #121 because it's usually not passed --option flags
     'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
     'stdbuf' ioe:
+    'eatmydata' ''
+    'catchsegv' ''
+    'nohup' ''
+    'setsid' :wc
   )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
