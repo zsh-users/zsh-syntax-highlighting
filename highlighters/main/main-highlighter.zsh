@@ -683,18 +683,35 @@ _zsh_highlight_main_highlighter_highlight_list()
 
    # The Great Fork: is this a command word?  Is this a non-command word?
    if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+     # First, determine the style of the command separator itself.
      if _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
        # Missing closing square bracket(s)
        style=unknown-token
-     elif [[ $this_word == *':regular:'* ]]; then
+     elif $in_array_assignment && [[ $arg == ';' ]] && [[ $this_word == *':regular:'* ]]; then
+       # Okay, this is hairy.
+       # 
+       # Literal newlines inside array assignment are just fine.
+       #
+       # Literal semicolons inside array assignments are accepted by zsh (don't ask),
+       # but we want to highlight them as errors anyway, because _nobody_ expects
+       # them to behave as they do.
+       #
+       # However, BOTH cases are reported as ";" by ${(z)}, so we have to
+       # actually check the buffer:
+       case "${buf[start_pos+1,end_pos]}" in
+         (';')   style=unknown-token;;
+         ($'\n') style=default;;
+       esac
+     elif [[ $this_word == *':regular:'* ]] && ! $in_array_assignment; then
        # This highlights empty commands (semicolon follows nothing) as an error.
        # Zsh accepts them, though.
        style=commandseparator
      else
        style=unknown-token
      fi
+     # Second, determine the style of next_word.
      if [[ $arg == ';' ]] && $in_array_assignment; then
-       # literal newline inside an array assignment
+       # Literal semicolon or literal newline inside an array assignment
        next_word=':regular:'
      else
        next_word=':start:'
