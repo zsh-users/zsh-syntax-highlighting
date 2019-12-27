@@ -393,9 +393,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   # alias_style is the style to apply to an alias once in_alias=0
   #     Usually 'alias' but set to 'unknown-token' if any word expanded from
   #     the alias would be highlighted as unknown-token
-  # last_alias is the last alias arg (lhs) expanded (if in an alias).
-  #     This allows for expanding alias ls='ls -l' while avoiding loops.
-  local alias_style arg buf=$4 highlight_glob=true last_alias style
+  local alias_style arg buf=$4 highlight_glob=true style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   # in_alias is equal to the number of shifts needed until arg=args[1] pops an
   #     arg from BUFFER and not added by an alias.
@@ -473,7 +471,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     if (( in_alias )); then
       (( in_alias-- ))
       if (( in_alias == 0 )); then
-        last_alias= seen_alias=()
+        seen_alias=()
         # start_pos and end_pos are of the alias (previous $arg) here
         _zsh_highlight_main_add_region_highlight $start_pos $end_pos $alias_style
       fi
@@ -549,16 +547,15 @@ _zsh_highlight_main_highlighter_highlight_list()
       # Expand aliases.
       _zsh_highlight_main__type "$arg" "$(( ! ${+seen_alias[$arg]} ))"
       local res="$REPLY"
-      if [[ $res == "alias" ]] && [[ $last_alias != $arg ]]; then
+      if [[ $res == "alias" ]]; then
         # Avoid looping forever on alias a=b b=c c=b, but allow alias foo='foo bar'
         # Also mark insane aliases as unknown-token (cf. #263).
-        if (( $+seen_alias[$arg] )) || [[ $arg == ?*=* ]]; then
+        if [[ $arg == ?*=* ]]; then
           (( in_alias == 0 )) && in_alias=1
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
           continue
         fi
         seen_alias[$arg]=1
-        last_alias=$arg
         _zsh_highlight_main__resolve_alias $arg
         local -a alias_args
         # Elision is desired in case alias x=''
