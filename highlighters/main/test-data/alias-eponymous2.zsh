@@ -32,5 +32,5 @@ alias ls=tmp tmp='command ls'
 BUFFER='ls'
 
 expected_region_highlight=(
-  "1 2 alias 'issue #652'" # ls
+  "1 2 alias" # ls
 )
