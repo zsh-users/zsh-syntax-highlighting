@@ -309,9 +309,8 @@ _zsh_highlight_highlighter_main_paint()
     'builtin' ''
     'command' :pvV
     'exec' a:cl
-    'nocorrect' ''
     'noglob' ''
-    'time' ''
+    # 'time' and 'nocorrect' shouldn't be added here; they're reserved words, not precommands.
 
     'doas' aCu:Lns # as of OpenBSD's doas(1) dated September 4, 2016
     'nice' n: # as of current POSIX spec
@@ -723,6 +722,10 @@ _zsh_highlight_main_highlighter_highlight_list()
                         style=reserved-word
                         # Match braces and handle special cases.
                         case $arg in
+                          (time|nocorrect)
+                            next_word=${next_word//:regular:/}
+                            next_word+=':start:'
+                            ;;
                           ($'\x7b')
                             braces_stack='Y'"$braces_stack"
                             ;;
