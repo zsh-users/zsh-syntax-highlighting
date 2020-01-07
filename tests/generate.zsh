@@ -55,15 +55,15 @@ _zsh_highlight_add_highlight()
 
 # Copyright block
 year="`LC_ALL=C date +%Y`"
-if ! read -q "?Set copyright year to $year? "; then
+if ! { read -q "?Set copyright year to $year? " } always { echo "" }; then
   year="YYYY"
 fi
-exec >$fname
-<$0 sed -n -e '1,/^$/p' | sed -e "s/2[0-9][0-9][0-9]/${year}/"
+<$0 sed -n -e '1,/^$/p' | sed -e "s/2[0-9][0-9][0-9]/${year}/" > $fname
 # Assumes stdout is line-buffered
 git add -- $fname
 
 # Buffer
+exec > >(tee $fname)
 print -n 'BUFFER='
 if [[ $buffer != (#s)[$'\t -~']#(#e) ]]; then
   print -r -- ${(qqqq)buffer}
