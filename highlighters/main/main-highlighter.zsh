@@ -129,6 +129,18 @@ _zsh_highlight_main_calculate_fallback() {
   done
 }
 
+_zsh_highlight_main__test_type_builtin() {
+
+  if [[ -n  ${ZSH_HIGHLIGHT_SPECIAL_PATH} ]]; then
+    if [ "$this_word" = ":sudo_opt::start:" ]; then
+      # ZSH_HIGHLIGHT_SPECIAL_PATH exist is not empty : "Admin" says that user has access to commands in these paths with sudo
+      local PATH="${ZSH_HIGHLIGHT_SPECIAL_PATH}"
+    fi
+  fi
+
+  builtin type -w -- $1
+}
+
 # Get the type of a command.
 #
 # Uses the zsh/parameter module if available to avoid forks, and a
@@ -151,6 +163,24 @@ _zsh_highlight_main__type() {
     REPLY=$_zsh_highlight_main__command_type_cache[(e)$1]
     if [[ -n "$REPLY" ]]; then
       return
+    fi
+  fi
+
+  if [[ -v ZSH_HIGHLIGHT_SPECIAL_COMMAND ]]; then
+    if (( ${ZSH_HIGHLIGHT_SPECIAL_COMMAND[(I)$1]} )); then
+      # ZSH_HIGHLIGHT_SPECIAL_COMMAND exists : if foo of "sudo foo" is in ZSH_HIGHLIGHT_SPECIAL_COMMAND then "Admin" says that user has access to this command
+      REPLY=command
+      return 0
+    fi
+  fi
+
+  if [[ -v ZSH_HIGHLIGHT_SPECIAL_PATH ]]; then
+    if [ "$this_word" = ":sudo_opt::start:" ]; then
+      if [ -z  "${ZSH_HIGHLIGHT_SPECIAL_PATH}" ]; then
+        # ZSH_HIGHLIGHT_SPECIAL_PATH exist and is empty : "Admin" wants to say that user has no access to sudo : foo in "sudo foo" is red
+        REPLY=none
+        return 0
+      fi
     fi
   fi
 
@@ -188,7 +218,7 @@ _zsh_highlight_main__type() {
     elif {  [[ $1 != */* ]] || is-at-least 5.3 } &&
          # Add a subshell to avoid a zsh upstream bug; see issue #606.
          # ### Remove the subshell when we stop supporting zsh 5.7.1 (I assume 5.8 will have the bugfix).
-         ! (builtin type -w -- $1) >/dev/null 2>&1; then
+         ! (_zsh_highlight_main__test_type_builtin $1) >/dev/null 2>&1; then
       REPLY=none
     fi
   fi
@@ -203,7 +233,7 @@ _zsh_highlight_main__type() {
     # starts with an arithmetic expression [«((…))» as the first thing inside
     # «$(…)»], which is area that has had some parsing bugs before 5.6
     # (approximately).
-    REPLY="${$(:; (( aliases_allowed )) || unalias -- $1 2>/dev/null; LC_ALL=C builtin type -w -- $1 2>/dev/null)##*: }"
+    REPLY="${$(:; (( aliases_allowed )) || unalias -- $1 2>/dev/null; LC_ALL=C _zsh_highlight_main__test_type_builtin $1 2>/dev/null)##*: }"
     if [[ $REPLY == 'alias' ]]; then
       may_cache=0
     fi
