@@ -1,3 +1,60 @@
+# Changes in version 0.7.0
+
+**Version 0.7.0 has not been released.  This changelog is a work in progress.**
+
+This is a stable bugfix and feature release.  Major new features and changes include:
+
+- Add `ZSH_HIGHLIGHT_DIRS_BLACKLIST` to disable "path" and "path prefix"
+  highlighting for specific directories
+  [#379]
+
+- Add the "regexp" highlighter, modelled after the pattern highlighter
+  [4e6f60063f1c]
+
+- When a word uses globbing, only the globbing metacharacters will be highlighted as globbing:
+  in `: foo*bar`, only the `*` will be blue.
+  [e48af357532c]
+
+- Highlight pasted quotes (e.g., `: foo"bar"`)
+  [dc1b2f6fa4bb]
+
+- Highlight command substitutions (`` : `ls` ``, `: $(ls)`)
+  [c0e64fe13178 and parents, e86f75a840e7, et al]
+
+- Highlight process substitutions (`: >(nl)`, `: <(pwd)`, `: =(git diff)`)
+  [c0e64fe13178 and parents, e86f75a840e7, et al]
+
+- Highlight command substitutions inside double quotes (``: "`foo`"``)
+  [f16e858f0c83]
+
+- Highlight many precommands (e.g., `nice`, `stdbuf`, `eatmydata`;
+  see `$precommand_options` in the source)
+
+- Highlight numeric globs (e.g., `echo /lib<->`)
+
+- Assorted improvement to aliases highlighting
+  (e.g.,
+   `alias sudo_u='sudo -u'; sudo_u jrandom ls`,
+   `alias x=y y=z z=nosuchcommand; x`,
+   `alias ls='ls -l'; \ls`)
+  [f3410c5862fc, 57386f30aec8, #544, and many others]
+
+- Highlight some more syntax errors
+  [dea05e44e671, 298ef6a2fa30]
+
+- New styles: named file descriptors, `RC_QUOTES`, and unclosed quotes (e.g., `echo "foo<CURSOR>`)
+  [38c794a978cd, 25ae1c01216c, 967335dfc5fd]
+
+
+Selected bugfixes include:
+
+- Highlight `sudo` correctly when it's not installed
+  [26a82113b08b]
+
+- Handle some non-default options being set in zshrc
+  [b07ada1255b7, a2a899b41b8, 972ad197c13d, b3f66fc8748f]
+
+
 # Changes in version 0.6.0
 
 This is a stable release, featuring bugfixes and minor improvements.
