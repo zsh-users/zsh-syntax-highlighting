@@ -86,7 +86,6 @@ manual page][zshzle-Character-Highlighting].
 #### Parameters
 
 To avoid partial path lookups on a path, add the path to the `ZSH_HIGHLIGHT_DIRS_BLACKLIST` array.
-This interface is still experimental.
 
 ```zsh
 ZSH_HIGHLIGHT_DIRS_BLACKLIST+=(/mnt/slow_share)
