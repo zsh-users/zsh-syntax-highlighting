@@ -63,7 +63,7 @@ fi
 git add -- $fname
 
 # Buffer
-exec > >(tee $fname)
+exec > >(tee -a $fname)
 print -n 'BUFFER='
 if [[ $buffer != (#s)[$'\t -~']#(#e) ]]; then
   print -r -- ${(qqqq)buffer}
