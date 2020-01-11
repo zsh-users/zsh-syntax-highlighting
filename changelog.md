@@ -45,6 +45,9 @@ This is a stable bugfix and feature release.  Major new features and changes inc
 - New styles: named file descriptors, `RC_QUOTES`, and unclosed quotes (e.g., `echo "foo<CURSOR>`)
   [38c794a978cd, 25ae1c01216c, 967335dfc5fd]
 
+- The 'brackets' highlighting no longer treats quotes specially.
+  [ecdda36ef56f]
+
 
 Selected bugfixes include:
 
@@ -53,6 +56,12 @@ Selected bugfixes include:
 
 - Handle some non-default options being set in zshrc
   [b07ada1255b7, a2a899b41b8, 972ad197c13d, b3f66fc8748f]
+
+- Fix off-by-one highlighting in vi "visual" mode (vicmd keymap)
+  [be3882aeb054]
+
+- The 'yank-pop' widget is not wrapped
+  [#183]
 
 
 # Changes in version 0.6.0
