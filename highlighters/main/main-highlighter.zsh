@@ -434,12 +434,12 @@ _zsh_highlight_main_highlighter_highlight_list()
   #
   # When the kind of a word is not yet known, $this_word / $next_word may contain
   # multiple states.  For example, after "sudo -i", the next word may be either
-  # another --flag or a command name, hence the state would include both :start:
-  # and :sudo_opt:.
+  # another --flag or a command name, hence the state would include both ':start:'
+  # and ':sudo_opt:'.
   #
   # The tokens are always added with both leading and trailing colons to serve as
-  # word delimiters (an improvised array); [[ $x == *:foo:* ]] and x=${x//:foo:/}
-  # will DTRT regardless of how many elements or repetitions $x has..
+  # word delimiters (an improvised array); [[ $x == *':foo:'* ]] and x=${x//:foo:/}
+  # will DTRT regardless of how many elements or repetitions $x has.
   #
   # Handling of redirections: upon seeing a redirection token, we must stall
   # the current state --- that is, the value of $this_word --- for two iterations
@@ -544,7 +544,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       continue
     fi
 
-    if [[ $this_word == *:start:* ]] && ! (( in_redirection )); then
+    if [[ $this_word == *':start:'* ]] && ! (( in_redirection )); then
       # Expand aliases.
       _zsh_highlight_main__type "$arg"
       local res="$REPLY"
@@ -660,12 +660,12 @@ _zsh_highlight_main_highlighter_highlight_list()
         elif [[ -n $flags_sans_argument ]] &&
              [[ $arg == '-'[$flags_sans_argument]# ]]; then
           # Flag that requires no argument
-          this_word=:sudo_opt:
+          this_word=':sudo_opt:'
           next_word+=':start:'
           next_word+=':sudo_opt:'
         elif [[ $arg == '-'* ]]; then
           # Unknown flag
-          this_word=:sudo_opt:
+          this_word=':sudo_opt:'
           next_word+=':start:'
           next_word+=':sudo_opt:'
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
