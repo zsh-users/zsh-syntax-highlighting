@@ -580,8 +580,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         continue
       else
         _zsh_highlight_main_highlighter_expand_path $arg
-        arg=$REPLY
-        _zsh_highlight_main__type "$arg" 0
+        _zsh_highlight_main__type "$REPLY" 0
         res="$REPLY"
       fi
     fi
