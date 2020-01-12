@@ -545,11 +545,11 @@ _zsh_highlight_main_highlighter_highlight_list()
 
     if [[ $this_word == *:start:* ]] && ! (( in_redirection )); then
       # Expand aliases.
+      # An alias is ineligible for expansion while it's being expanded (see #652/#653).
       _zsh_highlight_main__type "$arg" "$(( ! ${+seen_alias[$arg]} ))"
       local res="$REPLY"
       if [[ $res == "alias" ]]; then
-        # Avoid looping forever on alias a=b b=c c=b, but allow alias foo='foo bar'
-        # Also mark insane aliases as unknown-token (cf. #263).
+        # Mark insane aliases as unknown-token (cf. #263).
         if [[ $arg == ?*=* ]]; then
           (( in_alias == 0 )) && in_alias=1
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
