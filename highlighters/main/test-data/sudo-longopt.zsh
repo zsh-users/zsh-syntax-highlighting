@@ -32,6 +32,6 @@ BUFFER='sudo --askpass ls'
 
 expected_region_highlight=(
   '1 4 precommand' # sudo
-  '6 14 double-hyphen-option "issues #641 and #658"' # --askpass
-  '16 17 default "issues #641 and #658"' # ls (we don't know whether --askpass takes an argument)
+  '6 14 double-hyphen-option' # --askpass
+  '16 17 default' # ls (we don't know whether --askpass takes an argument)
 )

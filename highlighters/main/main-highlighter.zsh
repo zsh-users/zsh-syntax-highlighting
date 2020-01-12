@@ -664,12 +664,9 @@ _zsh_highlight_main_highlighter_highlight_list()
           next_word+=':start:'
           next_word+=':sudo_opt:'
         elif [[ $arg == '-'* ]]; then
-          # Unknown flag
+          # Unknown flag.  We don't know whether it takes an argument or not,
+          # so we don't modify $next_word.
           this_word=':sudo_opt:'
-          next_word+=':start:'
-          next_word+=':sudo_opt:'
-          _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
-          continue
         else
           # Not an option flag; nothing to do.  (If the command line is
           # syntactically valid, ${this_word//:sudo_opt:/} should be
