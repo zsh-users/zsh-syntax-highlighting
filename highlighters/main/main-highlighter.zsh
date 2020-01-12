@@ -188,7 +188,7 @@ _zsh_highlight_main__type() {
     elif {  [[ $1 != */* ]] || is-at-least 5.3 } &&
          # Add a subshell to avoid a zsh upstream bug; see issue #606.
          # ### Remove the subshell when we stop supporting zsh 5.7.1 (I assume 5.8 will have the bugfix).
-         ! (builtin type -w -- $1) >/dev/null 2>&1; then
+         ! (builtin type -w -- "$1") >/dev/null 2>&1; then
       REPLY=none
     fi
   fi
@@ -203,7 +203,7 @@ _zsh_highlight_main__type() {
     # starts with an arithmetic expression [«((…))» as the first thing inside
     # «$(…)»], which is area that has had some parsing bugs before 5.6
     # (approximately).
-    REPLY="${$(:; (( aliases_allowed )) || unalias -- $1 2>/dev/null; LC_ALL=C builtin type -w -- $1 2>/dev/null)##*: }"
+    REPLY="${$(:; (( aliases_allowed )) || unalias -- "$1" 2>/dev/null; LC_ALL=C builtin type -w -- "$1" 2>/dev/null)##*: }"
     if [[ $REPLY == 'alias' ]]; then
       may_cache=0
     fi
