@@ -656,6 +656,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       local MATCH; integer MBEGIN MEND
       local parameter_name
       local -a words
+      integer elision_is_happening
       if [[ $arg[1] == '$' ]] && [[ ${arg[2]} == '{' ]] && [[ ${arg[-1]} == '}' ]]; then
         parameter_name=${${arg:2}%?}
       elif [[ $arg[1] == '$' ]]; then
@@ -663,23 +664,36 @@ _zsh_highlight_main_highlighter_highlight_list()
       fi
       if [[ $res == none ]] && zmodload -e zsh/parameter &&
          [[ ${parameter_name} =~ ^${~parameter_name_pattern}$ ]] &&
-         (( ${+parameters[(e)${MATCH}]} )) && [[ ${parameters[(e)$MATCH]} != *special* ]]
+         [[ ${parameters[(e)$MATCH]} != *special* ]]
          then
         # Set $arg and update $res.
         case ${(tP)MATCH} in
           (*array*|*assoc*)
             words=( ${(P)MATCH} )
+            elision_is_happening=$(( $#words == 0 ))
+            ;;
+          ("")
+            # not set
+            words=( )
+            elision_is_happening=1
             ;;
           (*)
             # scalar, presumably
             words=( ${(P)MATCH} )
+            elision_is_happening=$(( $#words == 0 ))
             ;;
         esac
-        (( in_param = 1 + $#words ))
-        args=( $words $args )
-        arg=$args[1]
-        _zsh_highlight_main__type "$arg" 0
-        res=$REPLY
+        if (( elision_is_happening )); then
+          (( ++in_redirection ))
+          _zsh_highlight_main_add_region_highlight $start_pos $end_pos comment
+          continue
+        else
+          (( in_param = 1 + $#words ))
+          args=( $words $args )
+          arg=$args[1]
+          _zsh_highlight_main__type "$arg" 0
+          res=$REPLY
+        fi
       fi
     }
 
