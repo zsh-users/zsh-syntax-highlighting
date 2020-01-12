@@ -1006,7 +1006,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                           fi
                           _zsh_highlight_main__stack_pop 'R' reserved-word
                         else
-                          if _zsh_highlight_main_highlighter_check_path $arg; then
+                          if _zsh_highlight_main_highlighter_check_path $arg 1; then
                             style=$REPLY
                           else
                             style=unknown-token
@@ -1115,12 +1115,19 @@ _zsh_highlight_main_highlighter_highlight_path_separators()
 # Check if $1 is a path.
 # If yes, return 0 and in $REPLY the style to use.
 # Else, return non-zero (and the contents of $REPLY is undefined).
+#
+# $2 should be non-zero iff we're in command position.
 _zsh_highlight_main_highlighter_check_path()
 {
   _zsh_highlight_main_highlighter_expand_path "$1"
   local expanded_path="$REPLY" tmp_path
+  integer in_command_position=$2
 
-  REPLY=path
+  if (( in_command_position )); then
+    REPLY=arg0
+  else
+    REPLY=path
+  fi
 
   if [[ ${1[1]} == '=' && $1 == ??* && ${1[2]} != $'\x28' && $zsyh_user_options[equals] == 'on' && $expanded_path[1] != '/' ]]; then
     REPLY=unknown-token # will error out if executed
@@ -1142,15 +1149,23 @@ _zsh_highlight_main_highlighter_check_path()
     tmp_path=$tmp_path:h
   done
 
-  [[ -L $expanded_path ]] && return 0
-  [[ -e $expanded_path ]] && return 0
+  if (( in_command_position )); then
+    if [[ -x $expanded_path ]] && [[ $zsyh_user_options[autocd] == on || ! -d $expanded_path ]]; then
+      return 0
+    fi
+  else
+    if [[ -L $expanded_path || -e $expanded_path ]]; then
+      return 0
+    fi
+  fi
 
   # Search the path in CDPATH
-  if [[ $expanded_path != /* ]]; then
-    local cdpath_dir
+  if [[ $expanded_path != /* ]] &&
+     { (( ! in_command_position )) || [[ $zsyh_user_options[autocd] == on ]] }; then
     # TODO: When we've dropped support for pre-5.0.6 zsh, use the *(Y1) glob qualifier here.
+    local cdpath_dir
     for cdpath_dir in $cdpath ; do
-      [[ -e "$cdpath_dir/$expanded_path" ]] && return 0
+      [[ -d "$cdpath_dir/$expanded_path" && -x "$cdpath_dir/$expanded_path" ]] && return 0
     done
   fi
 
@@ -1162,7 +1177,14 @@ _zsh_highlight_main_highlighter_check_path()
      [[ $WIDGET != zle-line-finish ]]; then
     # TODO: When we've dropped support for pre-5.0.6 zsh, use the *(Y1) glob qualifier here.
     local -a tmp
-    tmp=( ${expanded_path}*(N) )
+    if (( in_command_position )); then
+      # We include directories even when autocd is enabled, because those
+      # directories might contain executable files: e.g., BUFFER="/bi" en route
+      # to typing "/bin/sh".
+      tmp=( ${expanded_path}*(N-*,N-/) )
+    else
+      tmp=( ${expanded_path}*(N) )
+    fi
     (( ${+tmp[1]} )) && REPLY=path_prefix && return 0
   fi
 
@@ -1173,6 +1195,8 @@ _zsh_highlight_main_highlighter_check_path()
 # Highlight an argument and possibly special chars in quotes starting at $1 in $arg
 # This command will at least highlight $1 to end_pos with the default style
 # If $2 is set to 0, the argument cannot be highlighted as an option.
+#
+# This function currently assumes it's never called for the command word.
 _zsh_highlight_main_highlighter_highlight_argument()
 {
   local base_style=default i=$1 option_eligible=${2:-1} path_eligible=1 ret start style
@@ -1307,7 +1331,8 @@ _zsh_highlight_main_highlighter_highlight_argument()
       else
         base_style=numeric-fd
       fi
-    elif _zsh_highlight_main_highlighter_check_path $arg[$1,-1]; then
+    # This function is currently never called for the command word, so $2 is hard-coded as 0.
+    elif _zsh_highlight_main_highlighter_check_path $arg[$1,-1] 0; then
       base_style=$REPLY
       _zsh_highlight_main_highlighter_highlight_path_separators $base_style
       highlights+=($reply)

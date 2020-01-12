@@ -28,12 +28,12 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-touch foo
-chmod -x foo
-BUFFER=$'./foo; ./foo'
+setopt autocd
+
+BUFFER=$'$PWD; ${PWD}'
 
 expected_region_highlight=(
-  '1 5 unknown-token' # ./foo (in middle)
-  '6 6 commandseparator' # ;
-  '8 12 unknown-token' # ./foo (at end)
+  '1 4 arg0' # $PWD
+  '5 5 commandseparator' # ;
+  '7 12 arg0' # ${PWD}
 )
