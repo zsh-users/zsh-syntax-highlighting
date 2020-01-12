@@ -28,6 +28,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+setopt autocd
 BUFFER=$'/bin; /bin'
 
 expected_region_highlight=(
