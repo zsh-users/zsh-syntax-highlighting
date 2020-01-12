@@ -986,10 +986,12 @@ _zsh_highlight_main_highlighter_check_path()
   [[ -e $expanded_path ]] && return 0
 
   # Search the path in CDPATH
-  local cdpath_dir
-  for cdpath_dir in $cdpath ; do
-    [[ -e "$cdpath_dir/$expanded_path" ]] && return 0
-  done
+  if [[ $expanded_path != /* ]]; then
+    local cdpath_dir
+    for cdpath_dir in $cdpath ; do
+      [[ -e "$cdpath_dir/$expanded_path" ]] && return 0
+    done
+  fi
 
   # If dirname($1) doesn't exist, neither does $1.
   [[ ! -d ${expanded_path:h} ]] && return 1

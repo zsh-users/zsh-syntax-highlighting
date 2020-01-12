@@ -34,5 +34,5 @@ mkdir foo foo/bar
 BUFFER="/foo"
 
 expected_region_highlight=(
-  '1 4 unknown-token "fixed in the next commit"' # x (/)
+  '1 4 unknown-token' # x (/)
 )
