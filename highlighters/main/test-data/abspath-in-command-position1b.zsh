@@ -32,5 +32,5 @@ setopt autocd
 BUFFER=$'/'
 
 expected_region_highlight=(
-  '1 1 arg0' # /
+  '1 1 autodirectory' # /
 )

@@ -29,11 +29,10 @@
 # -------------------------------------------------------------------------------------------------
 
 setopt autocd
-
 BUFFER=$'$PWD; ${PWD}'
 
 expected_region_highlight=(
-  '1 4 arg0' # $PWD
+  '1 4 autodirectory' # $PWD
   '5 5 commandseparator' # ;
-  '7 12 arg0' # ${PWD}
+  '7 12 autodirectory' # ${PWD}
 )

@@ -32,7 +32,7 @@ setopt autocd
 BUFFER=$'/bin; /bin'
 
 expected_region_highlight=(
-  '1 4 arg0' # /bin (in middle)
+  '1 4 autodirectory' # /bin (in middle)
   '5 5 commandseparator' # ;
-  '7 10 arg0' # /bin (at end)
+  '7 10 autodirectory' # /bin (at end)
 )

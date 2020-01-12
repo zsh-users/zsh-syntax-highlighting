@@ -36,6 +36,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[global-alias]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
+: ${ZSH_HIGHLIGHT_STYLES[autodirectory]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_pathseparator]:=}
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]:=}
@@ -113,6 +114,7 @@ _zsh_highlight_main_calculate_fallback() {
       command arg0
       precommand arg0
       hashed-command arg0
+      autodirectory arg0
       arg0_\* arg0
 
       # TODO: Maybe these? —
@@ -1130,6 +1132,8 @@ _zsh_highlight_main_highlighter_check_path()
   fi
 
   if (( in_command_position )); then
+    # ### Currently, this value is never returned: either it's overwritten
+    # ### below, or the return code is non-zero
     REPLY=arg0
   else
     REPLY=path
@@ -1156,8 +1160,16 @@ _zsh_highlight_main_highlighter_check_path()
   done
 
   if (( in_command_position )); then
-    if [[ -x $expanded_path ]] && { (( autocd )) || [[ ! -d $expanded_path ]] }; then
-      return 0
+    if [[ -x $expanded_path ]]; then
+      if (( autocd )); then
+        if [[ -d $expanded_path ]]; then
+          REPLY=autodirectory
+        fi
+        return 0
+      elif [[ ! -d $expanded_path ]]; then
+        # ### This seems unreachable for the current callers
+        return 0
+      fi
     fi
   else
     if [[ -L $expanded_path || -e $expanded_path ]]; then
@@ -1170,7 +1182,12 @@ _zsh_highlight_main_highlighter_check_path()
     # TODO: When we've dropped support for pre-5.0.6 zsh, use the *(Y1) glob qualifier here.
     local cdpath_dir
     for cdpath_dir in $cdpath ; do
-      [[ -d "$cdpath_dir/$expanded_path" && -x "$cdpath_dir/$expanded_path" ]] && return 0
+      if [[ -d "$cdpath_dir/$expanded_path" && -x "$cdpath_dir/$expanded_path" ]]; then
+        if (( in_command_position && autocd )); then
+          REPLY=autodirectory
+        fi
+        return 0
+      fi
     done
   fi
 
