@@ -32,16 +32,17 @@ emulate -LR zsh
 setopt localoptions extendedglob
 
 # Argument parsing.
-if (( $# != 3 )) || [[ $1 == -* ]]; then
-  print -r -- >&2 "$0: usage: $0 BUFFER HIGHLIGHTER BASENAME"
+if (( $# * $# - 7 * $# + 12 )) || [[ $1 == -* ]]; then
+  print -r -- >&2 "$0: usage: $0 BUFFER HIGHLIGHTER BASENAME [PREAMBLE]"
   print -r -- >&2 ""
   print -r -- >&2 "Generate highlighters/HIGHLIGHTER/test-data/BASENAME.zsh based on the"
-  print -r -- >&2 "current highlighting of BUFFER."
+  print -r -- >&2 "current highlighting of BUFFER, using the setup code PREAMBLE."
   exit 1
 fi
 buffer=$1
 ZSH_HIGHLIGHT_HIGHLIGHTERS=( $2 )
 fname=${0:A:h:h}/highlighters/$2/test-data/${3%.zsh}.zsh
+preamble=${4:-""}
 
 # Load the main script.
 . ${0:A:h:h}/zsh-syntax-highlighting.zsh
@@ -61,9 +62,14 @@ fi
 <$0 sed -n -e '1,/^$/p' | sed -e "s/2[0-9][0-9][0-9]/${year}/" > $fname
 # Assumes stdout is line-buffered
 git add -- $fname
+exec > >(tee -a $fname)
+
+# Preamble
+if [[ -n $preamble ]]; then
+  print -rl -- "$preamble" ""
+fi
 
 # Buffer
-exec > >(tee -a $fname)
 print -n 'BUFFER='
 if [[ $buffer != (#s)[$'\t -~']#(#e) ]]; then
   print -r -- ${(qqqq)buffer}
@@ -82,8 +88,17 @@ print 'expected_region_highlight=('
   PREBUFFER=""
   BUFFER="$buffer"
   region_highlight=()
-  # TODO: use run_test() from tests/test-highlighting.zsh (to get a tempdir)
-  _zsh_highlight
+  eval $(
+    exec 3>&1 >/dev/null
+    typeset -r __tests_tmpdir="$(mktemp -d)"
+    {
+      # Use a subshell to ensure $__tests_tmpdir, which is to be rm -rf'd, won't be modified.
+      (cd -- "$__tests_tmpdir" && eval $preamble && _zsh_highlight && typeset -p region_highlight >&3)
+      : # workaround zsh bug workers/45305 with respect to the $(…) subshell we're in
+    } always {
+      rm -rf -- ${__tests_tmpdir}
+    }
+  )
 
   for ((i=1; i<=${#region_highlight}; i++)); do
     local -a highlight_zone; highlight_zone=( ${(z)region_highlight[$i]} )
