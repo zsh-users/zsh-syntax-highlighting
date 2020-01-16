@@ -488,6 +488,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       if (( in_param == 0 )); then
         # start_pos and end_pos are of the alias (previous $arg) here
         _zsh_highlight_main_add_region_highlight $start_pos $end_pos ${param_style:-unknown_token}
+        param_style=""
       fi
     fi
 
