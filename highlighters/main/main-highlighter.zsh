@@ -78,8 +78,13 @@ _zsh_highlight_main_add_region_highlight() {
     return
   fi
   if (( in_param )); then
-    [[ $1 == unknown-token ]] && param_style=unknown-token
-    return
+    if [[ $1 == unknown-token ]]; then
+      param_style=unknown-token
+    fi
+    if [[ -n $param_style ]]; then
+      return
+    fi
+    param_style=$1
   fi
 
   # The calculation was relative to $buf but region_highlight is relative to $BUFFER.
@@ -951,8 +956,9 @@ _zsh_highlight_main_highlighter_highlight_list()
     fi
     _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
   done
+  : ${param_style:=$style}
   (( in_alias == 1 )) && in_alias=0 _zsh_highlight_main_add_region_highlight $start_pos $end_pos $alias_style
-  (( in_param == 1 )) && in_param=0 _zsh_highlight_main_add_region_highlight $start_pos $end_pos ${param_style:-unknown_token}
+  (( in_param == 1 )) && in_param=0 _zsh_highlight_main_add_region_highlight $start_pos $end_pos $param_style
   [[ "$proc_buf" = (#b)(#s)(([[:space:]]|\\$'\n')#) ]]
   REPLY=$(( end_pos + ${#match[1]} - 1 ))
   reply=($list_highlights)
