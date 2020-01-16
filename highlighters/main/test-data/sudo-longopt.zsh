@@ -28,6 +28,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+hash sudo='false'
 BUFFER='sudo --askpass ls'
 
 expected_region_highlight=(
