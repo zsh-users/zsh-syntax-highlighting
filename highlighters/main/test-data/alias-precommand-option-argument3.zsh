@@ -28,6 +28,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+# See also param-precommand-option-argument3.zsh
 alias sudo_u='sudo -u'
 sudo(){}
 
