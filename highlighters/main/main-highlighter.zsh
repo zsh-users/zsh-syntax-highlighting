@@ -323,6 +323,8 @@ _zsh_highlight_highlighter_main_paint()
     'setsid' :wc
     # As of OpenSSH 8.1p1; -k is deliberately left out since it may not be followed by a command
     'ssh-agent' aEPt:csDd
+    # suckless-tools v44
+    'tabbed' gnprtTuU:cdfhsv
   )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
