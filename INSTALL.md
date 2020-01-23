@@ -6,7 +6,7 @@ How to install
 * Arch Linux: [community/zsh-syntax-highlighting][arch-package] / [AUR/zsh-syntax-highlighting-git][AUR-package]
 * Debian: `zsh-syntax-highlighting` package [in `stretch`][debian-package] (or in [OBS repository][obs-repository])
 * Fedora: [zsh-syntax-highlighting package][fedora-package-alt] in Fedora 24+ (or in [OBS repository][obs-repository])
-* FreeBSD: `pkg install zsh-syntax-highlighting` (port name: [`textproc/zsh-syntax-highlighting`][freebsd-port])
+* FreeBSD: `pkg install zsh-syntax-highlighting` (port name: [`shells/zsh-syntax-highlighting`][freebsd-port])
 * Gentoo: [mv overlay][gentoo-overlay]
 * Mac OS X / Homebrew: [brew install zsh-syntax-highlighting][brew-package]
 * Ubuntu: `zsh-syntax-highlighting` package [in Xenial][ubuntu-package] (or in [OBS repository][obs-repository])
