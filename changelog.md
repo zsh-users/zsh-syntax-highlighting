@@ -64,6 +64,14 @@ Selected bugfixes include:
   [#183]
 
 
+Known issues include:
+
+- A multiline alias that uses a simple command terminator (such as `;`, `|`, `&&`)
+  before a newline will incorrectly be highlighted as an error.  See issue #677
+  for examples and workarounds.
+  [#677]
+
+
 # Changes in version 0.6.0
 
 This is a stable release, featuring bugfixes and minor improvements.
