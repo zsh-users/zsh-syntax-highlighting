@@ -29,7 +29,7 @@
 # -------------------------------------------------------------------------------------------------
 
 # See also alias-precommand-option-argument1.zsh
-local -a sudo_u=(sudo -u)
+local -a sudo_u; sudo_u=(sudo -u)
 sudo(){}
 
 BUFFER='$sudo_u phy1729 echo foo'
