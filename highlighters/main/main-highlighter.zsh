@@ -315,7 +315,8 @@ _zsh_highlight_highlighter_main_paint()
     'doas' aCu:Lns # as of OpenBSD's doas(1) dated September 4, 2016
     'nice' n: # as of current POSIX spec
     'pkexec' '' # doesn't take short options; immune to #121 because it's usually not passed --option flags
-    'sudo' Cgprtu:AEHKPSVbhiklnsv # as of sudo 1.8.21p2
+    # Argumentless flags that can't be followed by a command: -e -h -K -k -V -v
+    'sudo' Cgprtu:AEHPSbilns # as of sudo 1.8.21p2
     'stdbuf' ioe:
     'eatmydata' ''
     'catchsegv' ''
@@ -324,7 +325,8 @@ _zsh_highlight_highlighter_main_paint()
     # As of OpenSSH 8.1p1; -k is deliberately left out since it may not be followed by a command
     'ssh-agent' aEPt:csDd
     # suckless-tools v44
-    'tabbed' gnprtTuU:cdfhsv
+    # Argumentless flags that can't be followed by a command: -v
+    'tabbed' gnprtTuU:cdfhs
   )
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
