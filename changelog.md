@@ -71,6 +71,13 @@ Known issues include:
   for examples and workarounds.
   [#677]
 
+- Use of a simple parameter expansion (`${foo}` with nothing but a parameter
+  name inside the braces) in command position, when the value of the parameter
+  looks like an assignment (such as after `foo='bar=$(ls)'`), may result in
+  incorrect highlighting and "BUG" messages.  As a workaround, the expansion
+  may be nested (`${${foo}}`).
+  [#670]
+
 
 # Changes in version 0.6.0
 
