@@ -104,7 +104,7 @@ To create your own `acme` highlighter:
         `_zsh_highlight_highlighter_acme_paint` respectively.
 
         These names are still supported for backwards compatibility;
-        however, support for them will be removed in a a future major or minor release (v0.x.0 or v1.0.0).
+        however, support for them will be removed in a future major or minor release (v0.x.0 or v1.0.0).
 
 * Activate your highlighter in `~/.zshrc`:
 
