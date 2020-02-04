@@ -17,10 +17,11 @@ zsh_highlight_files_extract_ls_colors
 
 ### Configuration
 
-Files are colored according to the associative arrays `ZSH_HIGHLIGHT_FILE_TYPES`
-and `ZSH_HIGHLIGHT_FILE_PATTERNS`.  The values of `ZSH_HIGHLIGHT_FILE_TYPES` are
-color specifications as in `ZSH_HIGHLIGHT_STYLES`, and the keys define which
-file types are highlighted according to that style (following `LS_COLORS`):
+Files are colored according to the associative array `ZSH_HIGHLIGHT_FILE_TYPES`
+and the array `ZSH_HIGHLIGHT_FILE_PATTERNS`.  The values of
+`ZSH_HIGHLIGHT_FILE_TYPES` are color specifications as in
+`ZSH_HIGHLIGHT_STYLES`, and the keys define which file types are highlighted
+according to that style (following `LS_COLORS`):
 
 * `fi` - ordinary files
 * `di` - directories
@@ -38,12 +39,23 @@ file types are highlighted according to that style (following `LS_COLORS`):
 * `lp` - if set, the path-component of a filename is highlighted using this style
 
 If a file would be highlighted `fi`, then it can be highlighted according to the
-filename using `ZSH_HIGHLIGHT_FILE_PATTERNS` instead.  The keys of this
-associative array are arbitrary glob patterns; the values are color
-specifications.  For instance, if have `setopt extended_glob` and you write
+filename using `ZSH_HIGHLIGHT_FILE_PATTERNS` instead.  This array has the form
+`(glob1 style1 glob2 style2 glob3 style3 ...)`, where the globs are arbitrary
+glob patterns, and the styles are color specifications.  For instance, if have
+`setopt extended_glob` and you write
 
 ```zsh
-ZSH_HIGHLIGHT_FILE_PATTERNS[(#i)*.jpe#g]=red,bold
+ZSH_HIGHLIGHT_FILE_PATTERNS+=('(#i)*.jpe#g' red,bold)
 ```
 
 then the files `foo.jpg` and `bar.jPeG` will be colored red and bold.
+
+
+### Limitations
+
+This highlighter makes no attempt to determine if a word is in command position.
+Hence if you run the command `cat foo` and you happen to have a directory named
+`cat` in the current directory, then the highlighter will highlight `cat`
+according to `ZSH_HIGHLIGHT_FILE_TYPES[di]` and not
+`ZSH_HIGHLIGHT_STYLES[command]` (assuming you load the `files` highlighter after
+the `main` one).  Likewise with aliases, reserved words, etc.
