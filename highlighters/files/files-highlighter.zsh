@@ -108,7 +108,7 @@ zsh_highlight_files_extract_ls_colors()
 {
   local -A ls_colors
   _zsh_highlight_highlighter_files_ansi_to_zle ls_colors $LS_COLORS
-  for key val in ${(kv)ls_colors}; do
+  for key val in "${(@kv)ls_colors}"; do
     case $key in
       di|fi|ln|pi|so|bd|cd|or|ex|su|sg|ow|tw)
         ZSH_HIGHLIGHT_FILE_TYPES[$key]=$val ;;
@@ -202,7 +202,7 @@ _zsh_highlight_highlighter_files_paint()
 
     # Regular file: check file patterns
     if [[ -z "$col" ]]; then
-      for key val in ${(kv)ZSH_HIGHLIGHT_FILE_PATTERNS}; do
+      for key val in "${(@kv)ZSH_HIGHLIGHT_FILE_PATTERNS}"; do
         if [[ $basename = $~key ]]; then
           col=$val
           break
