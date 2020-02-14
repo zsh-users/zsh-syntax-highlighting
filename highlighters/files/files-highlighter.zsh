@@ -35,9 +35,6 @@ typeset -ga ZSH_HIGHLIGHT_FILE_PATTERNS
 # Convert an ANSI escape sequence color into zle_highlight format (man 1 zshzle)
 _zsh_highlight_highlighter_files_ansi_to_zle()
 {
-  emulate -L zsh
-  setopt local_options extended_glob
-
   local match mbegin mend seq
   local var=$1; shift
   for seq in "${(@s.:.)1}"; do
@@ -50,9 +47,6 @@ _zsh_highlight_highlighter_files_ansi_to_zle()
 
 _zsh_highlight_highlighter_files_ansi_to_zle1()
 {
-  emulate -L zsh
-  setopt local_options extended_glob
-
   local -a sgrs match
   local back mbegin mend fgbg hex
   integer sgr arg arg2 col r g b
@@ -127,9 +121,6 @@ zsh_highlight_files_extract_ls_colors()
 # errors
 _zsh_highlight_highlighter_files_fn_expand()
 {
-  emulate -L zsh
-  setopt local_options extended_glob
-
   local fn=$1
   local match expandable tail
   local -a mbegin mend
@@ -200,10 +191,12 @@ _zsh_highlight_highlighter_files_paint()
 
     # Regular file: more special cases
     if [[ -z "$col" ]]; then
-      if [[ $mode[4] = s ]]; then
+      if [[ $mode[4] = S ]]; then
         col=$ZSH_HIGHLIGHT_FILE_TYPES[su]  # setuid root
-      elif [[ $mode[7] = s ]]; then
+      elif [[ $mode[7] = S ]]; then
         col=$ZSH_HIGHLIGHT_FILE_TYPES[sg]  # setgid root
+      elif [[ $mode[9] = w ]]; then
+        col=$ZSH_HIGHLIGHT_FILE_TYPES[ow]  # other-writable
       elif [[ $mode[4] = x ]]; then
         col=$ZSH_HIGHLIGHT_FILE_TYPES[ex]  # Executable
       fi
