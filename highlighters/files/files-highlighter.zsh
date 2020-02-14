@@ -41,6 +41,7 @@ _zsh_highlight_highlighter_files_ansi_to_zle()
     seq=${seq#(#b)(*)=}
     (( $#match )) || continue
     _zsh_highlight_highlighter_files_ansi_to_zle1 $seq $var\[$match[1]\]
+    unset match
   done
 }
 
