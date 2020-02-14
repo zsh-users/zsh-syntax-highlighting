@@ -35,6 +35,9 @@ typeset -ga ZSH_HIGHLIGHT_FILE_PATTERNS
 # Convert an ANSI escape sequence color into zle_highlight format (man 1 zshzle)
 _zsh_highlight_highlighter_files_ansi_to_zle()
 {
+  emulate -L zsh
+  setopt local_options extended_glob
+
   local match mbegin mend seq
   local var=$1; shift
   for seq in "${(@s.:.)1}"; do
@@ -106,13 +109,16 @@ _zsh_highlight_highlighter_files_ansi_to_zle1()
 # Extract ZSH_HIGHLIGHT_FILE_TYPES and ZSH_HIGHLIGHT_FILE_PATTERNS from LS_COLORS
 zsh_highlight_files_extract_ls_colors()
 {
+  emulate -L zsh
+  setopt local_options extended_glob
+
   local -A ls_colors
   _zsh_highlight_highlighter_files_ansi_to_zle ls_colors $LS_COLORS
   for key val in "${(@kv)ls_colors}"; do
     case $key in
       di|fi|ln|pi|so|bd|cd|or|ex|su|sg|ow|tw)
         ZSH_HIGHLIGHT_FILE_TYPES[$key]=$val ;;
-      *)  ZSH_HIGHLIGHT_FILE_PATTERNS+=($key $val) ;;
+      *)  ZSH_HIGHLIGHT_FILE_PATTERNS+=("$key" "$val") ;;
     esac
   done
 }
@@ -121,6 +127,9 @@ zsh_highlight_files_extract_ls_colors()
 # errors
 _zsh_highlight_highlighter_files_fn_expand()
 {
+  emulate -L zsh
+  setopt local_options extended_glob
+
   local fn=$1
   local match expandable tail
   local -a mbegin mend
@@ -145,7 +154,7 @@ _zsh_highlight_highlighter_files_predicate()
 _zsh_highlight_highlighter_files_paint()
 {
   emulate -L zsh
-  setopt localoptions extended_glob
+  setopt local_options extended_glob
 
   zmodload -F zsh/stat b:zstat
 
@@ -202,7 +211,7 @@ _zsh_highlight_highlighter_files_paint()
 
     # Regular file: check file patterns
     if [[ -z "$col" ]]; then
-      for key val in "${(@kv)ZSH_HIGHLIGHT_FILE_PATTERNS}"; do
+      for key val in "${(@)ZSH_HIGHLIGHT_FILE_PATTERNS}"; do
         if [[ $basename = $~key ]]; then
           col=$val
           break
