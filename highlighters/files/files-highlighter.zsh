@@ -112,6 +112,7 @@ zsh_highlight_files_extract_ls_colors()
     case $key in
       di|fi|ln|pi|so|bd|cd|or|ex|su|sg|ow|tw)
         ZSH_HIGHLIGHT_FILE_TYPES[$key]=$val ;;
+      lc|rc|ec|rs|no|mi|do|st|ca|mh|cl) ;; # Recognized by LS_COLORS but not by us
       *)  ZSH_HIGHLIGHT_FILE_PATTERNS+=("$key" "$val") ;;
     esac
   done
