@@ -327,7 +327,15 @@ _zsh_highlight_highlighter_main_paint()
     # suckless-tools v44
     # Argumentless flags that can't be followed by a command: -v
     'tabbed' gnprtTuU:cdfhs
+
+    # moreutils 0.62-1
+    'chronic' :ev
+    'ifne' :n
+
   )
+  # Commands that would need to skip one positional argument:
+  #    flock
+  #    ssh
 
   if [[ $zsyh_user_options[ignorebraces] == on || ${zsyh_user_options[ignoreclosebraces]:-off} == on ]]; then
     local right_brace_is_recognised_everywhere=false
