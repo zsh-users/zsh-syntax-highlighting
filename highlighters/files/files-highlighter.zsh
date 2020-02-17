@@ -219,10 +219,19 @@ _zsh_highlight_highlighter_files_paint()
     fi
 
     if [[ -n "$col" ]]; then
-      if (( end > start + $#basename && ${+ZSH_HIGHLIGHT_FILE_TYPES[lp]} )); then
-        region_highlight+=("$start $(( end - $#basename )) $ZSH_HIGHLIGHT_FILE_TYPES[lp]")
+      if (( end > start + $#basename )); then
+        # There is a path component
+        if [[ $ZSH_HIGHLIGHT_FILE_TYPES[lp] = "same" ]]; then
+          region_highlight+=("$start $end $col")
+        else
+          if (( ${+ZSH_HIGHLIGHT_FILE_TYPES[lp]} )); then
+            region_highlight+=("$start $(( end - $#basename )) $ZSH_HIGHLIGHT_FILE_TYPES[lp]")
+          fi
+          region_highlight+=("$(( end - $#basename )) $end $col")
+        fi
+      else
+        region_highlight+=("$start $end $col")
       fi
-      region_highlight+=("$(( end - $#basename )) $end $col")
     fi
 
     start=$end

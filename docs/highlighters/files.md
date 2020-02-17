@@ -36,7 +36,7 @@ according to that style (following `LS_COLORS`):
 * `sg` - files that have the sgid bit set
 * `ow` - files that are world-writable
 * `tw` - files that are world-writable and sticky
-* `lp` - if set, the path-component of a filename is highlighted using this style
+* `lp` - if set, the path component of a filename is highlighted using this style, unless it is set to `same`, in which case the path component is highlighted the same as the file
 
 If a file would be highlighted `fi`, then it can be highlighted according to the
 filename using `ZSH_HIGHLIGHT_FILE_PATTERNS` instead.  This array has the form
