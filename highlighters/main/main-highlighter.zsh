@@ -628,18 +628,24 @@ _zsh_highlight_main_highlighter_highlight_list()
          (( ${+parameters[(e)${MATCH}]} )) && [[ ${parameters[(e)$MATCH]} != *special* ]]
          then
         # Set $arg.
+        local -a words
+        local testarg
         case ${(tP)MATCH} in
           (*array*|*assoc*)
-            local -a words; words=( ${(P)MATCH} )
-            arg=${words[1]}
+            words=( ${(P)MATCH} )
+            testarg=${words[1]}
             ;;
           (*)
             # scalar, presumably
-            arg=${(P)MATCH}
+            words=( ${(zP)MATCH} )
+            testarg=${words[1]}
             ;;
         esac
-        _zsh_highlight_main__type "$arg" 0
-        res=$REPLY
+        _zsh_highlight_main__type "$testarg" 0
+        if [[ -n $REPLY ]] && [[ $REPLY != none ]]; then
+            res=$REPLY
+            arg=$testarg
+        fi
       fi
     }
 
