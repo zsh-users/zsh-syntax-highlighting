@@ -645,6 +645,9 @@ _zsh_highlight_main_highlighter_highlight_list()
         if [[ -n $REPLY ]] && [[ $REPLY != none ]]; then
             res=$REPLY
             arg=$testarg
+        elif _zsh_highlight_main_highlighter_check_path $testarg; then
+            res=none
+            arg=$testarg
         fi
       fi
     }
