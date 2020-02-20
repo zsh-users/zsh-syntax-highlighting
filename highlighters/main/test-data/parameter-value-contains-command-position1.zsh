@@ -34,5 +34,5 @@ BUFFER=$'$foobar'
 
 expected_region_highlight=(
   # Used to highlight the "ba" as 'command' because the 'ls' showed through; issues #670 and #674
-  '1 7 assign' # $foobar
+  '1 7 unknown-token' # $foobar (not an assignment)
 )

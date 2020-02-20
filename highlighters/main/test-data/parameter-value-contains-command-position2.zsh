@@ -34,5 +34,5 @@ BUFFER=$'$y'
 
 expected_region_highlight=(
   # Used to trigger a "BUG" message on stderr - issues #670 and #674
-  '1 2 assign' # $y
+  '1 2 unknown-token' # $y (not an assignment)
 )

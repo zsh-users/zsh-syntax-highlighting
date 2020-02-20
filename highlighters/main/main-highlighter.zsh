@@ -839,7 +839,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         function)       style=function;;
         command)        style=command;;
         hashed)         style=hashed-command;;
-        none)           if _zsh_highlight_main_highlighter_check_assign; then
+        none)           if (( ! in_param )) && _zsh_highlight_main_highlighter_check_assign; then
                           _zsh_highlight_main_add_region_highlight $start_pos $end_pos assign
                           local i=$(( arg[(i)=] + 1 ))
                           if [[ $arg[i] == '(' ]]; then
