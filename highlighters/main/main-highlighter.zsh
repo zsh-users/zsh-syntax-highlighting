@@ -860,11 +860,14 @@ _zsh_highlight_main_highlighter_highlight_list()
                             fi
                           fi
                           continue
-                        elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
+                        elif (( ! in_param )) &&
+                             [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
                           style=history-expansion
-                        elif [[ $arg[0,1] == $histchars[2,2] ]]; then
+                        elif (( ! in_param )) &&
+                             [[ $arg[0,1] == $histchars[2,2] ]]; then
                           style=history-expansion
-                        elif [[ $arg[1,2] == '((' ]]; then
+                        elif (( ! in_param )) &&
+                             [[ $arg[1,2] == '((' ]]; then
                           # Arithmetic evaluation.
                           #
                           # Note: prior to zsh-5.1.1-52-g4bed2cf (workers/36669), the ${(z)...}
@@ -879,14 +882,17 @@ _zsh_highlight_main_highlighter_highlight_list()
                             _zsh_highlight_main_add_region_highlight $((end_pos - 2)) $end_pos reserved-word
                           fi
                           continue
-                        elif [[ $arg == '()' ]]; then
+                        elif (( ! in_param )) &&
+                             [[ $arg == '()' ]]; then
                           # anonymous function
                           style=reserved-word
-                        elif [[ $arg == $'\x28' ]]; then
+                        elif (( ! in_param )) &&
+                             [[ $arg == $'\x28' ]]; then
                           # subshell
                           style=reserved-word
                           braces_stack='R'"$braces_stack"
-                        elif [[ $arg == $'\x29' ]]; then
+                        elif (( ! in_param )) &&
+                             [[ $arg == $'\x29' ]]; then
                           # end of subshell or command substitution
                           if _zsh_highlight_main__stack_pop 'S'; then
                             REPLY=$start_pos
