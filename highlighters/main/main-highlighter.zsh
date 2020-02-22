@@ -85,6 +85,7 @@ _zsh_highlight_main_add_region_highlight() {
       return
     fi
     param_style=$1
+    return
   fi
 
   # The calculation was relative to $buf but region_highlight is relative to $BUFFER.
