@@ -93,9 +93,13 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=($1)
 
 # In zsh<5.3, 'typeset -p arrayvar' emits two lines, so we use this wrapper instead.
 typeset_p() {
-	for 1 ; do
-		print -r -- "$1=( ${(@q-P)1} )"
-	done
+  for 1 ; do
+    if [[ ${(tP)1} == *array* ]]; then
+      print -r -- "$1=( ${(@q-P)1} )"
+    else
+      print -r -- "$1=${(q-P)1}"
+    fi
+  done
 }
 
 # Escape # as ♯ and newline as ↵ they are illegal in the 'description' part of TAP output
