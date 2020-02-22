@@ -206,7 +206,7 @@ run_test() {
       local ret=$pipestatus[1] stderr=$pipestatus[2]
       if (( ! stderr )); then
         # stdout will become stderr
-	echo "Bail out! On ${(qq)1}: output on stderr"; return 1
+        echo "Bail out! On ${(qq)1}: output on stderr"; return 1
       else
         return $ret
       fi
