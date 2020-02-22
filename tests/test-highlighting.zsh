@@ -122,10 +122,6 @@ run_test_internal() {
   local expected_mismatch
   local -a expected_region_highlight region_highlight
 
-  echo "# ${1:t:r}"
-  [[ -n $PREBUFFER ]] && printf '# %s\n' "$(typeset_p PREBUFFER)"
-  [[ -n $BUFFER ]] && printf '# %s\n' "$(typeset_p BUFFER)"
-
   . "$srcdir"/"$1"
 
   (( $#skip_test )) && { print -r -- "1..0 # SKIP $skip_test"; return; }
@@ -146,7 +142,12 @@ run_test_internal() {
     expected_region_highlight=("${(@n)expected_region_highlight}")
   fi
 
+  # Print the plan line, and some comments for human readers
   echo "1..$(( $#expected_region_highlight + 1))"
+  echo "## ${1:t:r}"
+  [[ -n $PREBUFFER ]] && printf '# %s\n' "$(typeset_p PREBUFFER)"
+  [[ -n $BUFFER ]] && printf '# %s\n' "$(typeset_p BUFFER)"
+
   local i
   for ((i=1; i<=$#expected_region_highlight; i++)); do
     local -a expected_highlight_zone; expected_highlight_zone=( ${(z)expected_region_highlight[i]} )
