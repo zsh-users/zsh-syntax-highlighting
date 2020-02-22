@@ -117,12 +117,15 @@ run_test_internal() {
   local srcdir="$PWD"
   builtin cd -q -- "$tests_tempdir" || { echo >&2 "Bail out! On ${(qq)1}: cd failed: $?"; return 1 }
 
-  echo "# ${1:t:r}"
-
   # Load the data and prepare checking it.
   local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET REPLY skip_test unsorted=0
   local expected_mismatch
   local -a expected_region_highlight region_highlight
+
+  echo "# ${1:t:r}"
+  [[ -n $PREBUFFER ]] && printf '# %s\n' "$(typeset_p PREBUFFER)"
+  [[ -n $BUFFER ]] && printf '# %s\n' "$(typeset_p BUFFER)"
+
   . "$srcdir"/"$1"
 
   (( $#skip_test )) && { print -r -- "1..0 # SKIP $skip_test"; return; }
