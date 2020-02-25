@@ -29,7 +29,7 @@
 # -------------------------------------------------------------------------------------------------
 
 alias '$foo'='echo alias'
-foo=(echo param)
+local foo; foo=(echo param)
 
 BUFFER='$foo'
 
