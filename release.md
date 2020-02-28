@@ -8,7 +8,8 @@
     (easiest to check travis: https://travis-ci.org/zsh-users/zsh-syntax-highlighting/)
 - Update changelog.md
   `tig --abbrev=12  --abbrev-commit 0.4.1..upstream/master`
-- Remove `-dev` suffix from `./.version`;
+- Make sure there are no local commits and that `git status` is clean;
+  Remove `-dev` suffix from `./.version`;
   Commit that using `git commit -m "Tag version $(<.version)." .version`;
   Tag it using `git tag -s -m "Tag version $(<.version)" $(<.version)`;
   Increment `./.version` and restore the `-dev` suffix;
