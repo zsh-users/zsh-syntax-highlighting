@@ -1,3 +1,7 @@
+# Changes in version 0.7.1
+
+- Remove out-of-date information from the 0.7.0 changelog.
+
 # Changes in version 0.7.0
 
 This is a stable bugfix and feature release.  Major new features and changes include:
