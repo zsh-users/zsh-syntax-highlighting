@@ -40,8 +40,6 @@ expected_region_highlight=(
   '26 26 reserved-word' # {
   '28 31 builtin' # echo
   '33 33 default' # *
-  '33 33 globbing "issue #577"' # *
+  '33 33 globbing' # *
   '35 35 reserved-word' # }
 )
-
-expected_mismatch="expected default+globbing, observed default"
