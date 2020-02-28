@@ -7,6 +7,9 @@ The tests harness expects the highlighter directory to contain a `test-data`
 directory with test data files.
 See the [main highlighter](../highlighters/main/test-data) for examples.
 
+Tests should set the following variables:
+
+1.
 Each test should define the string `$BUFFER` that is to be highlighted and the
 array parameter `$expected_region_highlight`.
 The value of that parameter is a list of strings of the form  `"$i $j $style"`.
@@ -16,11 +19,16 @@ that is, `$i` and `$j` specify a range, 1-indexed, inclusive of both endpoints.
 `$style` is a key of `$ZSH_HIGHLIGHT_STYLES`.
 If `$todo` exists, the test point is marked as TODO (the failure of that test
 point will not fail the test), and `$todo` is used as the explanation.
+
+2. 
 If a test sets `$skip_test` to a non-empty string, the test will be skipped
 with the provided string as the reason.
+
+3.
 If a test sets `unsorted=1` the order of highlights in `$expected_region_highlight`
 need not match the order in `$region_highlight`.
 
+4.
 Normally, tests fail if `$expected_region_highlight` and `$region_highlight`
 have different numbers of elements.  Tests may set `$expected_mismatch` to an
 explanation string (like `$todo`) to avoid this and mark the cardinality check
