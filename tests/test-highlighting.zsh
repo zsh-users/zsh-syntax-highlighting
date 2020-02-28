@@ -155,7 +155,8 @@ run_test_internal() {
     local todo=
     (( $+expected_highlight_zone[4] )) && todo="# TODO $expected_highlight_zone[4]"
     if ! (( $+region_highlight[i] )); then
-      print -r -- "not ok $i - unmatched expectation ($exp_start $exp_end $expected_highlight_zone[3])"
+      print -r -- "not ok $i - unmatched expectation ($exp_start $exp_end $expected_highlight_zone[3])" \
+         "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
       continue
     fi
     local -a highlight_zone; highlight_zone=( ${(z)region_highlight[i]} )
