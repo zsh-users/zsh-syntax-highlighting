@@ -32,6 +32,7 @@
 # See issue #667 for the case of eliding all words
 local -a x; x=(sudo "")
 
+sudo(){}
 BUFFER=$'$x -u phy1729 ls'
 
 expected_region_highlight=(
