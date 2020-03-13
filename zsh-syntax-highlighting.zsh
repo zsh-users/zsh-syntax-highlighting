@@ -85,13 +85,15 @@ _zsh_highlight()
 
   # Before we 'emulate -L', save the user's options
   local -A zsyh_user_options
+	# If the zsh/parameter module has been loaded...
   if zmodload -e zsh/parameter; then
-    zsyh_user_options=("${(@kv)options}")
+    zsyh_user_options=("${(kv)options[@]}")
+	# If the zsh/parameter module has not been loaded...
   else
     local canonical_options onoff option raw_options
     raw_options=(${(f)"$(emulate -R zsh; set -o)"})
     canonical_options=(${${${(M)raw_options:#*off}%% *}#no} ${${(M)raw_options:#*on}%% *})
-    for option in $canonical_options; do
+    for option in "${canonical_options[@]}"; do
       [[ -o $option ]]
       # This variable cannot be eliminated c.f. workers/42101.
       onoff=${${=:-off on}[2-$?]}
