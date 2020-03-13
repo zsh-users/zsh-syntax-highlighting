@@ -1,3 +1,14 @@
+# Changes in HEAD
+
+- Redirection operators (e.g., `<` and `>`) are now highlighted by default
+  [#646]
+
+- Propertly terminate `noglob` scope in try/always blocks
+  [#577]
+
+- Don't error out when `KSH_ARRAYS` is set in the calling scope
+  [#622, #689]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
