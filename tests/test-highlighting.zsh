@@ -144,7 +144,7 @@ run_test_internal() {
 
   # Print the plan line, and some comments for human readers
   echo "1..$(( $#expected_region_highlight + 1))"
-  echo "## ${1:t:r}"
+  echo "## ${1:t:r}" # note: tests/edit-failed-tests looks for the "##" emitted by this line
   [[ -n $PREBUFFER ]] && printf '# %s\n' "$(typeset_p PREBUFFER)"
   [[ -n $BUFFER ]] && printf '# %s\n' "$(typeset_p BUFFER)"
 
