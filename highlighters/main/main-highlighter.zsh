@@ -453,6 +453,9 @@ _zsh_highlight_main_highlighter_highlight_list()
   # - :sudo_arg:   The argument to a precommand's leading-dash option,
   #                when given as a separate word; i.e., "foo" in "-u foo" (two
   #                words) but not in "-ufoo" (one word).
+  #    Note:       :sudo_opt: and :sudo_arg: are used for any precommand
+  #                declared in ${precommand_options}, not just for sudo(8).
+  #                The naming is historical.
   # - :regular:    "Not a command word", and command delimiters are permitted.
   #                Mainly used to detect premature termination of commands.
   # - :always:     The word 'always' in the «{ foo } always { bar }» syntax.
