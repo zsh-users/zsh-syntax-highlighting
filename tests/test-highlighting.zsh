@@ -153,7 +153,10 @@ run_test_internal() {
     local -a expected_highlight_zone; expected_highlight_zone=( ${(z)expected_region_highlight[i]} )
     integer exp_start=$expected_highlight_zone[1] exp_end=$expected_highlight_zone[2]
     local todo=
-    (( $+expected_highlight_zone[4] )) && todo="# TODO $expected_highlight_zone[4]"
+    if (( $+expected_highlight_zone[4] )); then
+      todo="# TODO $expected_highlight_zone[4]"
+      : ${expected_mismatch:="cardinality check disabled whilst regular test points are expected to fail"}
+    fi
     if ! (( $+region_highlight[i] )); then
       print -r -- "not ok $i - unmatched expectation ($exp_start $exp_end $expected_highlight_zone[3])" \
          "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
@@ -180,14 +183,17 @@ run_test_internal() {
     unset desc
   done
 
-  if (( $#expected_region_highlight == $#region_highlight )); then
-    print -r -- "ok $i - cardinality check" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
+  if [[ -n $expected_mismatch ]]; then
+    tap_escape $expected_mismatch; expected_mismatch=$REPLY
+    print "ok $i - cardinality check" "# SKIP $expected_mismatch"
+  elif (( $#expected_region_highlight == $#region_highlight )); then
+    print -r -- "ok $i - cardinality check"
   else
     local details
     details+="have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: "
     details+="«$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»"
     tap_escape $details; details=$REPLY
-    print -r -- "not ok $i - $details" "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
+    print -r -- "not ok $i - cardinality check - $details"
   fi
 }
 
