@@ -359,6 +359,7 @@ _zsh_highlight_highlighter_main_paint()
 
   ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR=(
     '|' '||' ';' '&' '&&'
+    $'\n' # ${(z)} returns ';' but we convert it to $'\n'
     '|&'
     '&!' '&|'
     # ### 'case' syntax, but followed by a pattern, not by a command
@@ -535,11 +536,16 @@ _zsh_highlight_main_highlighter_highlight_list()
 
     if (( in_alias == 0 && in_param == 0 )); then
       # Compute the new $start_pos and $end_pos, skipping over whitespace in $buf.
-      [[ "$proc_buf" = (#b)(#s)(([ $'\t']|\\$'\n')#)* ]]
+      [[ "$proc_buf" = (#b)(#s)(([ $'\t']|[\\]$'\n')#)(?|)* ]]
       # The first, outer parenthesis
       integer offset="${#match[1]}"
       (( start_pos = end_pos + offset ))
       (( end_pos = start_pos + $#arg ))
+
+      # The zsh lexer considers ';' and newline to be the same token, so
+      # ${(z)} converts all newlines to semicolons. Convert them back here to
+      # make later processing simplier.
+      [[ $arg == ';' && ${match[3]} == $'\n' ]] && arg=$'\n'
 
       # Compute the new $proc_buf. We advance it
       # (chop off characters from the beginning)
@@ -731,7 +737,7 @@ _zsh_highlight_main_highlighter_highlight_list()
      else
        style=unknown-token
      fi
-     if [[ $arg == ';' ]] && $in_array_assignment; then
+     if [[ $arg == (';'|$'\n') ]] && $in_array_assignment; then
        # literal newline inside an array assignment
        next_word=':regular:'
      else
