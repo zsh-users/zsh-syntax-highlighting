@@ -34,6 +34,6 @@ BUFFER=$':;\n:'
 expected_region_highlight=(
   '1 1 builtin' # :
   '2 2 commandseparator' # ;
-  '3 3 commandseparator "issue #616"' # \n
+  '3 3 commandseparator' # \n
   '4 4 builtin' # :
 )

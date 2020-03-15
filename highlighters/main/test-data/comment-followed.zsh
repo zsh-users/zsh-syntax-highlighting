@@ -34,6 +34,6 @@ BUFFER=$'# foo\ntrue'
 
 expected_region_highlight=(
   '1 5 comment' # # foo
-  '6 6 commandseparator "issue #501"' # \n
+  '6 6 commandseparator' # \n
   '7 10 builtin' # true
 )

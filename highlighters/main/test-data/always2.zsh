@@ -32,7 +32,7 @@ BUFFER=$'{\nls\n} always { pwd }'
 
 expected_region_highlight=(
   '1 1 reserved-word' # {
-  '2 2 unknown-token' # \n
+  '2 2 commandseparator' # \n
   '3 4 command' # ls
   '5 5 commandseparator' # \n
   '6 6 reserved-word' # }

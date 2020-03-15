@@ -747,10 +747,12 @@ _zsh_highlight_main_highlighter_highlight_list()
          (*) style=unknown-token;;
        esac
      elif [[ $this_word == *':regular:'* ]]; then
-       # This highlights empty commands (semicolon follows nothing) as an error.
-       # Zsh accepts them, though.
+       style=commandseparator
+     elif [[ $this_word == *':start:'* ]] && [[ $arg == $'\n' ]]; then
        style=commandseparator
      else
+       # This highlights empty commands (semicolon follows nothing) as an error.
+       # Zsh accepts them, though.
        style=unknown-token
      fi
 
