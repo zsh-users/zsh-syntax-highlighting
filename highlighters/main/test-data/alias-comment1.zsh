@@ -27,7 +27,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-# see alias-comment2.zsh
+# see alias-comment2.zsh and comment-followed.zsh
 setopt interactivecomments
 alias x=$'# foo\npwd'
 BUFFER='x'

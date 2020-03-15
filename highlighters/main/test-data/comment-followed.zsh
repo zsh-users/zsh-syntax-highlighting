@@ -28,6 +28,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+# see alias-comment1.zsh
 setopt interactivecomments
 BUFFER=$'# foo\ntrue'
 
