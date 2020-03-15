@@ -854,9 +854,17 @@ _zsh_highlight_main_highlighter_highlight_list()
         style=commandseparator
       elif [[ $this_word == *':start:'* ]] && [[ $arg == $'\n' ]]; then
         style=commandseparator
+      elif [[ $this_word == *':start:'* ]] && [[ $arg == ';' ]] && (( in_alias )); then
+        style=commandseparator 
       else
-        # This highlights empty commands (semicolon follows nothing) as an error.
-        # Zsh accepts them, though.
+        # Empty commands (semicolon follows nothing) are valid syntax.
+        # However, in interactive use they are likely to be erroneous;
+        # therefore, we highlight them as errors.
+        #
+        # Alias definitions are exempted from this check to allow multiline aliases
+        # with explicit (redundant) semicolons: «alias foo=$'bar;\nbaz'» (issue #677).
+        #
+        # See also #691 about possibly changing the style used here. 
         style=unknown-token
       fi
 

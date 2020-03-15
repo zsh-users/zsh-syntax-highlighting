@@ -85,6 +85,10 @@
   `_zsh_highlight_main__precmd_hook:1: array parameter _zsh_highlight_main__command_type_cache set in enclosing scope in function _zsh_highlight_main__precmd_hook`
   [#727, #731, #732, #733]
 
+- Fix highlighting of alias whose definitions use a simple command terminator
+  (such as `;`, `|`, `&&`) before a newline
+  [#677; had regressed in 0.7.0]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
@@ -159,6 +163,7 @@ Known issues include:
   before a newline will incorrectly be highlighted as an error.  See issue #677
   for examples and workarounds.
   [#677]
+  [UPDATE: Fixed in 0.8.0]
 
 
 # Changes in version 0.6.0
