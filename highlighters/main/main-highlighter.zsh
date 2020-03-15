@@ -727,6 +727,8 @@ _zsh_highlight_main_highlighter_highlight_list()
 
    # The Great Fork: is this a command word?  Is this a non-command word?
    if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+
+     # First, determine the style of the command separator itself.
      if _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
        # Missing closing square bracket(s)
        style=unknown-token
@@ -737,6 +739,8 @@ _zsh_highlight_main_highlighter_highlight_list()
      else
        style=unknown-token
      fi
+
+     # Second, determine the style of next_word.
      if [[ $arg == $'\n' ]] && $in_array_assignment; then
        # literal newline inside an array assignment
        next_word=':regular:'
@@ -755,6 +759,7 @@ _zsh_highlight_main_highlighter_highlight_list()
          next_word+=':start_of_pipeline:'
        fi
      fi
+
    elif ! (( in_redirection)) && [[ $this_word == *':always:'* && $arg == 'always' ]]; then
      # try-always construct
      style=reserved-word # de facto a reserved word, although not de jure
