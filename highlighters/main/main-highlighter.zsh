@@ -732,6 +732,17 @@ _zsh_highlight_main_highlighter_highlight_list()
      if _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
        # Missing closing square bracket(s)
        style=unknown-token
+     elif $in_array_assignment; then
+       case $arg in
+         # Literal newlines are just fine.
+         ($'\n') style=commandseparator;;
+         # Semicolons are parsed the same way as literal newlines.  Nevertheless,
+         # highlight them as errors since they're probably unintended.  Compare
+         # issue #691.
+         (';') style=unknown-token;;
+         # Other command separators aren't allowed.
+         (*) style=unknown-token;;
+       esac
      elif [[ $this_word == *':regular:'* ]]; then
        # This highlights empty commands (semicolon follows nothing) as an error.
        # Zsh accepts them, though.
@@ -746,12 +757,7 @@ _zsh_highlight_main_highlighter_highlight_list()
        next_word=':regular:'
      elif [[ $arg == ';' ]] && $in_array_assignment; then
        # literal semicolon inside an array assignment
-       #
-       # This is parsed the same way as a literal newline.  Nevertheless,
-       # highlight it as an error since it's probably unintended.  Compare
-       # issue #691.
        next_word=':regular:'
-       style=unknown-token
      else
        next_word=':start:'
        highlight_glob=true
