@@ -28,12 +28,16 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+function b() {} # beware of ALIAS_FUNC_DEF
 alias a=b b=c c=b
 
 BUFFER='a foo; :'
 
 expected_region_highlight=(
-  '1 1 unknown-token' # a (invalid alias loop)
+  # An alias is ineligible for expansion whilst it's being expanded.
+  # Therefore, the "b" in the expansion of the alias "c" is not considered
+  # as an alias.
+  '1 1 alias' # a
   '3 5 default' # foo
   '6 6 commandseparator' # ;
   '8 8 builtin' # :
