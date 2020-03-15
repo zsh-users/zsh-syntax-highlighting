@@ -17,6 +17,9 @@
   highlighted as errors.
   [#651, 81267ca3130c]
 
+- Support parameter elision in command position (e.g., `$foo ls` where `$foo` is unset or empty)
+  [#667]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
