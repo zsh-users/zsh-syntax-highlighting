@@ -737,9 +737,17 @@ _zsh_highlight_main_highlighter_highlight_list()
      else
        style=unknown-token
      fi
-     if [[ $arg == (';'|$'\n') ]] && $in_array_assignment; then
+     if [[ $arg == $'\n' ]] && $in_array_assignment; then
        # literal newline inside an array assignment
        next_word=':regular:'
+     elif [[ $arg == ';' ]] && $in_array_assignment; then
+       # literal semicolon inside an array assignment
+       #
+       # This is parsed the same way as a literal newline.  Nevertheless,
+       # highlight it as an error since it's probably unintended.  Compare
+       # issue #691.
+       next_word=':regular:'
+       style=unknown-token
      else
        next_word=':start:'
        highlight_glob=true
