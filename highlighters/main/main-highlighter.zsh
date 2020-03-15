@@ -665,7 +665,7 @@ _zsh_highlight_main_highlighter_highlight_list()
          [[ ${parameter_name} =~ ^${~parameter_name_pattern}$ ]] &&
          (( ${+parameters[(e)${MATCH}]} )) && [[ ${parameters[(e)$MATCH]} != *special* ]]
          then
-        # Set $arg.
+        # Set $arg and update $res.
         case ${(tP)MATCH} in
           (*array*|*assoc*)
             words=( ${(P)MATCH} )
