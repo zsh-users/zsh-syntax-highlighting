@@ -9,6 +9,14 @@
 - Don't error out when `KSH_ARRAYS` is set in the calling scope
   [#622, #689]
 
+- Literal semicolons in array assignments (`foo=( bar ; baz )`) are now
+  highlighted as errors.
+  [3ca93f864fb6]
+
+- Command separators in array assignments (`foo=( bar | baz )`) are now
+  highlighted as errors.
+  [#651, 81267ca3130c]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
