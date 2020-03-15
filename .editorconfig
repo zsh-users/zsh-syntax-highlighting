@@ -7,3 +7,8 @@ end_of_line = lf
 tab_width   = 2
 indent_size = 2
 indent_style = space
+
+[Makefile]
+tab_width   = 8
+indent_style = tab
+
