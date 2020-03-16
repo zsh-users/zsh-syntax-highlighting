@@ -1123,6 +1123,12 @@ _zsh_highlight_main_highlighter_check_path()
   local expanded_path="$REPLY" tmp_path
   integer in_command_position=$2
 
+  if [[ $zsyh_user_options[autocd] == on ]]; then
+    integer autocd=1
+  else
+    integer autocd=0
+  fi
+
   if (( in_command_position )); then
     REPLY=arg0
   else
@@ -1150,7 +1156,7 @@ _zsh_highlight_main_highlighter_check_path()
   done
 
   if (( in_command_position )); then
-    if [[ -x $expanded_path ]] && [[ $zsyh_user_options[autocd] == on || ! -d $expanded_path ]]; then
+    if [[ -x $expanded_path ]] && { (( autocd )) || [[ ! -d $expanded_path ]] }; then
       return 0
     fi
   else
@@ -1160,8 +1166,7 @@ _zsh_highlight_main_highlighter_check_path()
   fi
 
   # Search the path in CDPATH
-  if [[ $expanded_path != /* ]] &&
-     { (( ! in_command_position )) || [[ $zsyh_user_options[autocd] == on ]] }; then
+  if [[ $expanded_path != /* ]] && (( autocd || ! in_command_position )); then
     # TODO: When we've dropped support for pre-5.0.6 zsh, use the *(Y1) glob qualifier here.
     local cdpath_dir
     for cdpath_dir in $cdpath ; do
