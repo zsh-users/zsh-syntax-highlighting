@@ -790,8 +790,11 @@ _zsh_highlight_main_highlighter_highlight_list()
    elif ! (( in_redirection)) && [[ $this_word == *':start:'* ]]; then # $arg is the command word
      if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
       style=precommand
-      flags_with_argument=${precommand_options[$arg]%:*}
-      flags_sans_argument=${precommand_options[$arg]#*:}
+      () {
+        set -- "${(@s.:.)precommand_options[$arg]}"
+        flags_with_argument=$1
+        flags_sans_argument=$2
+      }
       next_word=${next_word//:regular:/}
       next_word+=':sudo_opt:'
       next_word+=':start:'
