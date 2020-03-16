@@ -1196,6 +1196,7 @@ _zsh_highlight_main_highlighter_check_path()
 
   # If this word ends the buffer, check if it's the prefix of a valid path.
   if (( has_end && (len == end_pos) )) &&
+     (( ! in_alias )) &&
      [[ $WIDGET != zle-line-finish ]]; then
     # TODO: When we've dropped support for pre-5.0.6 zsh, use the *(Y1) glob qualifier here.
     local -a tmp
