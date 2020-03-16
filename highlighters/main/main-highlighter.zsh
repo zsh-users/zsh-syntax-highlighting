@@ -306,9 +306,13 @@ _zsh_highlight_highlighter_main_paint()
   # $flags_sans_argument is a set of letters, corresponding to the option letters
   # that wouldn't be followed by a colon in a getopts specification.
   local flags_sans_argument
-  # $precommand_options maps precommand name to values of $flags_with_argument and
-  # $flags_sans_argument for that precommand, joined by a colon.  (The value is NOT
-  # a getopt(3) spec, although it resembles one.)
+  # $flags_solo is a set of letters, corresponding to option letters that, if
+  # present, mean the precommand will now be acting as a precommand, i.e., will
+  # not be followed by a :start: word.
+  local flags_solo
+  # $precommand_options maps precommand name to values of $flags_with_argument,
+  # $flags_sans_argument, and flags_solo for that precommand, joined by a
+  # colon.  (The value is NOT a getopt(3) spec, although it resembles one.)
   #
   # Currently, setting $flags_sans_argument is only important for commands that
   # have a non-empty $flags_with_argument; see test-data/precommand4.zsh.
@@ -726,6 +730,17 @@ _zsh_highlight_main_highlighter_highlight_list()
           this_word=':sudo_opt:'
           next_word+=':start:'
           next_word+=':sudo_opt:'
+        elif [[ -n $flags_solo ]] && 
+             {
+               # Trenary
+               if [[ -n $flags_sans_argument ]]
+               then [[ $arg == '-'[$flags_sans_argument]#[$flags_solo]* ]]
+               else [[ $arg == '-'[$flags_solo]* ]]
+               fi
+             } then
+          # Solo flags
+          this_word=':sudo_opt:'
+          next_word=':regular:' # no :start:, nor :sudo_opt: since we don't know whether the solo flag takes an argument or not
         elif [[ $arg == '-'* ]]; then
           # Unknown flag.  We don't know whether it takes an argument or not,
           # so modify $next_word as we do for flags that require no argument.
@@ -804,6 +819,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         set -- "${(@s.:.)precommand_options[$arg]}"
         flags_with_argument=$1
         flags_sans_argument=$2
+        flags_solo=$3
       }
       next_word=${next_word//:regular:/}
       next_word+=':sudo_opt:'
