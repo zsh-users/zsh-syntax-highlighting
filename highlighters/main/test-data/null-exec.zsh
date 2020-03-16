@@ -34,5 +34,5 @@ expected_region_highlight=(
   '1 4 precommand' # exec
   '6 6 redirection' # >
   '7 15 path' # /dev/null
-  '16 16 commandseparator "issue #676"' # ;
+  '16 16 commandseparator' # ;
 )

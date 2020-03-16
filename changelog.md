@@ -26,6 +26,9 @@
 - Don't look up absolute directory names in $cdpath
   [2cc2583f8f12, part of #669]
 
+- Fix "exec 2>&1;" being highlighted as an error.
+  [#676]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
