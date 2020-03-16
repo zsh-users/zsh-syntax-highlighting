@@ -1137,7 +1137,7 @@ _zsh_highlight_main_highlighter_check_path()
 _zsh_highlight_main_highlighter_highlight_argument()
 {
   local base_style=default i=$1 option_eligible=${2:-1} path_eligible=1 ret start style
-  local -a highlights
+  local -a globs highlights
 
   local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
@@ -1247,6 +1247,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
           highlights+=($(( start_pos + i - 1 )) $(( start_pos + i + $#MATCH - 1)) globbing)
           (( i += $#MATCH - 1 ))
           path_eligible=0
+          globs+=($#highlights)
         else
           continue
         fi
@@ -1258,6 +1259,20 @@ _zsh_highlight_main_highlighter_highlight_argument()
     base_style=$REPLY
     _zsh_highlight_main_highlighter_highlight_path_separators $base_style
     highlights+=($reply)
+  elif (( $#globs )); then
+    local glob
+    local -a files; files=($~arg(NY1))
+    if ! [[ -e $files[1] ]]; then
+      if [[ $zsyh_user_options[nomatch] == on ]]; then
+        for glob in $globs; do
+          highlights[glob]=unknown-token
+        done
+      else
+        for glob in $globs; do
+          unset "highlights[$glob - 2]" "highlights[glob - 1]" "highlights[glob]"
+        done
+      fi
+    fi
   fi
 
   highlights=($(( start_pos + $1 - 1 )) $end_pos $base_style $highlights)
