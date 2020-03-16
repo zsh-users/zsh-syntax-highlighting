@@ -28,7 +28,12 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-unhash sudo
+# Simulate sudo not being installed.
+#
+# The 'hash' step is because, if sudo _really_ isn't installed, 'unhash sudo'
+# would error out and break the test.
+hash sudo=/usr/bin/env && unhash sudo
+
 local PATH
 
 BUFFER=$'sudo ls'
