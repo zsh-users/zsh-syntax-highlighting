@@ -23,6 +23,9 @@
 - Don't consider the filename in «sudo -e /path/to/file» to be a command position
   [#678]
 
+- Don't look up absolute directory names in $cdpath
+  [2cc2583f8f12, part of #669]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
