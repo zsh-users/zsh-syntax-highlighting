@@ -180,9 +180,9 @@ _zsh_highlight_main__type() {
     if (( $+aliases[(e)$1] )); then
       may_cache=0
     fi
-    if (( ${+galiases[(e)$1]} )) && (( aliases_allowed )); then
+    if (( aliases_allowed )) && (( ${+galiases[(e)$1]} )); then
       REPLY='global alias'
-    elif (( $+aliases[(e)$1] )) && (( aliases_allowed )); then
+    elif (( aliases_allowed )) && (( $+aliases[(e)$1] )) &&; then
       REPLY=alias
     elif [[ $1 == *.* && -n ${1%.*} ]] && (( $+saliases[(e)${1##*.}] )); then
       REPLY='suffix alias'
