@@ -29,6 +29,9 @@
 - Fix `exec 2>&1;` being highlighted as an error.
   [#676]
 
+- Fix `: $(<*)` being highlighted as globbing.
+  [#582]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.

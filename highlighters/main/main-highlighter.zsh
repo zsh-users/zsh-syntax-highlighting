@@ -498,6 +498,13 @@ _zsh_highlight_main_highlighter_highlight_list()
   else
     args=(${(z)buf})
   fi
+
+  # Special case: $(<*) isn't globbing.
+  if [[ $braces_stack == 'S' ]] && (( $+args[3] && ! $+args[4] )) && [[ $args[3] == $'\x29' ]] &&
+     [[ $args[1] == *'<'* ]] && _zsh_highlight_main__is_redirection $args[1]; then
+    highlight_glob=false
+  fi
+
   while (( $#args )); do
     arg=$args[1]
     shift args
