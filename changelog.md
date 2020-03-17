@@ -57,6 +57,9 @@
 - Highlight global aliases
   [#700]
 
+- Fix highlighting of `\local`, `\typeset`, etc (escaped)
+  [#701]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
