@@ -1122,6 +1122,11 @@ _zsh_highlight_main_highlighter_check_path()
 
   REPLY=path
 
+  if [[ ${1[1]} == '=' && $1 == ??* && ${1[2]} != $'\x28' && $zsyh_user_options[equals] == 'on' && $expanded_path[1] != '/' ]]; then
+    REPLY=unknown-token # will error out if executed
+    return 0
+  fi
+
   [[ -z $expanded_path ]] && return 1
 
   # Check if this is a blacklisted path
