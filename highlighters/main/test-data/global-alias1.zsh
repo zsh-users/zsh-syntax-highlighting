@@ -33,6 +33,6 @@ alias -g foo=bar
 BUFFER=$'foo foo'
 
 expected_region_highlight=(
-  '1 3 arg0_global' # foo
-  '5 7 default' # foo
+  '1 3 global-alias' # foo
+  '5 7 global-alias' # foo
 )

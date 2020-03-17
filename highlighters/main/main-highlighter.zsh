@@ -33,6 +33,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[unknown-token]:=fg=red,bold}
 : ${ZSH_HIGHLIGHT_STYLES[reserved-word]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[suffix-alias]:=fg=green,underline}
+: ${ZSH_HIGHLIGHT_STYLES[global-alias]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
@@ -106,6 +107,7 @@ _zsh_highlight_main_calculate_fallback() {
   local -A fallback_of; fallback_of=(
       alias arg0
       suffix-alias arg0
+      global-alias dollar-double-quoted-argument
       builtin arg0
       function arg0
       command arg0
@@ -178,7 +180,9 @@ _zsh_highlight_main__type() {
     if (( $+aliases[(e)$1] )); then
       may_cache=0
     fi
-    if (( $+aliases[(e)$1] )) && (( aliases_allowed )); then
+    if false && (( ${+galiases[(e)$1]} )); then
+      REPLY='global alias'
+    elif (( $+aliases[(e)$1] )) && (( aliases_allowed )); then
       REPLY=alias
     elif [[ $1 == *.* && -n ${1%.*} ]] && (( $+saliases[(e)${1##*.}] )); then
       REPLY='suffix alias'
@@ -930,6 +934,9 @@ _zsh_highlight_main_highlighter_highlight_list()
           ('suffix alias')
                         style=suffix-alias
                         ;;
+          ('global alias')
+                        style=global-alias
+                        ;;
           (alias)       :;;
           (builtin)     style=builtin
                         [[ $arg == $'\x5b' ]] && braces_stack='Q'"$braces_stack"
@@ -1014,6 +1021,8 @@ _zsh_highlight_main_highlighter_highlight_list()
       if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} ]]; then
         next_word=':start::start_of_pipeline:'
       fi
+    elif _zsh_highlight_main__type "$arg"; [[ $REPLY == 'global alias' ]]; then # $arg is a global alias that isn't in command position
+      style=global-alias
     else # $arg is a non-command word
       case $arg in
         ($'\x29')

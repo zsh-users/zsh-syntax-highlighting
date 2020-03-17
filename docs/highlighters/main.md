@@ -20,6 +20,7 @@ This highlighter defines the following styles:
 * `reserved-word` - shell reserved words (`if`, `for`)
 * `alias` - aliases
 * `suffix-alias` - suffix aliases (requires zsh 5.1.1 or newer)
+* `global-alias` - global aliases
 * `builtin` - shell builtin commands (`shift`, `pwd`, `zstyle`)
 * `function` - function names
 * `command` - command names
