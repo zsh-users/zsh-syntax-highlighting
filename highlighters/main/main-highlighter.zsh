@@ -1243,7 +1243,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
           # multiplications from being highlighted as globbing (issue #607,
           # test-data/arith1.zsh)
         fi
-        while [[ $arg[i+1] == [\^=~#+] ]]; do
+        while [[ $arg[i+1] == [=~#+'^'] ]]; do
           (( i += 1 ))
         done
         if [[ $arg[i+1] == [*@#?$!-] ]]; then
