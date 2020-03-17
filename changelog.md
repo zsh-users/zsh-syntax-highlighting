@@ -35,6 +35,9 @@
 - Fix `cat < *` being highlighting as globbing when the `MULTIOS` option is unset.
   [#583]
 
+- Fix `echo >&2` highlighting the `2` as a filename if a file by that name happened to exist
+  [#694]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.

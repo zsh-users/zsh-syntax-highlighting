@@ -59,6 +59,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[redirection]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[comment]:=fg=black,bold}
 : ${ZSH_HIGHLIGHT_STYLES[named-fd]:=none}
+: ${ZSH_HIGHLIGHT_STYLES[numeric-fd]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[arg0]:=fg=green}
 
 # Whether the highlighter should be called or not.
@@ -111,6 +112,10 @@ _zsh_highlight_main_calculate_fallback() {
       precommand arg0
       hashed-command arg0
       arg0_\* arg0
+
+      # TODO: Maybe these? —
+      #   named-fd file-descriptor
+      #   numeric-fd file-descriptor
 
       path_prefix path
       # The path separator fallback won't ever be used, due to the optimisation
@@ -1271,10 +1276,14 @@ _zsh_highlight_main_highlighter_highlight_argument()
     esac
   done
 
-  if (( path_eligible )) && _zsh_highlight_main_highlighter_check_path $arg[$1,-1]; then
-    base_style=$REPLY
-    _zsh_highlight_main_highlighter_highlight_path_separators $base_style
-    highlights+=($reply)
+  if (( path_eligible )); then
+    if (( in_redirection )) && [[ $last_arg == *['<>']['&'] && $arg[$1,-1] == <0-> ]]; then
+      base_style=numeric-fd
+    elif _zsh_highlight_main_highlighter_check_path $arg[$1,-1]; then
+      base_style=$REPLY
+      _zsh_highlight_main_highlighter_highlight_path_separators $base_style
+      highlights+=($reply)
+    fi
   fi
 
   highlights=($(( start_pos + $1 - 1 )) $end_pos $base_style $highlights)

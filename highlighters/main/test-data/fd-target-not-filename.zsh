@@ -36,5 +36,5 @@ expected_region_highlight=(
   '1 4 builtin' # echo
   '6 8 default' # foo
   '9 10 redirection' # >&
-  '11 11 file-descriptor "issue #694"' # 2 (not path)
+  '11 11 numeric-fd' # 2 (not path)
 )

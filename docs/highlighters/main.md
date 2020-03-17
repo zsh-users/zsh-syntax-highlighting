@@ -59,7 +59,8 @@ This highlighter defines the following styles:
 * `redirection` - redirection operators (`<`, `>`, etc)
 * `comment` - comments, when `setopt INTERACTIVE_COMMENTS` is in effect (`echo # foo`)
 * `comment` - elided parameters in command position (`$x ls` when `$x` is unset or empty)
-* `named-fd` - named file descriptor (`echo foo {fd}>&2`)
+* `named-fd` - named file descriptor (the `fd` in `echo foo {fd}>&2`)
+* `numeric-fd` - numeric file descriptor (the `2` in `echo foo {fd}>&2`)
 * `arg0` - a command word other than one of those enumerated above (other than a command, precommand, alias, function, or shell builtin command).
 * `default` - everything else
 
