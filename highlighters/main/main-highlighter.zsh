@@ -153,9 +153,12 @@ _zsh_highlight_main_calculate_fallback() {
 #
 # If $2 is 0, do not consider aliases.
 #
+# If $3 is 0, do not consider reserved words.
+#
 # The result will be stored in REPLY.
 _zsh_highlight_main__type() {
   integer -r aliases_allowed=${2-1}
+  integer -r resword_allowed=${3-1}
   # We won't cache replies of anything that exists as an alias at all, to
   # ensure the cached value is correct regardless of $aliases_allowed.
   #
@@ -186,7 +189,7 @@ _zsh_highlight_main__type() {
       REPLY=alias
     elif [[ $1 == *.* && -n ${1%.*} ]] && (( $+saliases[(e)${1##*.}] )); then
       REPLY='suffix alias'
-    elif (( $reswords[(Ie)$1] )); then
+    elif (( resword_allowed )) && (( $reswords[(Ie)$1] )); then
       REPLY=reserved
     elif (( $+functions[(e)$1] )); then
       REPLY=function
@@ -616,7 +619,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     if [[ $this_word == *':start:'* ]] && ! (( in_redirection )); then
       # Expand aliases.
       # An alias is ineligible for expansion while it's being expanded (see #652/#653).
-      _zsh_highlight_main__type "$arg" "$(( ! ${+seen_alias[$arg]} ))"
+      _zsh_highlight_main__type "$arg" "$(( ! ${+seen_alias[$arg]} ))" 1
       local res="$REPLY"
       if [[ $res == "alias" ]]; then
         # Mark insane aliases as unknown-token (cf. #263).
@@ -648,7 +651,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         continue
       else
         _zsh_highlight_main_highlighter_expand_path $arg
-        _zsh_highlight_main__type "$REPLY" 0
+        _zsh_highlight_main__type "$REPLY" 0 0
         res="$REPLY"
       fi
     fi

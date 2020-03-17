@@ -31,5 +31,7 @@
 BUFFER=$'\\local a=( * )'
 
 expected_region_highlight=(
-  '1 6 builtin "issue #701"' # \\local
+  '1 6 builtin' # \\local
+  '8 14 default' # a=( * )
+  '12 12 globbing' # *
 )
