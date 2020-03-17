@@ -762,75 +762,75 @@ _zsh_highlight_main_highlighter_highlight_list()
         next_word+=':sudo_opt:'
         next_word+=':start:'
       fi
-   fi
+    fi
 
-   # The Great Fork: is this a command word?  Is this a non-command word?
-   if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+    # The Great Fork: is this a command word?  Is this a non-command word?
+    if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
 
-     # First, determine the style of the command separator itself.
-     if _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
-       # Missing closing square bracket(s)
-       style=unknown-token
-     elif $in_array_assignment; then
-       case $arg in
-         # Literal newlines are just fine.
-         ($'\n') style=commandseparator;;
-         # Semicolons are parsed the same way as literal newlines.  Nevertheless,
-         # highlight them as errors since they're probably unintended.  Compare
-         # issue #691.
-         (';') style=unknown-token;;
-         # Other command separators aren't allowed.
-         (*) style=unknown-token;;
-       esac
-     elif [[ $this_word == *':regular:'* ]]; then
-       style=commandseparator
-     elif [[ $this_word == *':start:'* ]] && [[ $arg == $'\n' ]]; then
-       style=commandseparator
-     else
-       # This highlights empty commands (semicolon follows nothing) as an error.
-       # Zsh accepts them, though.
-       style=unknown-token
-     fi
-
-     # Second, determine the style of next_word.
-     if [[ $arg == $'\n' ]] && $in_array_assignment; then
-       # literal newline inside an array assignment
-       next_word=':regular:'
-     elif [[ $arg == ';' ]] && $in_array_assignment; then
-       # literal semicolon inside an array assignment
-       next_word=':regular:'
-     else
-       next_word=':start:'
-       highlight_glob=true
-       if [[ $arg != '|' && $arg != '|&' ]]; then
-         next_word+=':start_of_pipeline:'
-       fi
-     fi
-
-   elif ! (( in_redirection)) && [[ $this_word == *':always:'* && $arg == 'always' ]]; then
-     # try-always construct
-     style=reserved-word # de facto a reserved word, although not de jure
-     highlight_glob=true
-     next_word=':start::start_of_pipeline:' # only left brace is allowed, apparently
-   elif ! (( in_redirection)) && [[ $this_word == *':start:'* ]]; then # $arg is the command word
-     if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
-      style=precommand
-      () {
-        set -- "${(@s.:.)precommand_options[$arg]}"
-        flags_with_argument=$1
-        flags_sans_argument=$2
-        flags_solo=$3
-      }
-      next_word=${next_word//:regular:/}
-      next_word+=':sudo_opt:'
-      next_word+=':start:'
-      if [[ $arg == 'exec' ]]; then
-        # To allow "exec 2>&1;" where there's no command word
-        next_word+=':regular:'
+      # First, determine the style of the command separator itself.
+      if _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
+        # Missing closing square bracket(s)
+        style=unknown-token
+      elif $in_array_assignment; then
+        case $arg in
+          # Literal newlines are just fine.
+          ($'\n') style=commandseparator;;
+          # Semicolons are parsed the same way as literal newlines.  Nevertheless,
+          # highlight them as errors since they're probably unintended.  Compare
+          # issue #691.
+          (';') style=unknown-token;;
+          # Other command separators aren't allowed.
+          (*) style=unknown-token;;
+        esac
+      elif [[ $this_word == *':regular:'* ]]; then
+        style=commandseparator
+      elif [[ $this_word == *':start:'* ]] && [[ $arg == $'\n' ]]; then
+        style=commandseparator
+      else
+        # This highlights empty commands (semicolon follows nothing) as an error.
+        # Zsh accepts them, though.
+        style=unknown-token
       fi
-     else
-      case $res in
-        reserved)       # reserved word
+
+      # Second, determine the style of next_word.
+      if [[ $arg == $'\n' ]] && $in_array_assignment; then
+        # literal newline inside an array assignment
+        next_word=':regular:'
+      elif [[ $arg == ';' ]] && $in_array_assignment; then
+        # literal semicolon inside an array assignment
+        next_word=':regular:'
+      else
+        next_word=':start:'
+        highlight_glob=true
+        if [[ $arg != '|' && $arg != '|&' ]]; then
+          next_word+=':start_of_pipeline:'
+        fi
+      fi
+
+    elif ! (( in_redirection)) && [[ $this_word == *':always:'* && $arg == 'always' ]]; then
+      # try-always construct
+      style=reserved-word # de facto a reserved word, although not de jure
+      highlight_glob=true
+      next_word=':start::start_of_pipeline:' # only left brace is allowed, apparently
+    elif ! (( in_redirection)) && [[ $this_word == *':start:'* ]]; then # $arg is the command word
+      if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
+        style=precommand
+        () {
+          set -- "${(@s.:.)precommand_options[$arg]}"
+          flags_with_argument=$1
+          flags_sans_argument=$2
+          flags_solo=$3
+        }
+        next_word=${next_word//:regular:/}
+        next_word+=':sudo_opt:'
+        next_word+=':start:'
+        if [[ $arg == 'exec' ]]; then
+          # To allow "exec 2>&1;" where there's no command word
+          next_word+=':regular:'
+        fi
+      else
+        case $res in
+          (reserved)    # reserved word
                         style=reserved-word
                         # Match braces and handle special cases.
                         case $arg in
@@ -907,15 +907,17 @@ _zsh_highlight_main_highlighter_highlight_list()
                             ;;
                         esac
                         ;;
-        'suffix alias') style=suffix-alias;;
-        alias)          :;;
-        builtin)        style=builtin
+          ('suffix alias')
+                        style=suffix-alias
+                        ;;
+          (alias)       :;;
+          (builtin)     style=builtin
                         [[ $arg == $'\x5b' ]] && braces_stack='Q'"$braces_stack"
                         ;;
-        function)       style=function;;
-        command)        style=command;;
-        hashed)         style=hashed-command;;
-        none)           if (( ! in_param )) && _zsh_highlight_main_highlighter_check_assign; then
+          (function)    style=function;;
+          (command)     style=command;;
+          (hashed)      style=hashed-command;;
+          (none)        if (( ! in_param )) && _zsh_highlight_main_highlighter_check_assign; then
                           _zsh_highlight_main_add_region_highlight $start_pos $end_pos assign
                           local i=$(( arg[(i)=] + 1 ))
                           if [[ $arg[i] == '(' ]]; then
@@ -984,67 +986,70 @@ _zsh_highlight_main_highlighter_highlight_list()
                           fi
                         fi
                         ;;
-        *)              _zsh_highlight_main_add_region_highlight $start_pos $end_pos arg0_$res
+          (*)           _zsh_highlight_main_add_region_highlight $start_pos $end_pos arg0_$res
                         continue
                         ;;
-      esac
-     fi
-     if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} ]]; then
-      next_word=':start::start_of_pipeline:'
-     fi
-   else # $arg is a non-command word
+        esac
+      fi
+      if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} ]]; then
+        next_word=':start::start_of_pipeline:'
+      fi
+    else # $arg is a non-command word
       case $arg in
-        $'\x29') # subshell or end of array assignment
-                 if $in_array_assignment; then
-                   style=assign
-                   in_array_assignment=false
-                   next_word+=':start:'
-                 elif (( in_redirection )); then
-                   style=unknown-token
-                 else
-                   if _zsh_highlight_main__stack_pop 'S'; then
-                     REPLY=$start_pos
-                     reply=($list_highlights)
-                     return 0
-                   fi
-                   _zsh_highlight_main__stack_pop 'R' reserved-word
-                 fi;;
-        $'\x28\x29') # possibly a function definition
-                 if (( in_redirection )) || $in_array_assignment; then
-                   style=unknown-token
-                 else
-                   if [[ $zsyh_user_options[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
-                   then
-                     next_word+=':start::start_of_pipeline:'
-                   fi
-                   style=reserved-word
-                 fi
-                 ;;
-        *)       if false; then
-                 elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
-                   # Parsing rule: {
-                   #
-                   #     Additionally, `tt(})' is recognized in any position if neither the
-                   #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set.
-                   if (( in_redirection )) || $in_array_assignment; then
-                     style=unknown-token
-                   else
-                     _zsh_highlight_main__stack_pop 'Y' reserved-word
-                     if [[ $style == reserved-word ]]; then
-                       next_word+=':always:'
-                     fi
-                   fi
-                 elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
-                   style=history-expansion
-                 elif [[ $arg == $'\x5d\x5d' ]] && _zsh_highlight_main__stack_pop 'T' reserved-word; then
-                   :
-                 elif [[ $arg == $'\x5d' ]] && _zsh_highlight_main__stack_pop 'Q' builtin; then
-                   :
-                 else
-                   _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 != in_redirection ))
-                   continue
-                 fi
-                 ;;
+        ($'\x29')
+                  # subshell or end of array assignment
+                  if $in_array_assignment; then
+                    style=assign
+                    in_array_assignment=false
+                    next_word+=':start:'
+                  elif (( in_redirection )); then
+                    style=unknown-token
+                  else
+                    if _zsh_highlight_main__stack_pop 'S'; then
+                      REPLY=$start_pos
+                      reply=($list_highlights)
+                      return 0
+                    fi
+                    _zsh_highlight_main__stack_pop 'R' reserved-word
+                  fi
+                  ;;
+        ($'\x28\x29')
+                  # possibly a function definition
+                  if (( in_redirection )) || $in_array_assignment; then
+                    style=unknown-token
+                  else
+                    if [[ $zsyh_user_options[multifuncdef] == on ]] || false # TODO: or if the previous word was a command word
+                    then
+                      next_word+=':start::start_of_pipeline:'
+                    fi
+                    style=reserved-word
+                  fi
+                  ;;
+        (*)       if false; then
+                  elif [[ $arg = $'\x7d' ]] && $right_brace_is_recognised_everywhere; then
+                    # Parsing rule: {
+                    #
+                    #     Additionally, `tt(})' is recognized in any position if neither the
+                    #     tt(IGNORE_BRACES) option nor the tt(IGNORE_CLOSE_BRACES) option is set.
+                    if (( in_redirection )) || $in_array_assignment; then
+                      style=unknown-token
+                    else
+                      _zsh_highlight_main__stack_pop 'Y' reserved-word
+                      if [[ $style == reserved-word ]]; then
+                        next_word+=':always:'
+                      fi
+                    fi
+                  elif [[ $arg[0,1] = $histchars[0,1] ]] && (( $#arg[0,2] == 2 )); then
+                    style=history-expansion
+                  elif [[ $arg == $'\x5d\x5d' ]] && _zsh_highlight_main__stack_pop 'T' reserved-word; then
+                    :
+                  elif [[ $arg == $'\x5d' ]] && _zsh_highlight_main__stack_pop 'Q' builtin; then
+                    :
+                  else
+                    _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 != in_redirection ))
+                    continue
+                  fi
+                  ;;
       esac
     fi
     _zsh_highlight_main_add_region_highlight $start_pos $end_pos $style
@@ -1202,7 +1207,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
           (( i = REPLY ))
           highlights+=($reply)
           continue
-       elif [[ $arg[i+1] == $'\x28' ]]; then
+        elif [[ $arg[i+1] == $'\x28' ]]; then
           start=$i
           (( i += 2 ))
           _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,-1]
@@ -1310,14 +1315,14 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
     (( j = i + start_pos - 1 ))
     (( k = j + 1 ))
     case "$arg[$i]" in
-      '"') break;;
-      '`') saved_reply=($reply)
-           _zsh_highlight_main_highlighter_highlight_backtick $i
-           (( i = REPLY ))
-           reply=($saved_reply $reply)
-           continue
-           ;;
-      '$' ) style=dollar-double-quoted-argument
+      ('"') break;;
+      ('`') saved_reply=($reply)
+            _zsh_highlight_main_highlighter_highlight_backtick $i
+            (( i = REPLY ))
+            reply=($saved_reply $reply)
+            continue
+            ;;
+      ('$') style=dollar-double-quoted-argument
             # Look for an alphanumeric parameter name.
             if [[ ${arg:$i} =~ ^([A-Za-z_][A-Za-z0-9_]*|[0-9]+) ]] ; then
               (( k += $#MATCH )) # highlight the parameter name
