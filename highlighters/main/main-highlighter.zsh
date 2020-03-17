@@ -641,6 +641,9 @@ _zsh_highlight_main_highlighter_highlight_list()
       else
         _zsh_highlight_main_highlighter_expand_path $arg
         if [[ $arg != $REPLY ]]; then
+          # TODO: Is this right?  Shouldn't we simply check whether it's
+          # executable?  It's not just aliases and reserved words that aren't
+          # considered here; builtins should likewise be excluded.
           _zsh_highlight_main__type "$REPLY" 0 0
           res="$REPLY"
         fi
