@@ -444,7 +444,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   # "Q" for square
   # "Y" for curly
   # "T" for [[ ]]
-  # "S" for $( )
+  # "S" for $( ), =( ), <( ), >( )
   # "D" for do/done
   # "$" for 'end' (matches 'foreach' always; also used with cshjunkiequotes in repeat/while)
   # "?" for 'if'/'fi'; also checked by 'elif'/'else'
