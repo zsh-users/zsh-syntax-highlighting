@@ -1222,7 +1222,8 @@ _zsh_highlight_main_highlighter_highlight_argument()
           (( i = REPLY ))
           highlights+=($reply)
           continue
-       elif [[ $arg[i+1] == $'\x28' ]]; then
+        elif [[ $arg[i+1] == $'\x28' && ${arg:$i} != $'\x28\x28'*$'\x29\x29'* ]]; then
+          # command substitution that doesn't look like an arithmetic expansion
           start=$i
           (( i += 2 ))
           _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,-1]
@@ -1237,6 +1238,10 @@ _zsh_highlight_main_highlighter_highlight_argument()
             highlights+=($(( start_pos + i - 1)) $(( start_pos + i )) command-substitution-delimiter-unquoted)
           fi
           continue
+        else
+          # TODO: if it's an arithmetic expansion, skip past it, to prevent
+          # multiplications from being highlighted as globbing (issue #607,
+          # test-data/arith1.zsh)
         fi
         while [[ $arg[i+1] == [\^=~#+] ]]; do
           (( i += 1 ))
@@ -1359,7 +1364,8 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
               # $#, $*, $@, $?, $- - like $$ above
               (( k += 1 )) # highlight both dollar signs
               (( i += 1 )) # don't consider the second one as introducing another parameter expansion
-            elif [[ $arg[i+1] == $'\x28' ]]; then
+            elif [[ $arg[i+1] == $'\x28' && ${arg:$i} != $'\x28\x28'*$'\x29\x29'* ]]; then
+              # command substitution that doesn't look like an arithmetic expansion
               breaks+=( $last_break $(( start_pos + i - 1 )) )
               (( i += 2 ))
               saved_reply=($reply)

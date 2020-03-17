@@ -38,6 +38,13 @@
 - Fix `echo >&2` highlighting the `2` as a filename if a file by that name happened to exist
   [#694]
 
+- Fix `: $((42))` being highlighted as a subshell.
+  [part of #607]
+
+- Regress highlighting of `: $((ls); (ls))`: is a subshell, but will now be
+  incorrectly highlighted as an arithmetic expansion.
+  [#704]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
