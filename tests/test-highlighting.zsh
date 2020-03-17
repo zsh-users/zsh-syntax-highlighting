@@ -120,6 +120,7 @@ run_test_internal() {
   # Load the data and prepare checking it.
   local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET REPLY skip_test unsorted=0
   local expected_mismatch
+  local skip_mismatch
   local -a expected_region_highlight region_highlight
 
   . "$srcdir"/"$1"
@@ -155,11 +156,11 @@ run_test_internal() {
     local todo=
     if (( $+expected_highlight_zone[4] )); then
       todo="# TODO $expected_highlight_zone[4]"
-      : ${expected_mismatch:="cardinality check disabled whilst regular test points are expected to fail"}
+      skip_mismatch="cardinality check disabled whilst regular test points are expected to fail"
     fi
     if ! (( $+region_highlight[i] )); then
       print -r -- "not ok $i - unmatched expectation ($exp_start $exp_end $expected_highlight_zone[3])" \
-         "${expected_mismatch:+"# TODO ${(qqq)expected_mismatch}"}"
+         "${skip_mismatch:+"# TODO ${(qqq)skip_mismatch}"}"
       continue
     fi
     local -a highlight_zone; highlight_zone=( ${(z)region_highlight[i]} )
@@ -183,18 +184,27 @@ run_test_internal() {
     unset desc
   done
 
-  if [[ -n $expected_mismatch ]]; then
-    tap_escape $expected_mismatch; expected_mismatch=$REPLY
-    print "ok $i - cardinality check" "# SKIP $expected_mismatch"
+  # If both $skip_mismatch and $expected_mismatch are set, that means the test
+  # has some XFail test points, _and_ explicitly sets $expected_mismatch as
+  # well.  Explicit settings should have priority, so we ignore $skip_mismatch
+  # if $expected_mismatch is set.
+  if [[ -n $skip_mismatch && -z $expected_mismatch ]]; then
+    tap_escape $skip_mismatch; skip_mismatch=$REPLY
+    print "ok $i - cardinality check" "# SKIP $skip_mismatch"
   else
+    local todo
+    if [[ -n $expected_mismatch ]]; then
+      tap_escape $expected_mismatch; expected_mismatch=$REPLY
+      todo="# TODO $expected_mismatch"
+    fi
     if (( $#expected_region_highlight == $#region_highlight )); then
-      print -r -- "ok $i - cardinality check"
+      print -r -- "ok $i - cardinality check${todo:+ - }$todo"
     else
       local details
       details+="have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: "
       details+="«$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»"
       tap_escape $details; details=$REPLY
-      print -r -- "not ok $i - cardinality check - $details"
+      print -r -- "not ok $i - cardinality check - $details${todo:+ - }$todo"
     fi
   fi
 }

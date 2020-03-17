@@ -30,9 +30,11 @@ need not match the order in `$region_highlight`.
 
 4.
 Normally, tests fail if `$expected_region_highlight` and `$region_highlight`
-have different numbers of elements.  Tests may set `$expected_mismatch` to an
-explanation string (like `$todo`) to avoid this and skip the cardinality check.
-`$expected_mismatch` is set implicitly if the `$todo` component is present.
+have different numbers of elements.  To mark this check as expected to fail,
+tests may set `$expected_mismatch` to an explanation string (like `$todo`);
+this is useful when the only difference between actual and expected is that actual
+has some additional, superfluous elements.  This check is skipped if the
+`$todo` component is present in any regular test point.
 
 **Note**: `$region_highlight` uses the same `"$i $j $style"` syntax but
 interprets the indexes differently.
