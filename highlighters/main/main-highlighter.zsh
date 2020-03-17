@@ -488,6 +488,13 @@ _zsh_highlight_main_highlighter_highlight_list()
   # $in_redirection.  The value of $next_word from the iteration that processed
   # the operator is discarded.
   #
+  # $in_redirection is currently used for:
+  # - comments
+  # - aliases
+  # - redirections
+  # - parameter elision in command position
+  # - 'repeat' loops
+  #
   local this_word next_word=':start::start_of_pipeline:'
   integer in_redirection
   # Processing buffer
