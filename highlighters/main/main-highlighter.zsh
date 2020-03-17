@@ -1257,7 +1257,9 @@ _zsh_highlight_main_highlighter_highlight_argument()
         fi
         ;|
       *)
-        if $highlight_glob && [[ ${arg[$i]} =~ ^[*?] || ${arg:$i-1} =~ ^\<[0-9]*-[0-9]*\> ]]; then
+        if $highlight_glob &&
+           [[ $zsyh_user_options[multios] == on || $in_redirection -eq 0 ]] &&
+           [[ ${arg[$i]} =~ ^[*?] || ${arg:$i-1} =~ ^\<[0-9]*-[0-9]*\> ]]; then
           highlights+=($(( start_pos + i - 1 )) $(( start_pos + i + $#MATCH - 1)) globbing)
           (( i += $#MATCH - 1 ))
           path_eligible=0

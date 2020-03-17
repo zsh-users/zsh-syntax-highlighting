@@ -32,6 +32,9 @@
 - Fix `: $(<*)` being highlighted as globbing.
   [#582]
 
+- Fix `cat < *` being highlighting as globbing when the `MULTIOS` option is unset.
+  [#583]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
