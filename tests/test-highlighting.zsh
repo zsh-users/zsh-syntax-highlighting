@@ -123,20 +123,27 @@ run_test_internal() {
   local skip_mismatch
   local -a expected_region_highlight region_highlight
 
-  . "$srcdir"/"$1"
+  local ARG="$1"
+  () {
+    setopt localoptions
+    . "$srcdir"/"$ARG"
 
-  (( $#skip_test )) && { print -r -- "1..0 # SKIP $skip_test"; return; }
+    # WARNING: The remainder of this anonymous function will run with the test's options in effect
 
-  # Check the data declares $PREBUFFER or $BUFFER.
-  [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! On ${(qq)1}: Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return 1; }
-  # Check the data declares $expected_region_highlight.
-  (( $+expected_region_highlight == 0 )) && { echo >&2 "Bail out! On ${(qq)1}: 'expected_region_highlight' is not declared."; return 1; }
+    (( $#skip_test )) && { print -r -- "1..0 # SKIP $skip_test"; return; }
 
-  # Set sane defaults for ZLE variables
-  : ${CURSOR=$#BUFFER} ${PENDING=0} ${WIDGET=z-sy-h-test-harness-test-widget}
+    # Check the data declares $PREBUFFER or $BUFFER.
+    [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! On ${(qq)1}: Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return 1; }
+    # Check the data declares $expected_region_highlight.
+    (( $+expected_region_highlight == 0 )) && { echo >&2 "Bail out! On ${(qq)1}: 'expected_region_highlight' is not declared."; return 1; }
 
-  # Process the data.
-  _zsh_highlight
+    # Set sane defaults for ZLE variables
+    : ${CURSOR=$#BUFFER} ${PENDING=0} ${WIDGET=z-sy-h-test-harness-test-widget}
+
+    # Process the data.
+    _zsh_highlight
+  }
+  unset ARG
 
   if (( unsorted )); then
     region_highlight=("${(@n)region_highlight}")
