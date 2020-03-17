@@ -422,7 +422,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   #     Usually 'alias' but set to 'unknown-token' if any word expanded from
   #     the alias would be highlighted as unknown-token
   # param_style is analogous for parameter expansions
-  local alias_style param_style arg buf=$4 highlight_glob=true style
+  local alias_style param_style last_arg arg buf=$4 highlight_glob=true style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   # in_alias is equal to the number of shifts needed until arg=args[1] pops an
   #     arg from BUFFER and not added by an alias.
@@ -513,6 +513,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   fi
 
   while (( $#args )); do
+    last_arg=$arg
     arg=$args[1]
     shift args
     if (( in_alias )); then
