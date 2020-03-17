@@ -105,7 +105,7 @@ typeset_p() {
 # Escape # as ♯ and newline as ↵ they are illegal in the 'description' part of TAP output
 # The string to escape is «"$@"»; the result is returned in $REPLY.
 tap_escape() {
-  local s="$@"
+  local s="${(j. .)@}"
   REPLY="${${s//'#'/♯}//$'\n'/↵}"
 }
 
