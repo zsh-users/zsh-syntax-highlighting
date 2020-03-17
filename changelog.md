@@ -65,7 +65,7 @@ This is a stable bugfix and feature release.  Major new features and changes inc
 
 - Highlight numeric globs (e.g., `echo /lib<->`)
 
-- Assorted improvement to aliases highlighting
+- Assorted improvements to aliases highlighting
   (e.g.,
    `alias sudo_u='sudo -u'; sudo_u jrandom ls`,
    `alias x=y y=z z=nosuchcommand; x`,
