@@ -790,7 +790,8 @@ _zsh_highlight_main_highlighter_highlight_list()
     fi
 
     # The Great Fork: is this a command word?  Is this a non-command word?
-    if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]]; then
+    if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_COMMANDSEPARATOR:#"$arg"} ]] &&
+       [[ $braces_stack != *T* || $arg != ('||'|'&&') ]]; then
 
       # First, determine the style of the command separator itself.
       if _zsh_highlight_main__stack_pop T || _zsh_highlight_main__stack_pop Q; then
