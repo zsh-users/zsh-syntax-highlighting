@@ -439,9 +439,12 @@ _zsh_highlight_main_highlighter__try_expand_parameter()
       local MATCH; integer MBEGIN MEND
       local parameter_name
       local -a words
-      if [[ $arg[1] == '$' ]] && [[ ${arg[2]} == '{' ]] && [[ ${arg[-1]} == '}' ]]; then
+      if [[ $arg[1] != '$' ]]; then
+        return 1
+      fi
+      if [[ ${arg[2]} == '{' ]] && [[ ${arg[-1]} == '}' ]]; then
         parameter_name=${${arg:2}%?}
-      elif [[ $arg[1] == '$' ]]; then
+      else
         parameter_name=${arg:1}
       fi
       if [[ $res == none ]] && zmodload -e zsh/parameter &&
