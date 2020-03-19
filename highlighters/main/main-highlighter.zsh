@@ -431,7 +431,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   #     Usually 'alias' but set to 'unknown-token' if any word expanded from
   #     the alias would be highlighted as unknown-token
   # param_style is analogous for parameter expansions
-  local alias_style param_style last_arg arg buf=$4 highlight_glob=true style
+  local alias_style param_style last_arg arg buf=$4 highlight_glob=true saw_assignment=false style
   local in_array_assignment=false # true between 'a=(' and the matching ')'
   # in_alias is equal to the number of shifts needed until arg=args[1] pops an
   #     arg from BUFFER and not added by an alias.
@@ -556,6 +556,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     #   $style               how to highlight $arg
     #   $in_array_assignment boolean flag for "between '(' and ')' of array assignment"
     #   $highlight_glob      boolean flag for "'noglob' is in effect"
+    #   $saw_assignment      boolean flag for "was preceded by an assignment"
     #
     style=unknown-token
     if [[ $this_word == *':start:'* ]]; then
@@ -826,6 +827,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       else
         next_word=':start:'
         highlight_glob=true
+        saw_assignment=false
         if [[ $arg != '|' && $arg != '|&' ]]; then
           next_word+=':start_of_pipeline:'
         fi
@@ -835,6 +837,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       # try-always construct
       style=reserved-word # de facto a reserved word, although not de jure
       highlight_glob=true
+      saw_assignment=false
       next_word=':start::start_of_pipeline:' # only left brace is allowed, apparently
     elif ! (( in_redirection)) && [[ $this_word == *':start:'* ]]; then # $arg is the command word
       if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
@@ -930,6 +933,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                             fi
                             ;;
                         esac
+                        if $saw_assignment && [[ $style != unknown-token ]]; then
+                          style=unknown-token
+                        fi
                         ;;
           ('suffix alias')
                         style=suffix-alias
@@ -947,6 +953,7 @@ _zsh_highlight_main_highlighter_highlight_list()
           (none)        if (( ! in_param )) && _zsh_highlight_main_highlighter_check_assign; then
                           _zsh_highlight_main_add_region_highlight $start_pos $end_pos assign
                           local i=$(( arg[(i)=] + 1 ))
+                          saw_assignment=true
                           if [[ $arg[i] == '(' ]]; then
                             in_array_assignment=true
                           else
@@ -972,6 +979,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                              [[ $arg[0,1] == $histchars[2,2] ]]; then
                           style=history-expansion
                         elif (( ! in_param )) &&
+                             ! $saw_assignment &&
                              [[ $arg[1,2] == '((' ]]; then
                           # Arithmetic evaluation.
                           #
@@ -992,6 +1000,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                           # anonymous function
                           style=reserved-word
                         elif (( ! in_param )) &&
+                             ! $saw_assignment &&
                              [[ $arg == $'\x28' ]]; then
                           # subshell
                           style=reserved-word

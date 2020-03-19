@@ -60,6 +60,9 @@
 - Highlight `: =nosuchcommand' as an error (when the `EQUALS` option hasn't been unset).
   [#430]
 
+- Highlight reserved word after assignments as errors (e.g., `foo=bar (ls;)`)
+  [#461]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
