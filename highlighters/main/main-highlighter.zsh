@@ -153,19 +153,17 @@ _zsh_highlight_main_calculate_fallback() {
 #
 # If $2 is 0, do not consider aliases.
 #
+# If $3 is 0, do not consider reserved words.
+#
 # The result will be stored in REPLY.
 _zsh_highlight_main__type() {
   integer -r aliases_allowed=${2-1}
-  # We won't cache replies of anything that exists as an alias at all, to
-  # ensure the cached value is correct regardless of $aliases_allowed.
-  #
-  # ### We probably _should_ cache them in a cache that's keyed on the value of
-  # ### $aliases_allowed, on the assumption that aliases are the common case.
-  integer may_cache=1
+  integer -r resword_allowed=${3-1}
+  readonly cache_key="${1}:$(( aliases_allowed ? 1 : 0)):$((resword_allowed ? 1 : 0))"
 
   # Cache lookup
   if (( $+_zsh_highlight_main__command_type_cache )); then
-    REPLY=$_zsh_highlight_main__command_type_cache[(e)$1]
+    REPLY=$_zsh_highlight_main__command_type_cache[(e)$cache_key]
     if [[ -n "$REPLY" ]]; then
       return
     fi
@@ -177,16 +175,13 @@ _zsh_highlight_main__type() {
   fi
   unset REPLY
   if zmodload -e zsh/parameter; then
-    if (( $+aliases[(e)$1] )); then
-      may_cache=0
-    fi
-    if (( ${+galiases[(e)$1]} )) && (( aliases_allowed )); then
+    if (( aliases_allowed )) && (( ${+galiases[(e)$1]} )); then
       REPLY='global alias'
-    elif (( $+aliases[(e)$1] )) && (( aliases_allowed )); then
+    elif (( aliases_allowed )) && (( $+aliases[(e)$1] )) &&; then
       REPLY=alias
     elif [[ $1 == *.* && -n ${1%.*} ]] && (( $+saliases[(e)${1##*.}] )); then
       REPLY='suffix alias'
-    elif (( $reswords[(Ie)$1] )); then
+    elif (( resword_allowed )) && (( $reswords[(Ie)$1] )); then
       REPLY=reserved
     elif (( $+functions[(e)$1] )); then
       REPLY=function
@@ -223,14 +218,11 @@ _zsh_highlight_main__type() {
     # «$(…)»], which is area that has had some parsing bugs before 5.6
     # (approximately).
     REPLY="${$(:; (( aliases_allowed )) || unalias -- "$1" 2>/dev/null; LC_ALL=C builtin type -w -- "$1" 2>/dev/null)##*: }"
-    if [[ $REPLY == 'alias' ]]; then
-      may_cache=0
-    fi
   fi
 
   # Cache population
-  if (( may_cache )) && (( $+_zsh_highlight_main__command_type_cache )); then
-    _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
+  if (( $+_zsh_highlight_main__command_type_cache )); then
+    _zsh_highlight_main__command_type_cache[(e)$cache_key]=$REPLY
   fi
   [[ -n $REPLY ]]
   return $?
@@ -616,7 +608,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     if [[ $this_word == *':start:'* ]] && ! (( in_redirection )); then
       # Expand aliases.
       # An alias is ineligible for expansion while it's being expanded (see #652/#653).
-      _zsh_highlight_main__type "$arg" "$(( ! ${+seen_alias[$arg]} ))"
+      _zsh_highlight_main__type "$arg" "$(( ! ${+seen_alias[$arg]} ))" 1
       local res="$REPLY"
       if [[ $res == "alias" ]]; then
         # Mark insane aliases as unknown-token (cf. #263).
@@ -648,8 +640,13 @@ _zsh_highlight_main_highlighter_highlight_list()
         continue
       else
         _zsh_highlight_main_highlighter_expand_path $arg
-        _zsh_highlight_main__type "$REPLY" 0
-        res="$REPLY"
+        if [[ $arg != $REPLY ]]; then
+          # TODO: Is this right?  Shouldn't we simply check whether it's
+          # executable?  It's not just aliases and reserved words that aren't
+          # considered here; builtins should likewise be excluded.
+          _zsh_highlight_main__type "$REPLY" 0 0
+          res="$REPLY"
+        fi
       fi
     fi
 
