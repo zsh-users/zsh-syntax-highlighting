@@ -36,7 +36,13 @@
   [#583]
 
 - Fix `echo >&2` highlighting the `2` as a filename if a file by that name happened to exist
-  [#694]
+  [#694, part of #645]
+
+- Fix `echo >&-` highlighting the `-` as a filename if a file by that name happened to exist
+  [part of #645]
+
+- Fix `echo >&p` highlighting the `p` as a filename if a file by that name happened to exist
+  [part of #645]
 
 - Fix `: $((42))` being highlighted as a subshell.
   [part of #607]
@@ -44,6 +50,12 @@
 - Regress highlighting of `: $((ls); (ls))`: is a subshell, but will now be
   incorrectly highlighted as an arithmetic expansion.
   [#704]
+
+- Fix wrong highlighting of unquoted parameter expansions under zsh 5.2 and older
+  [e165f18c758e]
+
+- Highlight global aliases
+  [#700]
 
 # Changes in version 0.7.1
 
