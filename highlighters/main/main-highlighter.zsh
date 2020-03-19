@@ -180,7 +180,7 @@ _zsh_highlight_main__type() {
     if (( $+aliases[(e)$1] )); then
       may_cache=0
     fi
-    if false && (( ${+galiases[(e)$1]} )); then
+    if (( ${+galiases[(e)$1]} )); then
       REPLY='global alias'
     elif (( $+aliases[(e)$1] )) && (( aliases_allowed )); then
       REPLY=alias
