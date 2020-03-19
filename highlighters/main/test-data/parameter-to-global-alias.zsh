@@ -34,5 +34,5 @@ local s=x
 BUFFER=$'$s'
 
 expected_region_highlight=(
-  '1 2 unknown-token "fixed in the next commit"' # $s
+  '1 2 unknown-token' # $s
 )
