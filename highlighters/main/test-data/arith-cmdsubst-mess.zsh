@@ -33,14 +33,14 @@ BUFFER=$': $((ls); (ls))'
 expected_region_highlight=(
   '1 1 builtin' # :
   '3 15 default' # $((ls); (ls))
-  '3 15 command-substitution-unquoted "issue #704"' # $((ls); (ls))
-  '3 4 command-substitution-delimiter-unquoted "issue #704"' # $(
-  '5 5 reserved-word "issue #704"' # (
-  '6 7 command "issue #704"' # ls
-  '8 8 reserved-word "issue #704"' # )
-  '9 9 commandseparator "issue #704"' # ;
-  '11 11 reserved-word "issue #704"' # (
-  '12 13 command "issue #704"' # ls
-  '14 14 reserved-word "issue #704"' # )
-  '15 15 command-substitution-delimiter-unquoted "issue #704"' # )
+  '3 15 command-substitution-unquoted' # $((ls); (ls))
+  '3 4 command-substitution-delimiter-unquoted' # $(
+  '5 5 reserved-word' # (
+  '6 7 command' # ls
+  '8 8 reserved-word' # )
+  '9 9 commandseparator' # ;
+  '11 11 reserved-word' # (
+  '12 13 command' # ls
+  '14 14 reserved-word' # )
+  '15 15 command-substitution-delimiter-unquoted' # )
 )

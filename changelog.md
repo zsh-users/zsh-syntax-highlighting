@@ -50,13 +50,6 @@
 - Fix `echo >&p` highlighting the `p` as a filename if a file by that name happened to exist
   [part of #645]
 
-- Fix `: $((42))` being highlighted as a subshell.
-  [part of #607]
-
-- Regress highlighting of `: $((ls); (ls))`: is a subshell, but will now be
-  incorrectly highlighted as an arithmetic expansion.
-  [#704]
-
 - Fix wrong highlighting of unquoted parameter expansions under zsh 5.2 and older
   [e165f18c758e]
 
@@ -89,6 +82,8 @@
   (such as `;`, `|`, `&&`) before a newline
   [#677; had regressed in 0.7.0]
 
+- Highlight arithmetic expansions (e.g., `$(( 42 ))`)
+  [#607 #649 #704]
 
 # Changes in version 0.7.1
 
