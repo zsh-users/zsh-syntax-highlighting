@@ -221,11 +221,21 @@ run_test_internal() {
       details+="«$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»"
       tap_escape $details; details=$REPLY
       print -r -- "not ok $i - cardinality check - $details${todo:+ - }$todo"
-      paste \
-        =(print -rC1 -- "expected_region_highlight" "${(qq)expected_region_highlight[@]}") \
-        =(print -rC1 -- "region_highlight" "${(qq)region_highlight[@]}") \
-        | if type column >/dev/null; then column -t -s $'\t'; else cat; fi \
-        | sed 's/^/# /'
+
+      () {
+        local -a left_column right_column
+        left_column=( "expected_region_highlight" "${(qq)expected_region_highlight[@]}" )
+        right_column=( "region_highlight" "${(qq)region_highlight[@]}" )
+        integer difference=$(( $#right_column - $#left_column ))
+        if (( difference > 0 )); then
+          left_column+=( ${(r:2*difference::. :):-} )
+        fi
+        paste \
+          =(print -rC1 -- $left_column) \
+          =(print -rC1 -- $right_column) \
+          | if type column >/dev/null; then column -t -s $'\t'; else cat; fi \
+          | sed 's/^/# /'
+      }
     fi
   fi
 }
