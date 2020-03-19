@@ -95,9 +95,9 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=($1)
 typeset_p() {
   for 1 ; do
     if [[ ${(tP)1} == *array* ]]; then
-      print -r -- "$1=( ${(@q-P)1} )"
+      print -r -- "$1=( ${(@qqqqP)1} )"
     else
-      print -r -- "$1=${(q-P)1}"
+      print -r -- "$1=${(qqqqP)1}"
     fi
   done
 }
