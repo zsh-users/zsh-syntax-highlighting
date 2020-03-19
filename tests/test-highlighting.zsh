@@ -230,7 +230,10 @@ run_test_internal() {
         if (( difference > 0 )); then
           left_column+=( ${(r:2*difference::. :):-} )
         fi
-        print -rC2 -- "${left_column[@]}" "${right_column[@]}" \
+        paste \
+          =(print -rC1 -- $left_column) \
+          =(print -rC1 -- $right_column) \
+          | if type column >/dev/null; then column -t -s $'\t'; else cat; fi \
           | sed 's/^/# /'
       }
     fi
