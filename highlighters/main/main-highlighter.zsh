@@ -422,7 +422,7 @@ _zsh_highlight_highlighter_main_paint()
 
 # Try to expand $1, if it's possible to do so safely.
 # 
-# Uses two parameters from the caller: $parameter_name_pattern and $res.
+# Uses one parameter from the caller: $parameter_name_pattern.
 #
 # If expansion was done, set $reply to the expansion and return true.
 # Otherwise, return false.
@@ -447,7 +447,7 @@ _zsh_highlight_main_highlighter__try_expand_parameter()
       else
         parameter_name=${arg:1}
       fi
-      if [[ $res == none ]] && zmodload -e zsh/parameter &&
+      if zmodload -e zsh/parameter &&
          [[ ${parameter_name} =~ ^${~parameter_name_pattern}$ ]] &&
          [[ ${parameters[(e)$MATCH]} != *special* ]]
       then
@@ -745,8 +745,10 @@ _zsh_highlight_main_highlighter_highlight_list()
           (( in_param = 1 + $#words ))
           args=( $words $args )
           arg=$args[1]
-          _zsh_highlight_main__type "$arg" 0
-          res=$REPLY
+          if [[ $this_word == *':start:'* ]] && ! (( in_redirection )); then
+            _zsh_highlight_main__type "$arg" 0
+            res=$REPLY
+          fi
         fi
       }
     fi

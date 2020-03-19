@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2018 zsh-syntax-highlighting contributors
+# Copyright (c) 2020 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,12 +28,10 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-local foo='is set'
-touch '$foo'
-BUFFER=': $foo \$foo'
+BUFFER=$': $foo ${bar}'
 
 expected_region_highlight=(
   '1 1 builtin' # :
-  '3 6 default' # $foo - if we add a "unquoted parameter expansion" style then this expectation should change
-  '8 12 path' # \$foo
+  '3 6 comment' # $foo
+  '8 13 comment' # ${bar}
 )
