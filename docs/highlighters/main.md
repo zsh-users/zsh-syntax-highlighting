@@ -27,6 +27,7 @@ This highlighter defines the following styles:
 * `precommand` - precommand modifiers (e.g., `noglob`, `builtin`)
 * `commandseparator` - command separation tokens (`;`, `&&`)
 * `hashed-command` - hashed commands
+* `autodirectory` - a directory name in command position when the `AUTO_CD` option is set
 * `path` - existing filenames
 * `path_pathseparator` - path separators in filenames (`/`); if unset, `path` is used (default)
 * `path_prefix` - prefixes of existing filenames

@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2018 zsh-syntax-highlighting contributors
+# Copyright (c) 2020 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,9 +28,11 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-alias x=/
-BUFFER=$'x'
+setopt autocd
+BUFFER=$'$PWD; ${PWD}'
 
 expected_region_highlight=(
-  '1 1 unknown-token' # x (/)
+  '1 4 autodirectory' # $PWD
+  '5 5 commandseparator' # ;
+  '7 12 autodirectory' # ${PWD}
 )

@@ -34,7 +34,7 @@
 BUFFER='$PWD; ${PWD}'
 
 expected_region_highlight=(
-  "1 4 path" # $PWD
+  "1 4 unknown-token" # $PWD (without AUTO_CD)
   "5 5 commandseparator" # ;
-  "7 12 path" # ${PWD}
+  "7 12 path_prefix" # ${PWD}
 )
