@@ -24,11 +24,15 @@ point will not fail the test), and `$todo` is used as the explanation.
 If a test sets `$skip_test` to a non-empty string, the test will be skipped
 with the provided string as the reason.
 
-3.
+3. 
+If a test sets `$fail_test` to a non-empty string, the test will be skipped
+with the provided string as the reason.
+
+4.
 If a test sets `unsorted=1` the order of highlights in `$expected_region_highlight`
 need not match the order in `$region_highlight`.
 
-4.
+5.
 Normally, tests fail if `$expected_region_highlight` and `$region_highlight`
 have different numbers of elements.  To mark this check as expected to fail,
 tests may set `$expected_mismatch` to an explanation string (like `$todo`);

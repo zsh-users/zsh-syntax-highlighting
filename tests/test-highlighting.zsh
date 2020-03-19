@@ -118,7 +118,7 @@ run_test_internal() {
   builtin cd -q -- "$tests_tempdir" || { echo >&2 "Bail out! On ${(qq)1}: cd failed: $?"; return 1 }
 
   # Load the data and prepare checking it.
-  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET REPLY skip_test unsorted=0
+  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET REPLY skip_test fail_test unsorted=0
   local expected_mismatch
   local skip_mismatch
   local -a expected_region_highlight region_highlight
@@ -127,9 +127,15 @@ run_test_internal() {
   local RETURN=""
   () {
     setopt localoptions
-    . "$srcdir"/"$ARG"
 
     # WARNING: The remainder of this anonymous function will run with the test's options in effect
+    if { ! . "$srcdir"/"$ARG" } || (( $#fail_test )); then
+      print -r -- "1..1"
+      print -r -- "## ${ARG:t:r}"
+      tap_escape $fail_test; fail_test=$REPLY
+      print -r -- "not ok 1 - failed setup: $fail_test"
+      return ${RETURN:=0}
+    fi
 
     (( $#skip_test )) && {
       print -r -- "1..0 # SKIP $skip_test"
