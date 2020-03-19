@@ -73,7 +73,7 @@ run_test_internal() {
 
   # Measure the time taken by _zsh_highlight.
   TIMEFMT="%*Es"
-  time (BUFFER="$BUFFER" && _zsh_highlight)
+  { time (BUFFER="$BUFFER" && _zsh_highlight) } 2>&1
 }
 
 run_test() {
