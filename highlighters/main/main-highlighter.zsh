@@ -1287,8 +1287,12 @@ _zsh_highlight_main_highlighter_highlight_argument()
   done
 
   if (( path_eligible )); then
-    if (( in_redirection )) && [[ $last_arg == *['<>']['&'] && $arg[$1,-1] == <0-> ]]; then
-      base_style=numeric-fd
+    if (( in_redirection )) && [[ $last_arg == *['<>']['&'] && $arg[$1,-1] == (<0->|p|-) ]]; then
+      if [[ $arg[$1,-1] == (p|-) ]]; then
+        base_style=redirection
+      else
+        base_style=numeric-fd
+      fi
     elif _zsh_highlight_main_highlighter_check_path $arg[$1,-1]; then
       base_style=$REPLY
       _zsh_highlight_main_highlighter_highlight_path_separators $base_style
