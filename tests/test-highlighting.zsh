@@ -131,7 +131,11 @@ run_test_internal() {
 
     # WARNING: The remainder of this anonymous function will run with the test's options in effect
 
-    (( $#skip_test )) && { print -r -- "1..0 # SKIP $skip_test"; return ${RETURN:=0}; }
+    (( $#skip_test )) && {
+      print -r -- "1..0 # SKIP $skip_test"
+      print -r -- "## ${ARG:t:r}"
+      return ${RETURN:=0}
+    }
 
     # Check the data declares $PREBUFFER or $BUFFER.
     [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! On ${(qq)1}: Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return ${RETURN:=1}; }
