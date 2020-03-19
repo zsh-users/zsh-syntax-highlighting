@@ -35,7 +35,7 @@ env:
   - ZSH=4.3.12
   - ZSH=4.3.11
 
-script: docker run -v $PWD:/work -w /work zshusers/zsh:${ZSH} /bin/sh -c 'install_packages make procps bsdmainutils && make test'
+script: docker run -v $PWD:/work -w /work zshusers/zsh:${ZSH} /bin/sh -c 'install_packages make procps && make test'
 
 notifications:
   webhooks:
