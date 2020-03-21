@@ -347,6 +347,8 @@ _zsh_highlight_highlighter_main_paint()
     'catchsegv' ''
     'nohup' ''
     'setsid' :wc
+    'env' u:i
+
     # As of OpenSSH 8.1p1
     'ssh-agent' aEPt:csDd:k
     # suckless-tools v44

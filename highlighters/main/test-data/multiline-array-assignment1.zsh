@@ -35,5 +35,5 @@ expected_region_highlight=(
   '6 6 commandseparator' # \n
   '7 9 default' # bar
   '10 10 assign' # )
-  '12 14 command' # env
+  '12 14 precommand' # env
 )
