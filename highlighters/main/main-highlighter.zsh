@@ -318,7 +318,7 @@ _zsh_highlight_highlighter_main_paint()
   # that wouldn't be followed by a colon in a getopts specification.
   local flags_sans_argument
   # $flags_solo is a set of letters, corresponding to option letters that, if
-  # present, mean the precommand will now be acting as a precommand, i.e., will
+  # present, mean the precommand will not be acting as a precommand, i.e., will
   # not be followed by a :start: word.
   local flags_solo
   # $precommand_options maps precommand name to values of $flags_with_argument,

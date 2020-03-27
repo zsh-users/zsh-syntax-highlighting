@@ -29,8 +29,8 @@
 
 # First of all, ensure predictable parsing.
 typeset zsh_highlight__aliases="$(builtin alias -Lm '[^+]*')"
-# In zsh <= 5.2, `alias -L` emits aliases that begin with a plus sign ('alias -- +foo=42')
-# them without a '--' guard, so they don't round trip.
+# In zsh <= 5.2, aliases that begin with a plus sign ('alias -- +foo=42')
+# are emitted by `alias -L` without a '--' guard, so they don't round trip.
 #
 # Hence, we exclude them from unaliasing:
 builtin unalias -m '[^+]*'
