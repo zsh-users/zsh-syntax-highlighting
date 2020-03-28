@@ -1141,6 +1141,9 @@ _zsh_highlight_main_highlighter_check_assign()
 
 _zsh_highlight_main_highlighter_highlight_path_separators()
 {
+  if (( in_param || in_alias )); then
+    return
+  fi
   local pos style_pathsep
   style_pathsep=$1_pathseparator
   reply=()
@@ -1386,7 +1389,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
   done
 
   if (( path_eligible )); then
-    if (( in_redirection )) && [[ $last_arg == *['<>']['&'] && $arg[$1,-1] == (<0->|p|-) ]]; then
+    if (( in_redirection && ! in_param )) && [[ $last_arg == *['<>']['&'] && $arg[$1,-1] == (<0->|p|-) ]]; then
       if [[ $arg[$1,-1] == (p|-) ]]; then
         base_style=redirection
       else
