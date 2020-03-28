@@ -1299,7 +1299,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
       fi
   esac
 
-  for (( ; i <= $#arg ; i += 1 )); do
+  for (( ; i <= $#arg && ! in_param ; i += 1 )); do
     case "$arg[$i]" in
       "\\") (( i += 1 )); continue;;
       "'")
