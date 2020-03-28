@@ -1141,13 +1141,14 @@ _zsh_highlight_main_highlighter_check_assign()
 
 _zsh_highlight_main_highlighter_highlight_path_separators()
 {
-  if (( in_param || in_alias )); then
-    return
-  fi
   local pos style_pathsep
   style_pathsep=$1_pathseparator
   reply=()
-  [[ -z "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" || "$ZSH_HIGHLIGHT_STYLES[$1]" == "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" ]] && return 0
+  if (( in_param || in_alias )) ||
+     [[ -z "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" || "$ZSH_HIGHLIGHT_STYLES[$1]" == "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" ]]
+  then
+    return 0
+  fi
   for (( pos = start_pos; $pos <= end_pos; pos++ )) ; do
     if [[ $BUFFER[pos] == / ]]; then
       reply+=($((pos - 1)) $pos $style_pathsep)
