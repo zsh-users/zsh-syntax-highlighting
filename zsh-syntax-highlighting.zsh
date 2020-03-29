@@ -93,9 +93,13 @@ _zsh_highlight()
     canonical_options=(${${${(M)raw_options:#*off}%% *}#no} ${${(M)raw_options:#*on}%% *})
     for option in "${canonical_options[@]}"; do
       [[ -o $option ]]
-      # This variable cannot be eliminated c.f. workers/42101.
-      onoff=${${=:-off on}[2-$?]}
-      zsyh_user_options+=($option $onoff)
+      case $? in
+        (0) zsyh_user_options+=($option on);;
+        (1) zsyh_user_options+=($option off);;
+        (*) # Can't happen, surely?
+            echo "zsh-syntax-highlighting: warning: '[[ -o $option ]]' returned $?"
+            ;;
+      esac
     done
   fi
   typeset -r zsyh_user_options
