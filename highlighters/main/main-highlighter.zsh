@@ -423,7 +423,7 @@ _zsh_highlight_highlighter_main_paint()
 
 # Try to expand $1, if it's possible to do so safely.
 # 
-# Uses two parameters from the caller: $parameter_name_pattern and $res.
+# Uses one parameter from the caller: $parameter_name_pattern.
 #
 # If expansion was done, set $reply to the expansion and return true.
 # Otherwise, return false.
@@ -448,7 +448,7 @@ _zsh_highlight_main_highlighter__try_expand_parameter()
       else
         parameter_name=${arg:1}
       fi
-      if [[ $res == none ]] && zmodload -e zsh/parameter &&
+      if zmodload -e zsh/parameter &&
          [[ ${parameter_name} =~ ^${~parameter_name_pattern}$ ]] &&
          [[ ${parameters[(e)$MATCH]} != *special* ]]
       then
@@ -746,8 +746,10 @@ _zsh_highlight_main_highlighter_highlight_list()
           (( in_param = 1 + $#words ))
           args=( $words $args )
           arg=$args[1]
-          _zsh_highlight_main__type "$arg" 0
-          res=$REPLY
+          if [[ $this_word == *':start:'* ]] && ! (( in_redirection )); then
+            _zsh_highlight_main__type "$arg" 0
+            res=$REPLY
+          fi
         fi
       }
     fi
@@ -1143,7 +1145,11 @@ _zsh_highlight_main_highlighter_highlight_path_separators()
   local pos style_pathsep
   style_pathsep=$1_pathseparator
   reply=()
-  [[ -z "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" || "$ZSH_HIGHLIGHT_STYLES[$1]" == "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" ]] && return 0
+  if (( in_param || in_alias )) ||
+     [[ -z "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" || "$ZSH_HIGHLIGHT_STYLES[$1]" == "$ZSH_HIGHLIGHT_STYLES[$style_pathsep]" ]]
+  then
+    return 0
+  fi
   for (( pos = start_pos; $pos <= end_pos; pos++ )) ; do
     if [[ $BUFFER[pos] == / ]]; then
       reply+=($((pos - 1)) $pos $style_pathsep)
@@ -1298,7 +1304,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
       fi
   esac
 
-  for (( ; i <= $#arg ; i += 1 )); do
+  for (( ; i <= $#arg && ! in_param ; i += 1 )); do
     case "$arg[$i]" in
       "\\") (( i += 1 )); continue;;
       "'")
@@ -1385,7 +1391,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
   done
 
   if (( path_eligible )); then
-    if (( in_redirection )) && [[ $last_arg == *['<>']['&'] && $arg[$1,-1] == (<0->|p|-) ]]; then
+    if (( in_redirection && ! in_param )) && [[ $last_arg == *['<>']['&'] && $arg[$1,-1] == (<0->|p|-) ]]; then
       if [[ $arg[$1,-1] == (p|-) ]]; then
         base_style=redirection
       else

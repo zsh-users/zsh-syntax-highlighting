@@ -17,8 +17,8 @@
   highlighted as errors.
   [#651, 81267ca3130c]
 
-- Support parameter elision in command position (e.g., `$foo ls` where `$foo` is unset or empty)
-  [#667]
+- Support parameter elision (e.g., `cd $foo` where `$foo` is unset or empty)
+  [#667, #239]
 
 - Don't consider the filename in `sudo -e /path/to/file` to be a command position
   [#678]

@@ -39,7 +39,7 @@ expected_region_highlight=(
   '11 11 commandseparator' # ;
   '13 14 reserved-word' # do
   '16 19 builtin' # echo
-  '21 22 default' # $n
+  '21 22 comment' # $n - because it's unset when the line is parsed
   '23 23 commandseparator' # ;
   '25 27 unknown-token' # end
 )
