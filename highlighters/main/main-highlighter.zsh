@@ -348,6 +348,7 @@ _zsh_highlight_highlighter_main_paint()
     'nohup' ''
     'setsid' :wc
     'env' u:i
+    'ionice' cn:t:pPu # util-linux 2.33.1-0.1
 
     # As of OpenSSH 8.1p1
     'ssh-agent' aEPt:csDd:k
