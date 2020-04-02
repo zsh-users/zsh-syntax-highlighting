@@ -448,9 +448,9 @@ _zsh_highlight_main_highlighter__try_expand_parameter()
       else
         parameter_name=${arg:1}
       fi
-      if [[ $res == none ]] && zmodload -e zsh/parameter &&
+      if [[ $res == none ]] && 
          [[ ${parameter_name} =~ ^${~parameter_name_pattern}$ ]] &&
-         [[ ${parameters[(e)$MATCH]} != *special* ]]
+         [[ ${(tP)MATCH} != *special* ]]
       then
         # Set $arg and update $res.
         case ${(tP)MATCH} in
