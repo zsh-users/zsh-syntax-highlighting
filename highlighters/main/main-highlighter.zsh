@@ -730,7 +730,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     fi
 
     # Expand parameters.
-    if _zsh_highlight_main_highlighter__try_expand_parameter "$arg"; then
+    if (( ! in_param )) && _zsh_highlight_main_highlighter__try_expand_parameter "$arg"; then
       # That's not entirely correct --- if the parameter's value happens to be a reserved
       # word, the parameter expansion will be highlighted as a reserved word --- but that
       # incorrectness is outweighed by the usability improvement of permitting the use of
