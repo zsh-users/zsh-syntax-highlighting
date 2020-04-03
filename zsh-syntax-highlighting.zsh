@@ -72,7 +72,9 @@ typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS
 _zsh_highlight()
 {
   # Store the previous command return code to restore it whatever happens.
-  readonly ret=$?
+  local ret=$?
+  # Make it read-only.  Can't combine this with the previous line when POSIX_BUILTINS may be set.
+  typeset -r ret
 
   # Remove all highlighting in isearch, so that only the underlining done by zsh itself remains.
   # For details see FAQ entry 'Why does syntax highlighting not work while searching history?'.
