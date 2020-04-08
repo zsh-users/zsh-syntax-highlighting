@@ -634,7 +634,7 @@ _zsh_highlight_main_highlighter_highlight_list()
 
       # The zsh lexer considers ';' and newline to be the same token, so
       # ${(z)} converts all newlines to semicolons. Convert them back here to
-      # make later processing simplier.
+      # make later processing simpler.
       [[ $arg == ';' && ${match[3]} == $'\n' ]] && arg=$'\n'
 
       # Compute the new $proc_buf. We advance it
