@@ -73,6 +73,9 @@
 
 - Recognize `env` as a precommand (e.g., `env FOO=bar ls`)
 
+- Skip installing .revision-hash if not running `make install` from a git checkout.
+  [#723]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
