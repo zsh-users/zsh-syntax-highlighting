@@ -73,6 +73,8 @@
 
 - Recognize `env` as a precommand (e.g., `env FOO=bar ls`)
 
+- Recognize `strace` as a precommand
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
