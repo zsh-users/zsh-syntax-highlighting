@@ -1677,6 +1677,8 @@ _zsh_highlight_main_highlighter_expand_path()
 # -------------------------------------------------------------------------------------------------
 
 _zsh_highlight_main__precmd_hook() {
+  setopt localoptions
+  unsetopt warnnestedvar
   _zsh_highlight_main__command_type_cache=()
 }
 
