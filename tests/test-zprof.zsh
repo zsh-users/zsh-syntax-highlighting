@@ -74,12 +74,4 @@ run_test() {
   }
 }
 
-# Process each test data file in test data directory.
-local data_file
-TIMEFMT="%*Es"
-{ time (for data_file in ${0:h:h}/highlighters/$1/test-data/cthulhu.zsh; do
-  run_test "$data_file"
-  (( $pipestatus[1] )) && exit 2
-done) } 2>&1 || exit $?
-
-exit 0
+run_test
