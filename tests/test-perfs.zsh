@@ -62,8 +62,6 @@ run_test_internal() {
   local srcdir="$PWD"
   builtin cd -q -- "$tests_tempdir" || { echo >&2 "Bail out! cd failed: $?"; return 1 }
 
-  echo -n "# ${1:t:r}: "
-
   # Load the data and prepare checking it.
   PREBUFFER= BUFFER= ;
   . "$srcdir"/"$1"
@@ -71,9 +69,8 @@ run_test_internal() {
   # Check the data declares $PREBUFFER or $BUFFER.
   [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return 1; }
 
-  # Measure the time taken by _zsh_highlight.
-  TIMEFMT="%*Es"
-  { time (BUFFER="$BUFFER" && _zsh_highlight) } 2>&1
+  # Set $? for _zsh_highlight
+  true && _zsh_highlight
 }
 
 run_test() {
@@ -93,9 +90,10 @@ run_test() {
 
 # Process each test data file in test data directory.
 local data_file
-for data_file in ${0:h:h}/highlighters/$1/test-data/*.zsh; do
+TIMEFMT="%*Es"
+{ time (for data_file in ${0:h:h}/highlighters/$1/test-data/*.zsh; do
   run_test "$data_file"
   (( $pipestatus[1] )) && exit 2
-done
+done) } 2>&1 || exit $?
 
 exit 0
