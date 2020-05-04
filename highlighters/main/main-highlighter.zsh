@@ -1311,7 +1311,12 @@ _zsh_highlight_main_highlighter_highlight_argument()
       fi
   esac
 
+  # This loop is a hot path.  Keep it fast!
   for (( ; i <= $#arg ; i += 1 )); do
+    if [[ $arg[$i] != [\\\'\"\`\$\<\>\*\?] ]]; then
+      continue
+    fi
+
     case "$arg[$i]" in
       "\\") (( i += 1 )); continue;;
       "'")
