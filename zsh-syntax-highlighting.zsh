@@ -350,9 +350,15 @@ then
       _zsh_highlight
     }
   }
+  _zsh_highlight__zle-line-pre-redraw() {
+    # Set $? to 0 for _zsh_highlight.  Without this, subsequent
+    # zle-line-pre-redraw hooks won't run, since add-zle-hook-widget happens to
+    # call us with $? == 1 in the common case.
+    true && _zsh_highlight "$@"
+  }
   _zsh_highlight_bind_widgets(){}
   if [[ -o zle ]]; then
-    add-zle-hook-widget zle-line-pre-redraw _zsh_highlight
+    add-zle-hook-widget zle-line-pre-redraw _zsh_highlight__zle-line-pre-redraw
     add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
   fi
 else
