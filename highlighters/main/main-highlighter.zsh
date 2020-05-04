@@ -1312,12 +1312,11 @@ _zsh_highlight_main_highlighter_highlight_argument()
   esac
 
   # This loop is a hot path.  Keep it fast!
-  for (( ; i <= $#arg ; i += 1 )); do
-    if [[ $arg[$i] != [\\\'\"\`\$\<\>\*\?] ]]; then
-      continue
-    fi
-
+  (( --i ))
+  while (( ++i <= $#arg )); do
+    i=${arg[(ib.i.)[\\\'\"\`\$\<\>\*\?]]}
     case "$arg[$i]" in
+      "") break;;
       "\\") (( i += 1 )); continue;;
       "'")
         _zsh_highlight_main_highlighter_highlight_single_quote $i
