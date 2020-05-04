@@ -273,6 +273,18 @@ _zsh_highlight_main__resolve_alias() {
   fi
 }
 
+# Return true iff $1 is a global alias
+_zsh_highlight_main__is_global_alias() {
+  if zmodload -e zsh/parameter; then
+    (( ${+galiases[$arg]} ))
+  elif [[ $arg == '='* ]]; then
+    # avoid running into «alias -L '=foo'» erroring out with 'bad assignment'
+    return 1
+  else
+    alias -L -g -- "$1" >/dev/null
+  fi
+}
+
 # Check that the top of $braces_stack has the expected value.  If it does, set
 # the style according to $2; otherwise, set style=unknown-token.
 #
@@ -1061,7 +1073,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} ]]; then
         next_word=':start::start_of_pipeline:'
       fi
-    elif _zsh_highlight_main__type "$arg"; [[ $REPLY == 'global alias' ]]; then # $arg is a global alias that isn't in command position
+    elif _zsh_highlight_main__is_global_alias "$arg"; then # $arg is a global alias that isn't in command position
       style=global-alias
     else # $arg is a non-command word
       case $arg in
