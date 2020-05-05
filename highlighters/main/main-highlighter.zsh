@@ -1689,8 +1689,13 @@ _zsh_highlight_main_highlighter_expand_path()
 # -------------------------------------------------------------------------------------------------
 
 _zsh_highlight_main__precmd_hook() {
+  # Unset the WARN_NESTED_VAR option, taking care not to error if the option
+  # doesn't exist (zsh older than zsh-5.3.1-test-2).
   setopt localoptions
-  unsetopt warnnestedvar
+  if [[ -o warnnestedvar ]] 2>/dev/null; then
+    unsetopt warnnestedvar
+  fi
+
   _zsh_highlight_main__command_type_cache=()
 }
 
