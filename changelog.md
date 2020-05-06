@@ -77,7 +77,7 @@
 
 - Fix an error message on stderr before every prompt when the `WARN_NESTED_VAR` zsh option is set:
   `_zsh_highlight_main__precmd_hook:1: array parameter _zsh_highlight_main__command_type_cache set in enclosing scope in function _zsh_highlight_main__precmd_hook`
-  [#727, #731]
+  [#727, #731, #732, #733]
 
 # Changes in version 0.7.1
 
