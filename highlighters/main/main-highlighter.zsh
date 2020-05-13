@@ -750,7 +750,7 @@ _zsh_highlight_main_highlighter_highlight_list()
       # parameters that refer to commands, functions, and builtins.
       () {
         local -a words; words=( "${reply[@]}" )
-        if (( $#words == 0 )); then
+        if (( $#words == 0 )) && (( ! in_redirection )); then
           # Parameter elision is happening
           (( ++in_redirection ))
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos comment
