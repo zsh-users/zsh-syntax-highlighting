@@ -89,9 +89,11 @@
   (such as `;`, `|`, `&&`) before a newline
   [#677; had regressed in 0.7.0]
 
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.
+
 
 # Changes in version 0.7.0
 
