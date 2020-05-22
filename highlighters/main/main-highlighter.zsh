@@ -523,6 +523,7 @@ _zsh_highlight_main_highlighter_highlight_list()
   # "D" for do/done
   # "$" for 'end' (matches 'foreach' always; also used with cshjunkiequotes in repeat/while)
   # "?" for 'if'/'fi'; also checked by 'elif'/'else'
+  # "4" for the arithmetic 'for'
   # ":" for 'then'
   local braces_stack=$2
 
@@ -543,6 +544,8 @@ _zsh_highlight_main_highlighter_highlight_list()
   # - :regular:    "Not a command word", and command delimiters are permitted.
   #                Mainly used to detect premature termination of commands.
   # - :always:     The word 'always' in the «{ foo } always { bar }» syntax.
+  # - :arithmetic_for:
+  #                The double opening parenthesis of an arithmetic 'for' loop.
   #
   # When the kind of a word is not yet known, $this_word / $next_word may contain
   # multiple states.  For example, after "sudo -i", the next word may be either
@@ -854,6 +857,8 @@ _zsh_highlight_main_highlighter_highlight_list()
         style=commandseparator
       elif [[ $this_word == *':start:'* ]] && [[ $arg == $'\n' ]]; then
         style=commandseparator
+      elif [[ $braces_stack == '4'* ]]; then
+        style=commandseparator
       else
         # This highlights empty commands (semicolon follows nothing) as an error.
         # Zsh accepts them, though.
@@ -882,6 +887,8 @@ _zsh_highlight_main_highlighter_highlight_list()
       highlight_glob=true
       saw_assignment=false
       next_word=':start::start_of_pipeline:' # only left brace is allowed, apparently
+    elif [[ $arg == $'\x29\x29' ]] && _zsh_highlight_main__stack_pop '4' reserved-word; then
+      next_word+=':start:'
     elif ! (( in_redirection)) && [[ $this_word == *':start:'* ]]; then # $arg is the command word
       if (( ${+precommand_options[$arg]} )) && _zsh_highlight_main__is_runnable $arg; then
         style=precommand
@@ -949,6 +956,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                             ;;
                           ('fi')
                             _zsh_highlight_main__stack_pop '?'
+                            ;;
+                          ('for')
+                            next_word+=':arithmetic_for:'
                             ;;
                           ('foreach')
                             braces_stack='$'"$braces_stack"
@@ -1075,6 +1085,9 @@ _zsh_highlight_main_highlighter_highlight_list()
       fi
     elif _zsh_highlight_main__is_global_alias "$arg"; then # $arg is a global alias that isn't in command position
       style=global-alias
+    elif [[ $this_word == *':arithmetic_for:'* && $arg == $'\x28\x28' ]]; then # arithmetic for loop
+      braces_stack='4'"$braces_stack"
+      style=reserved-word
     else # $arg is a non-command word
       case $arg in
         ($'\x29')
