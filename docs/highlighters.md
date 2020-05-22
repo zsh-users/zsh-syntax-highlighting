@@ -18,6 +18,23 @@ Syntax highlighting is done by pluggable highlighters:
 [6]: highlighters/line.md
 
 
+Highlighter-independent settings
+--------------------------------
+
+By default, all command lines are highlighted.  However, it is possible to
+prevent command lines longer than a fixed number of characters from being
+highlighted by setting the variable `${ZSH_HIGHLIGHT_MAXLENGTH}` to the maximum
+length (in characters) of command lines to be highlighter.  This is useful when
+editing very long comand lines (for example, with the [`fned`][fned] utility
+function).  Example:
+
+[fned]: http://zsh.sourceforge.net/Doc/Release/User-Contributions.html#index-zed
+
+```zsh
+ZSH_HIGHLIGHT_MAXLENGTH=512
+```
+
+
 How to activate highlighters
 ----------------------------
 
