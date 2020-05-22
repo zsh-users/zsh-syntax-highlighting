@@ -154,6 +154,8 @@ run_test_internal() {
   }; [[ -z $RETURN ]] || return $RETURN
   unset ARG
 
+  integer print_expected_and_actual=0
+
   if (( unsorted )); then
     region_highlight=("${(@n)region_highlight}")
     expected_region_highlight=("${(@n)expected_region_highlight}")
@@ -177,6 +179,7 @@ run_test_internal() {
     if ! (( $+region_highlight[i] )); then
       print -r -- "not ok $i - unmatched expectation ($exp_start $exp_end $expected_highlight_zone[3])" \
          "${skip_mismatch:+"# TODO ${(qqq)skip_mismatch}"}"
+      if [[ -z $skip_mismatch ]]; then (( ++print_expected_and_actual )); fi
       continue
     fi
     local -a highlight_zone; highlight_zone=( ${(z)region_highlight[i]} )
@@ -189,6 +192,7 @@ run_test_internal() {
       [[ $highlight_zone[3] != $expected_highlight_zone[3] ]]
     then
       print -r -- "not ok $i - $desc - expected ($exp_start $exp_end ${(qqq)expected_highlight_zone[3]}), observed ($start $end ${(qqq)highlight_zone[3]}). $todo"
+      if [[ -z $todo ]]; then (( ++print_expected_and_actual )); fi
     else
       print -r -- "ok $i - $desc${todo:+ - }$todo"
     fi
@@ -221,7 +225,10 @@ run_test_internal() {
       details+="«$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»"
       tap_escape $details; details=$REPLY
       print -r -- "not ok $i - cardinality check - $details${todo:+ - }$todo"
-
+      if [[ -z $todo ]]; then (( ++print_expected_and_actual )); fi
+    fi
+  fi
+  if (( print_expected_and_actual )); then
       () {
         local -a left_column right_column
         left_column=( "expected_region_highlight" "${(qq)expected_region_highlight[@]}" )
@@ -234,7 +241,6 @@ run_test_internal() {
           | if type column >/dev/null; then column -t -s $'\t'; else cat; fi \
           | sed 's/^/# /'
       }
-    fi
   fi
 }
 
