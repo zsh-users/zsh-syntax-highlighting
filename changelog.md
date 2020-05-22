@@ -1,5 +1,8 @@
 # Changes in HEAD
 
+- Document `$ZSH_HIGHLIGHT_MAXLENGTH`.
+  [#698]
+
 - Redirection operators (e.g., `<` and `>`) are now highlighted by default
   [#646]
 
