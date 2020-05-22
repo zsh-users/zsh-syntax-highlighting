@@ -3,6 +3,9 @@
 - Document `$ZSH_HIGHLIGHT_MAXLENGTH`.
   [#698]
 
+- Optimize highlighting unquoted words (words that are not in single quotes, double quotes, backticks, or dollar-single-quotes)
+  [#730]
+
 - Redirection operators (e.g., `<` and `>`) are now highlighted by default
   [#646]
 
