@@ -617,7 +617,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     if (( in_redirection == 0 )); then
       this_word=$next_word
       next_word=':regular:'
-    else
+    elif (( !in_param )); then
       # Stall $next_word.
       (( --in_redirection ))
     fi

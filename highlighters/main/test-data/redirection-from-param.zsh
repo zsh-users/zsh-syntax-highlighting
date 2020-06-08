@@ -35,6 +35,6 @@ BUFFER=$'<$fn cat'
 
 expected_region_highlight=(
   '1 1 redirection' # <
-  '2 4 path "issue #712"' # $fn
-  '6 8 command "issue #712"' # cat
+  '2 4 path' # $fn
+  '6 8 command' # cat
 )
