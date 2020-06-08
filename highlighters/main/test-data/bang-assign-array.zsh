@@ -32,9 +32,11 @@ BUFFER=$'foo=(bar abaz) \! ls'
 
 expected_region_highlight=(
   '1 5 assign' # foo=(
+  '5 5 reserved-word' # (
   '6 8 default' # bar
   '10 13 default' # abaz
   '14 14 assign' # )
+  '14 14 reserved-word' # )
   '16 16 unknown-token' # \!
   '18 19 command' # ls
 )

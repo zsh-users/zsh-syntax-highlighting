@@ -1007,6 +1007,7 @@ _zsh_highlight_main_highlighter_highlight_list()
                           saw_assignment=true
                           if [[ $arg[i] == '(' ]]; then
                             in_array_assignment=true
+                            _zsh_highlight_main_add_region_highlight start_pos+i-1 start_pos+i reserved-word
                           else
                             # assignment to a scalar parameter.
                             # (For array assignments, the command doesn't start until the ")" token.)
@@ -1088,9 +1089,11 @@ _zsh_highlight_main_highlighter_highlight_list()
         ($'\x29')
                   # subshell or end of array assignment
                   if $in_array_assignment; then
-                    style=assign
+                    _zsh_highlight_main_add_region_highlight $start_pos $end_pos assign
+                    _zsh_highlight_main_add_region_highlight $start_pos $end_pos reserved-word
                     in_array_assignment=false
                     next_word+=':start:'
+                    continue
                   elif (( in_redirection )); then
                     style=unknown-token
                   else

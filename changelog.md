@@ -85,6 +85,10 @@
 - Highlight arithmetic expansions (e.g., `$(( 42 ))`)
   [#607 #649 #704]
 
+- Highlight the parentheses of array assignments as reserved words (`foo=( bar )`).
+  The `assign` style remains supported and has precedence.
+  [#585]
+
 # Changes in version 0.7.1
 
 - Remove out-of-date information from the 0.7.0 changelog.

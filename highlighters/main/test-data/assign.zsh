@@ -33,8 +33,10 @@ expected_region_highlight=(
   "1 3 assign" # A=1
   "3 3 default" # 1
   "5 7 assign" # b=(
+  "7 7 reserved-word" # (
   "8 12 default" # "foo"
   "8 12 double-quoted-argument" # "foo"
   "14 16 default" # bar
   "17 17 assign" # )
+  "17 17 reserved-word" # )
 )

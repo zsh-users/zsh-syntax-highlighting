@@ -32,8 +32,10 @@ BUFFER=$'a=( foo ; bar )'
 
 expected_region_highlight=(
   '1 3 assign' # a=(
+  '3 3 reserved-word' # (
   '5 7 default' # foo
   '9 9 unknown-token' # ; (not commandseparator; see highlighter source code)
   '11 13 default' # bar
   '15 15 assign' # )
+  '15 15 reserved-word' # )
 )

@@ -33,6 +33,7 @@ bar(){}
 
 expected_region_highlight=(
   '1 3 assign' # a=(
+  '3 3 reserved-word' # (
   '5 7 default' # foo
   '9 9 unknown-token' # |
   # zsh reports a parse error at this point.  Nevertheless, we test how we

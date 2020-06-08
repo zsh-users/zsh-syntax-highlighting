@@ -34,5 +34,6 @@ BUFFER=$'l+=( $1'
 
 expected_region_highlight=(
   '1 4 assign' # l+=(
+  '4 4 reserved-word' # (
   '6 7 default' # $1
 )
