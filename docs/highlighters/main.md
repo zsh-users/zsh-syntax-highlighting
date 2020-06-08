@@ -56,6 +56,7 @@ This highlighter defines the following styles:
 * `dollar-quoted-argument-unclosed` - unclosed dollar-quoted arguments (`` $'foo ``)
 * `rc-quote` - two single quotes inside single quotes when the `RC_QUOTES` option is set (`` 'foo''bar' ``)
 * `dollar-double-quoted-argument` - parameter expansion inside double quotes (`$foo` inside `""`)
+* `back-un-quoted-argument` -  backslash escape sequences outside quotes (`\"` in `print -r \"bar\"`)
 * `back-double-quoted-argument` -  backslash escape sequences inside double-quoted arguments (`\"` in `"foo\"bar"`)
 * `back-dollar-quoted-argument` -  backslash escape sequences inside dollar-quoted arguments (`\x` in `$'\x48'`)
 * `assign` - parameter assignments (`x=foo` and `x=( )`)

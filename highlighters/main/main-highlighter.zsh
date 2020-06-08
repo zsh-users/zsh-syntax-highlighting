@@ -55,6 +55,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[rc-quote]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]:=fg=cyan}
+: ${ZSH_HIGHLIGHT_STYLES[back-un-quoted-argument]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[assign]:=none}
@@ -1328,7 +1329,13 @@ _zsh_highlight_main_highlighter_highlight_argument()
     i=${arg[(ib.i.)[\\\'\"\`\$\<\>\*\?]]}
     case "$arg[$i]" in
       "") break;;
-      "\\") (( i += 1 )); continue;;
+      "\\") 
+        highlights+=(
+          $(( start_pos + i - 1 )) $((start_pos + i + 1)) back-un-quoted-argument
+        )
+        (( i += 1 ))
+        continue
+        ;;
       "'")
         _zsh_highlight_main_highlighter_highlight_single_quote $i
         (( i = REPLY ))
