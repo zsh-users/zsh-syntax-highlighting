@@ -30,7 +30,7 @@
 # Assumes that '/bin/sh' exists and '/bin/s' does not exist.
 # Related to path_prefix.zsh
 
-PREBUFFER='ls \'
+PREBUFFER=$'ls \\\n'
 BUFFER='/bin/s'
 
 expected_region_highlight=(

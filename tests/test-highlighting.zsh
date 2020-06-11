@@ -145,6 +145,7 @@ run_test_internal() {
 
     # Check the data declares $PREBUFFER or $BUFFER.
     [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! On ${(qq)ARG}: Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return ${RETURN:=1}; }
+    [[ $PREBUFFER == (''|*$'\n') ]] || { echo >&2 "Bail out! On ${(qq)ARG}: PREBUFFER=${(qqqq)PREBUFFER} doesn't end with a newline"; return ${RETURN:=1}; }
 
     # Set sane defaults for ZLE variables
     : ${CURSOR=$#BUFFER} ${PENDING=0} ${WIDGET=z-sy-h-test-harness-test-widget}
