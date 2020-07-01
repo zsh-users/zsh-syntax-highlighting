@@ -36,7 +36,7 @@ the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`
 manual page][zshzle-Character-Highlighting].
 
 See also: [regular expressions tutorial][perlretut], zsh regexp operator `=~`
-in [the `zshmisc(1)` manual page][zshmisc-Conditional-Expressions], GNU
+in [the `zshmisc(1)` manual page][zshmisc-Conditional-Expressions]
 
 [POSIX_ERE]: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap09.html#tag_09_04
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
