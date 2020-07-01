@@ -11,7 +11,7 @@ To use this highlighter, associate regular expressions with styles in the
 `ZSH_HIGHLIGHT_REGEXP` associative array, for example in `~/.zshrc`:
 
 ```zsh
-typeset -A ZSH_HIGHLIGHT_PATTERNS
+typeset -A ZSH_HIGHLIGHT_REGEXP
 ZSH_HIGHLIGHT_REGEXP+=('\bsudo\b' fg=123,bold)
 ```
 
@@ -28,3 +28,19 @@ in [the `zshmisc(1)` manual page][zshmisc-Conditional-Expressions]
 [zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 [perlretut]: http://perldoc.perl.org/perlretut.html
 [zshmisc-Conditional-Expressions]: http://zsh.sourceforge.net/Doc/Release/Conditional-Expressions.html#Conditional-Expressions
+
+### Cautions to BSD-based platform users
+
+In BSD-based platform such as macOS, the regex metacharacters with leading backslash (`\`)
+such as `\b`, `\w`, etc. are [not supported](https://stackoverflow.com/a/12696899).
+
+So if you want something like the above example, you should use `[[:<:]]`(matches the beginning of a word)
+with `[[:>:]]`(matches the end of a word). The complete example would be like:
+
+```zsh
+typeset -A ZSH_HIGHLIGHT_REGEXP
+ZSH_HIGHLIGHT_REGEXP+=('[[:<:]]sudo[[:>:]]' fg=123,bold)
+```
+
+For other metacharacters, consider using
+[POSIX ERE](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap09.html#tag_09_04) instead.
