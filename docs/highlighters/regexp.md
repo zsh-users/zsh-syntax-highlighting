@@ -11,7 +11,7 @@ To use this highlighter, associate regular expressions with styles in the
 `ZSH_HIGHLIGHT_REGEXP` associative array, for example in `~/.zshrc`:
 
 ```zsh
-typeset -A ZSH_HIGHLIGHT_PATTERNS
+typeset -A ZSH_HIGHLIGHT_REGEXP
 ZSH_HIGHLIGHT_REGEXP+=('\bsudo\b' fg=123,bold)
 ```
 
