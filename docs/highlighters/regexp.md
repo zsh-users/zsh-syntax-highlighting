@@ -12,25 +12,25 @@ To use this highlighter, associate regular expressions with styles in the
 
 ```zsh
 typeset -A ZSH_HIGHLIGHT_REGEXP
-ZSH_HIGHLIGHT_REGEXP+=('^rm .*' fg="red",bold)
+ZSH_HIGHLIGHT_REGEXP+=('^rm .*' fg=red,bold)
 ```
 
 This will highlight the whole line starting with `rm` command (for all
 operating systems, in contrast to the below example).
 
 Some regular expressions are [subject to the host platform][MAN_ZSH_REGEX], 
-especially the kernel. To highlight `sudo` only as a complete word, i.e., 
+especially the `libc` module. To highlight `sudo` only as a complete word, i.e., 
 `sudo cmd`, but not `sudoedit`, the respective regular expressions for the host
 systems would be:
 
-* GNU-Linux
+* Platform with GNU libc (e.g., many GNU/Linux)
 
   ```zsh
   typeset -A ZSH_HIGHLIGHT_REGEXP
   ZSH_HIGHLIGHT_REGEXP+=('\<sudo\>' fg=123,bold)
   ```
 
-* BSD-based platforms
+* BSD-based platforms (e.g., macOS)
 
   ```zsh
   typeset -A ZSH_HIGHLIGHT_REGEXP
