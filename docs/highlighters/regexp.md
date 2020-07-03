@@ -15,12 +15,13 @@ typeset -A ZSH_HIGHLIGHT_REGEXP
 ZSH_HIGHLIGHT_REGEXP+=('^rm .*' fg="red",bold)
 ```
 
-This will highlight the whole line starting with `rm` (for all operating systems, 
-in contrast to the below example).
+This will highlight the whole line starting with `rm` command (for all
+operating systems, in contrast to the below example).
 
-Some regex patterns are [subject to the host platform][MAN_ZSH_REGEX], especially
-the kernel. To highlight `sudo` only as a complete word, i.e., `sudo cmd`, but 
-not `sudoedit`:
+Some regular expressions are [subject to the host platform][MAN_ZSH_REGEX], 
+especially the kernel. To highlight `sudo` only as a complete word, i.e., 
+`sudo cmd`, but not `sudoedit`, the respective regular expressions for the host
+systems would be:
 
 * GNU-Linux
 
