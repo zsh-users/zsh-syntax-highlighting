@@ -23,7 +23,7 @@ especially the `libc` module. To highlight `sudo` only as a complete word, i.e.,
 `sudo cmd`, but not `sudoedit`, the respective regular expressions for the host
 systems would be:
 
-* Platforms with GNU `libc` (e.g., many GNU/Linux)
+* Platforms with GNU `libc` (e.g., many GNU/Linux distributions)
 
   ```zsh
   typeset -A ZSH_HIGHLIGHT_REGEXP
