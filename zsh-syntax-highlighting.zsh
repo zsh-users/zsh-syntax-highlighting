@@ -62,28 +62,12 @@ else
   typeset -g zsh_highlight__pat_static_bug=true
 fi
 
-# Array declaring active highlighters names.
-typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS
+# Probe the memo= feature, once.  When this anonymous function returns,
+# $zsh_highlight__memo_feature will be set (either to 0 or to 1).
+() {
+  # Provide a mock $region_highlight.  (The test suite's mock might not have been set up yet.)
+  (( ${+region_highlight} )) || typeset -a region_highlight
 
-# Update ZLE buffer syntax highlighting.
-#
-# Invokes each highlighter that needs updating.
-# This function is supposed to be called whenever the ZLE state changes.
-_zsh_highlight()
-{
-  # Store the previous command return code to restore it whatever happens.
-  local ret=$?
-  # Make it read-only.  Can't combine this with the previous line when POSIX_BUILTINS may be set.
-  typeset -r ret
-
-  # $region_highlight should be predefined, either by zle or by the test suite's mock (non-special) array.
-  (( ${+region_highlight} )) || {
-    echo >&2 'zsh-syntax-highlighting: error: $region_highlight is not defined'
-    echo >&2 'zsh-syntax-highlighting: (Check whether zsh-syntax-highlighting was installed according to the instructions.)'
-    return $ret
-  }
-
-  # Probe the memo= feature, once.
   (( ${+zsh_highlight__memo_feature} )) || {
     region_highlight+=( " 0 0 fg=red, memo=zsh-syntax-highlighting" )
     case ${region_highlight[-1]} in
@@ -125,6 +109,28 @@ _zsh_highlight()
         ;;
     esac
     region_highlight[-1]=()
+  }
+}
+
+# Array declaring active highlighters names.
+typeset -ga ZSH_HIGHLIGHT_HIGHLIGHTERS
+
+# Update ZLE buffer syntax highlighting.
+#
+# Invokes each highlighter that needs updating.
+# This function is supposed to be called whenever the ZLE state changes.
+_zsh_highlight()
+{
+  # Store the previous command return code to restore it whatever happens.
+  local ret=$?
+  # Make it read-only.  Can't combine this with the previous line when POSIX_BUILTINS may be set.
+  typeset -r ret
+
+  # $region_highlight should be predefined, either by zle or by the test suite's mock (non-special) array.
+  (( ${+region_highlight} )) || {
+    echo >&2 'zsh-syntax-highlighting: error: $region_highlight is not defined'
+    echo >&2 'zsh-syntax-highlighting: (Check whether zsh-syntax-highlighting was installed according to the instructions.)'
+    return $ret
   }
 
   # Reset region_highlight to build it from scratch
