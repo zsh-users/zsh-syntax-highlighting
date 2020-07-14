@@ -1,6 +1,57 @@
 # Changes in HEAD
 
 
+## Changes fixed as part of the switch to zle-line-pre-redraw
+
+The changes in this section were fixed by switching to a `zle-line-pre-redraw`-based
+implementation.
+
+Note: The new implementation will only be used on future zsh releases,
+numbered 5.8.0.3 and newer, due to interoperability issues with other plugins
+(issues #418 and #579).  The underlying zsh feature has been available since
+zsh 5.2.
+
+Whilst under development, the new implementation was known as the
+"feature/redrawhook" topic branch.
+
+- Fixed: Highlighting not triggered after popping a buffer from the buffer stack
+  (using the `push-line` widget, default binding: `M-q`)
+  [#40]
+
+- Fixed: Invoking completion when there were no matches removed highlighting
+  [#90, #470]
+
+- Fixed: Two successive deletes followed by a yank only yanked the latest
+  delete, rather than both of them
+  [#150, #151, #160; cf. #183]
+
+- Presumed fixed: Completing `$(xsel)` results in an error message from `xsel`,
+  with pre-2017 versions of `xsel`.  (For 2017 vintage and newer, see the issue
+  for details.)
+  [#154]
+
+- Fixed: When the standard `bracketed-paste-magic` widget is in use, pastes were slow
+  [#295]
+
+- Fixed: No way to prevent a widget from being wrapped
+  [#324]
+
+- Fixed: No highlighting while cycling menu completion
+  [#375]
+
+- Fixed: Does not coexist with the `IGNORE_EOF` option
+  [#377]
+
+- Fixed: The `undefined-key` widget was wrapped
+  [#421]
+
+- Fixed: Does not coexist with the standard `surround` family of widgets
+  [#520]
+
+- Fixed: First completed filename doesn't get `path` highlighting
+  [#632]
+
+
 # Changes in 0.8.0-alpha1-pre-redrawhook
 
 ## Notice about an improbable-but-not-impossible forward incompatibility
