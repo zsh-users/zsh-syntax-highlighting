@@ -16,6 +16,25 @@ added to zsh at z-sy-h's initiative.  The new feature is used in the fix
 to issue #418.
 
 
+## Incompatible changes:
+
+- An unsuccessful completion (a <kbd>⮀ Tab</kbd> press that doesn't change the
+  command line) no longer causes highlighting to be lost.  Visual feedback can
+  alternatively be achieved by setting the `format` zstyle under the `warnings`
+  tag, for example,
+
+        zstyle ':completion:*:warnings' format '%F{red}No matches%f'
+
+    Refer to the [description of the `format` style in `zshcompsys(1)`]
+    [zshcompsys-Standard-Styles-format].
+
+    (#90, part of #245 (feature/redrawhook))
+
+[zshcompsys-Standard-Styles]: http://zsh.sourceforge.net/Doc/Release/Completion-System.html#Standard-Styles
+[zshcompsys-Standard-Styles-format]: http://zsh.sourceforge.net/Doc/Release/Completion-System.html#index-format_002c-completion-style
+  
+
+
 ## Other changes:
 
 - Document `$ZSH_HIGHLIGHT_MAXLENGTH`.
@@ -483,28 +502,6 @@ in this area.
 
 - Warn only once, rather than once per keypress, when a highlighter is unavailable.
   (0a9b347483ae)
-
-
-# Changes in version 0.5.0
-
-
-## Incompatible changes:
-
-- An unsuccessful completion (a <kbd>⮀ Tab</kbd> press that doesn't change the
-  command line) no longer causes highlighting to be lost.  Visual feedback can
-  alternatively be achieved by setting the `format` zstyle under the `warnings`
-  tag, for example,
-
-        zstyle ':completion:*:warnings' format '%F{red}No matches%f'
-
-    Refer to the [description of the `format` style in `zshcompsys(1)`]
-    [zshcompsys-Standard-Styles-format].
-
-    (#90, part of #245, XXXXXXXXXXXX)
-
-[zshcompsys-Standard-Styles]: http://zsh.sourceforge.net/Doc/Release/Completion-System.html#Standard-Styles
-[zshcompsys-Standard-Styles-format]: http://zsh.sourceforge.net/Doc/Release/Completion-System.html#index-format_002c-completion-style
-  
 
 
 # Changes in version 0.4.1
