@@ -407,7 +407,14 @@ _zsh_highlight_call_widget()
 # 
 # 2. If zsh has the memo= feature, which is required for interoperability reasons.
 #    See issues #579 and #735, and the issues referenced from them.
-if (( zsh_highlight__memo_feature )) && _zsh_highlight__function_callable_p add-zle-hook-widget
+#
+#    We check this with a plain version number check, since a functional check,
+#    as done by _zsh_highlight, can only be done from inside a widget
+#    function — a catch-22.
+#
+#    See _zsh_highlight for the magic version number.  (The use of 5.8.0.2
+#    rather than 5.8.0.3 as in the _zsh_highlight is deliberate.)
+if is-at-least 5.8.0.2 && _zsh_highlight__function_callable_p add-zle-hook-widget
 then
   autoload -U add-zle-hook-widget
   _zsh_highlight__zle-line-finish() {
