@@ -403,7 +403,17 @@ _zsh_highlight_call_widget()
   _zsh_highlight
 }
 
-if _zsh_highlight__function_callable_p add-zle-hook-widget
+# Decide whether to use the zle-line-pre-redraw codepath (colloquially known as
+# "feature/redrawhook", after the topic branch's name) or the legacy "bind all
+# widgets" codepath.
+#
+# We use the new codepath under two conditions:
+#
+# 1. If it's available, which we check by testing for add-zle-hook-widget's availability.
+# 
+# 2. If zsh has the memo= feature, which is required for interoperability reasons.
+#    See issues #579 and #735, and the issues referenced from them.
+if (( zsh_highlight__memo_feature )) && _zsh_highlight__function_callable_p add-zle-hook-widget
 then
   autoload -U add-zle-hook-widget
   _zsh_highlight__zle-line-finish() {
