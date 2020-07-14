@@ -1,5 +1,8 @@
 # Changes in HEAD
 
+
+# Changes in 0.8.0-alpha1-pre-redrawhook
+
 ## Notice about an improbable-but-not-impossible forward incompatibility
 
 Everyone can probably skip this section.
@@ -130,6 +133,8 @@ to issue #418.
   requires zsh 5.8.0.3 or newer.  (zsh 5.8.0.2-dev from the `master` branch,
   revision zsh-5.8-172-gdd6e702ee or newer is also fine.)
   [#418, https://github.com/okapia/zsh-viexchange/issues/1]
+
+- Improve performance of the `brackets` highlighter.
 
 
 # Changes in version 0.7.1

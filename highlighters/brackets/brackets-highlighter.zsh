@@ -51,8 +51,9 @@ _zsh_highlight_highlighter_brackets_paint()
   local -A levelpos lastoflevel matching
 
   # Find all brackets and remember which one is matching
-  for (( pos = 1; pos <= buflen; pos++ )) ; do
-    char=$BUFFER[pos]
+  pos=0
+  for char in ${(s..)BUFFER} ; do
+    (( ++pos ))
     case $char in
       ["([{"])
         levelpos[$pos]=$((++level))
