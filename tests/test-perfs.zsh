@@ -48,6 +48,7 @@
 }
 
 # Load the main script.
+typeset -a region_highlight
 . ${0:h:h}/zsh-syntax-highlighting.zsh
 
 # Activate the highlighter.
