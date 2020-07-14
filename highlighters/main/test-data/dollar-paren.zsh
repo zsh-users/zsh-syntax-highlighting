@@ -28,14 +28,22 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER=': "$(:)"'
+BUFFER=': "$(:)" "foo$(:)bar'
 
 expected_region_highlight=(
   '1 1 builtin' # :
   '3 8 default' # "$(:)"
-  '3 8 double-quoted-argument' # "$(:)"
-  '4 7 command-substitution' # $(:)
-  '4 5 command-substitution-delimiter' # $(
+  '3 3 double-quoted-argument' # "$(:)"
+  '8 8 double-quoted-argument' # "$(:)"
+  '4 7 command-substitution-quoted' # $(:)
+  '4 5 command-substitution-delimiter-quoted' # $(
   '6 6 builtin' # :
-  '7 7 command-substitution-delimiter' # )
+  '7 7 command-substitution-delimiter-quoted' # )
+  '10 20 default' # "foo$(:)bar
+  '10 13 double-quoted-argument-unclosed' # "foo
+  '18 20 double-quoted-argument-unclosed' # bar
+  '14 17 command-substitution-quoted' # $(:)
+  '14 15 command-substitution-delimiter-quoted' # $(
+  '16 16 builtin' # :
+  '17 17 command-substitution-delimiter-quoted' # )
 )

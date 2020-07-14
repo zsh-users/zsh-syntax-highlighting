@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2018 zsh-syntax-highlighting contributors
+# Copyright (c) 2020 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,14 +28,11 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-alias sdu='sudo -u'
-sudo(){}
+alias -g foo=bar
 
-BUFFER='sdu phy1729 echo foo'
+BUFFER=$'foo foo'
 
 expected_region_highlight=(
-  '1 3 alias' # sdu
-  '5 11 default "issue #540"' # phy1729
-  '13 16 commmand "issue #540"' # echo (not builtin)
-  '18 20 default' # foo
+  '1 3 global-alias' # foo
+  '5 7 global-alias' # foo
 )

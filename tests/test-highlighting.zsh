@@ -34,6 +34,11 @@ setopt NO_UNSET WARN_CREATE_GLOBAL
 # Required for add-zle-hook-widget.
 zmodload zsh/zle
 
+local -r root=${0:h:h}
+local -a anon_argv; anon_argv=("$@")
+
+(){
+set -- "${(@)anon_argv}"
 # Check an highlighter was given as argument.
 [[ -n "$1" ]] || {
   echo >&2 "Bail out! You must provide the name of a valid highlighter as argument."
@@ -41,13 +46,13 @@ zmodload zsh/zle
 }
 
 # Check the highlighter is valid.
-[[ -f ${0:h:h}/highlighters/$1/$1-highlighter.zsh ]] || {
+[[ -f $root/highlighters/$1/$1-highlighter.zsh ]] || {
   echo >&2 "Bail out! Could not find highlighter ${(qq)1}."
   exit 2
 }
 
 # Check the highlighter has test data.
-[[ -d ${0:h:h}/highlighters/$1/test-data ]] || {
+[[ -d $root/highlighters/$1/test-data ]] || {
   echo >&2 "Bail out! Highlighter ${(qq)1} has no test data."
   exit 2
 }
@@ -56,7 +61,7 @@ zmodload zsh/zle
 local results_filter
 if [[ ${QUIET-} == y ]]; then
   if type -w perl >/dev/null; then
-    results_filter=${0:A:h}/tap-filter
+    results_filter=$root/tests/tap-filter
   else
     echo >&2 "Bail out! quiet mode not supported: perl not found"; exit 2
   fi
@@ -67,18 +72,18 @@ fi
 
 # Load the main script.
 # While here, test that it doesn't eat aliases.
-print > >($results_filter | ${0:A:h}/tap-colorizer.zsh) -r -- "# global (driver) tests"
-print > >($results_filter | ${0:A:h}/tap-colorizer.zsh) -r -- "1..1"
+print > >($results_filter | $root/tests/tap-colorizer.zsh) -r -- "# global (driver) tests"
+print > >($results_filter | $root/tests/tap-colorizer.zsh) -r -- "1..1"
 alias -- +plus=plus
 alias -- _other=other
-original_alias_dash_L_output="$(alias -L)"
-. ${0:h:h}/zsh-syntax-highlighting.zsh
+local original_alias_dash_L_output="$(alias -L)"
+. $root/zsh-syntax-highlighting.zsh
 if [[ $original_alias_dash_L_output == $(alias -L) ]]; then
   print -r -- "ok 1 # 'alias -- +foo=bar' is preserved"
 else
   print -r -- "not ok 1 # 'alias -- +foo=bar' is preserved"
   exit 1
-fi > >($results_filter | ${0:A:h}/tap-colorizer.zsh) 
+fi > >($results_filter | $root/tests/tap-colorizer.zsh)
 
 # Overwrite _zsh_highlight_add_highlight so we get the key itself instead of the style
 _zsh_highlight_add_highlight()
@@ -89,6 +94,24 @@ _zsh_highlight_add_highlight()
 # Activate the highlighter.
 ZSH_HIGHLIGHT_HIGHLIGHTERS=($1)
 
+# In zsh<5.3, 'typeset -p arrayvar' emits two lines, so we use this wrapper instead.
+typeset_p() {
+  for 1 ; do
+    if [[ ${(tP)1} == *array* ]]; then
+      print -r -- "$1=( ${(@qqqqP)1} )"
+    else
+      print -r -- "$1=${(qqqqP)1}"
+    fi
+  done
+}
+
+# Escape # as ♯ and newline as ↵ they are illegal in the 'description' part of TAP output
+# The string to escape is «"$@"»; the result is returned in $REPLY.
+tap_escape() {
+  local s="${(j. .)@}"
+  REPLY="${${s//'#'/♯}//$'\n'/↵}"
+}
+
 # Runs a highlighting test
 # $1: data file
 run_test_internal() {
@@ -97,52 +120,83 @@ run_test_internal() {
   local srcdir="$PWD"
   builtin cd -q -- "$tests_tempdir" || { echo >&2 "Bail out! On ${(qq)1}: cd failed: $?"; return 1 }
 
-  echo "# ${1:t:r}"
-
   # Load the data and prepare checking it.
-  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET skip_test unsorted=0
+  local BUFFER CURSOR MARK PENDING PREBUFFER REGION_ACTIVE WIDGET REPLY skip_test fail_test unsorted=0
+  local expected_mismatch
+  local skip_mismatch
   local -a expected_region_highlight region_highlight
-  . "$srcdir"/"$1"
 
-  (( $#skip_test )) && { print -r -- "1..0 # SKIP $skip_test"; return; }
+  local ARG="$1"
+  local RETURN=""
+  () {
+    setopt localoptions
 
-  # Check the data declares $PREBUFFER or $BUFFER.
-  [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! On ${(qq)1}: Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return 1; }
-  # Check the data declares $expected_region_highlight.
-  (( $+expected_region_highlight == 0 )) && { echo >&2 "Bail out! On ${(qq)1}: 'expected_region_highlight' is not declared."; return 1; }
+    # WARNING: The remainder of this anonymous function will run with the test's options in effect
+    if { ! . "$srcdir"/"$ARG" } || (( $#fail_test )); then
+      print -r -- "1..1"
+      print -r -- "## ${ARG:t:r}"
+      tap_escape $fail_test; fail_test=$REPLY
+      print -r -- "not ok 1 - failed setup: $fail_test"
+      return ${RETURN:=0}
+    fi
 
-  # Set sane defaults for ZLE variables
-  : ${CURSOR=$#BUFFER} ${PENDING=0} ${WIDGET=z-sy-h-test-harness-test-widget}
+    (( $#skip_test )) && {
+      print -r -- "1..0 # SKIP $skip_test"
+      print -r -- "## ${ARG:t:r}"
+      return ${RETURN:=0}
+    }
 
-  # Process the data.
-  _zsh_highlight
+    # Check the data declares $PREBUFFER or $BUFFER.
+    [[ -z $PREBUFFER && -z $BUFFER ]] && { echo >&2 "Bail out! On ${(qq)ARG}: Either 'PREBUFFER' or 'BUFFER' must be declared and non-blank"; return ${RETURN:=1}; }
+    [[ $PREBUFFER == (''|*$'\n') ]] || { echo >&2 "Bail out! On ${(qq)ARG}: PREBUFFER=${(qqqq)PREBUFFER} doesn't end with a newline"; return ${RETURN:=1}; }
+
+    # Set sane defaults for ZLE variables
+    : ${CURSOR=$#BUFFER} ${PENDING=0} ${WIDGET=z-sy-h-test-harness-test-widget}
+
+    # Process the data.
+    _zsh_highlight
+  }; [[ -z $RETURN ]] || return $RETURN
+  unset ARG
+
+  integer print_expected_and_actual=0
 
   if (( unsorted )); then
     region_highlight=("${(@n)region_highlight}")
     expected_region_highlight=("${(@n)expected_region_highlight}")
   fi
 
+  # Print the plan line, and some comments for human readers
   echo "1..$(( $#expected_region_highlight + 1))"
+  echo "## ${1:t:r}" # note: tests/edit-failed-tests looks for the "##" emitted by this line
+  [[ -n $PREBUFFER ]] && printf '# %s\n' "$(typeset_p PREBUFFER)"
+  [[ -n $BUFFER ]] && printf '# %s\n' "$(typeset_p BUFFER)"
+
   local i
   for ((i=1; i<=$#expected_region_highlight; i++)); do
     local -a expected_highlight_zone; expected_highlight_zone=( ${(z)expected_region_highlight[i]} )
     integer exp_start=$expected_highlight_zone[1] exp_end=$expected_highlight_zone[2]
     local todo=
-    (( $+expected_highlight_zone[4] )) && todo="# TODO $expected_highlight_zone[4]"
+    if (( $+expected_highlight_zone[4] )); then
+      todo="# TODO $expected_highlight_zone[4]"
+      skip_mismatch="cardinality check disabled whilst regular test points are expected to fail"
+    fi
     if ! (( $+region_highlight[i] )); then
-      print -r -- "not ok $i - unmatched expectation ($exp_start $exp_end $expected_highlight_zone[3])"
+      print -r -- "not ok $i - unmatched expectation ($exp_start $exp_end $expected_highlight_zone[3])" \
+         "${skip_mismatch:+"# TODO ${(qqq)skip_mismatch}"}"
+      if [[ -z $skip_mismatch ]]; then (( ++print_expected_and_actual )); fi
       continue
     fi
     local -a highlight_zone; highlight_zone=( ${(z)region_highlight[i]} )
     integer start=$(( highlight_zone[1] + 1 )) end=$highlight_zone[2]
-    # Escape # as ♯ and newline as ↵ they are illegal in the 'description' part of TAP output
-    local desc="[$start,$end] «${${BUFFER[$start,$end]//'#'/♯}//$'\n'/↵}»"
+    local desc="[$start,$end] «${BUFFER[$start,$end]}»"
+    tap_escape $desc; desc=$REPLY
     if
       [[ $start != $exp_start ]] ||
       [[ $end != $exp_end ]] ||
-      [[ $highlight_zone[3] != $expected_highlight_zone[3] ]]
+      [[ ${highlight_zone[3]%,} != ${expected_highlight_zone[3]} ]] # remove the comma that's before the memo field
     then
       print -r -- "not ok $i - $desc - expected ($exp_start $exp_end ${(qqq)expected_highlight_zone[3]}), observed ($start $end ${(qqq)highlight_zone[3]}). $todo"
+      if [[ -z $todo ]]; then (( ++print_expected_and_actual )); fi
     else
       print -r -- "ok $i - $desc${todo:+ - }$todo"
     fi
@@ -154,10 +208,43 @@ run_test_internal() {
     unset desc
   done
 
-  if (( $#expected_region_highlight == $#region_highlight )); then
-    print -r -- "ok $i - cardinality check"
+  # If both $skip_mismatch and $expected_mismatch are set, that means the test
+  # has some XFail test points, _and_ explicitly sets $expected_mismatch as
+  # well.  Explicit settings should have priority, so we ignore $skip_mismatch
+  # if $expected_mismatch is set.
+  if [[ -n $skip_mismatch && -z $expected_mismatch ]]; then
+    tap_escape $skip_mismatch; skip_mismatch=$REPLY
+    print "ok $i - cardinality check" "# SKIP $skip_mismatch"
   else
-    print -r -- "not ok $i - have $#expected_region_highlight expectations and $#region_highlight region_highlight entries"
+    local todo
+    if [[ -n $expected_mismatch ]]; then
+      tap_escape $expected_mismatch; expected_mismatch=$REPLY
+      todo="# TODO $expected_mismatch"
+    fi
+    if (( $#expected_region_highlight == $#region_highlight )); then
+      print -r -- "ok $i - cardinality check${todo:+ - }$todo"
+    else
+      local details
+      details+="have $#expected_region_highlight expectations and $#region_highlight region_highlight entries: "
+      details+="«$(typeset_p expected_region_highlight)» «$(typeset_p region_highlight)»"
+      tap_escape $details; details=$REPLY
+      print -r -- "not ok $i - cardinality check - $details${todo:+ - }$todo"
+      if [[ -z $todo ]]; then (( ++print_expected_and_actual )); fi
+    fi
+  fi
+  if (( print_expected_and_actual )); then
+      () {
+        local -a left_column right_column
+        left_column=( "expected_region_highlight" "${(qq)expected_region_highlight[@]}" )
+        right_column=( "region_highlight" "${(qq)region_highlight[@]}" )
+        integer difference=$(( $#right_column - $#left_column ))
+        repeat $difference do left_column+=(.); done
+        paste \
+          =(print -rC1 -- $left_column) \
+          =(print -rC1 -- $right_column) \
+          | if type column >/dev/null; then column -t -s $'\t'; else cat; fi \
+          | sed 's/^/# /'
+      }
   fi
 }
 
@@ -181,7 +268,7 @@ run_test() {
       local ret=$pipestatus[1] stderr=$pipestatus[2]
       if (( ! stderr )); then
         # stdout will become stderr
-	echo "Bail out! On ${(qq)1}: output on stderr"; return 1
+        echo "Bail out! On ${(qq)1}: output on stderr"; return 1
       else
         return $ret
       fi
@@ -194,9 +281,11 @@ run_test() {
 # Process each test data file in test data directory.
 integer something_failed=0
 ZSH_HIGHLIGHT_STYLES=()
-for data_file in ${0:h:h}/highlighters/$1/test-data/*.zsh; do
-  run_test "$data_file" | tee >($results_filter | ${0:A:h}/tap-colorizer.zsh) | grep -v '^not ok.*# TODO' | grep -Eq '^not ok|^ok.*# TODO' && (( something_failed=1 ))
+local data_file
+for data_file in $root/highlighters/$1/test-data/*.zsh; do
+  run_test "$data_file" | tee >($results_filter | $root/tests/tap-colorizer.zsh) | grep -v '^not ok.*# TODO' | grep -Eq '^not ok|^ok.*# TODO' && (( something_failed=1 ))
   (( $pipestatus[1] )) && exit 2
 done
 
 exit $something_failed
+}

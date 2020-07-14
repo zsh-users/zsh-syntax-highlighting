@@ -3,6 +3,9 @@ sudo: required
 
 env:
   - ZSH=master
+  - ZSH=5.8
+  - ZSH=5.7.1
+  - ZSH=5.7
   - ZSH=5.6.2
   - ZSH=5.6.1
   - ZSH=5.6
@@ -33,7 +36,7 @@ env:
   - ZSH=4.3.12
   - ZSH=4.3.11
 
-script: docker run -v $PWD:/work -w /work zshusers/zsh-${ZSH} /bin/sh -c 'install_packages make procps && make test'
+script: docker run -v $PWD:/work -w /work zshusers/zsh:${ZSH} /bin/sh -c 'install_packages make procps bsdmainutils && make test'
 
 notifications:
   webhooks:

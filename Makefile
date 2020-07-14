@@ -41,7 +41,7 @@ test:
 	for test in highlighters/*; do \
 		if [ -d $$test/test-data ]; then \
 			echo "Running test $${test##*/}"; \
-			$(ZSH) -f tests/test-highlighting.zsh "$${test##*/}"; \
+			env -i QUIET=$$QUIET $${TERM:+"TERM=$$TERM"} $(ZSH) -f tests/test-highlighting.zsh "$${test##*/}"; \
 			: $$(( result |= $$? )); \
 		fi \
 	done; \

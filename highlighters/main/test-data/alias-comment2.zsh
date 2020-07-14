@@ -33,5 +33,5 @@ alias x=$'# foo\npwd'
 BUFFER='x'
 
 expected_region_highlight=(
-  "1 1 unknown-token" # x becomes #
+  '1 1 unknown-token' # x (#)
 )

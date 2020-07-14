@@ -27,14 +27,11 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-alias alias1="unused expansion"
+alias alias1="ls"
 alias -s alias2="echo"
-if set -o | grep -q aliasfuncdef; then
-  setopt alias_func_def # 5.4+
-fi
-alias1() {} # to check that it's highlighted as an alias, not as a function
+function alias1() {} # to check that it's highlighted as an alias, not as a function
 
-BUFFER='x.alias2; alias1'
+BUFFER='x.alias2; alias1; alias2'
 
 # Set expected_region_highlight as a function of zsh version.
 #
@@ -51,4 +48,6 @@ fi
 expected_region_highlight+=(
   "9 9 commandseparator" # ;
   "11 16 alias" # alias1
+  "17 17 commandseparator" # ;
+  "19 24 unknown-token" # alias2
 )

@@ -38,6 +38,6 @@ expected_region_highlight=(
   '10 11 command' # ls
   '12 12 commandseparator' # ;
   '14 17 precommand' # sudo
-  '19 20 unknown-token' # -x
+  '19 20 single-hyphen-option' # -x
   '22 23 command' # ls
 )

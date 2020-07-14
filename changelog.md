@@ -1,3 +1,196 @@
+# Changes in HEAD
+
+## Notice about an improbable-but-not-impossible forward incompatibility
+
+Everyone can probably skip this section.
+
+The `master` branch of zsh-syntax-highlighting uses a zsh feature that has not
+yet appeared in a zsh release: the `memo=` feature, added to zsh in commit
+zsh-5.8-172-gdd6e702ee (after zsh 5.8, before zsh 5.9).  In the unlikely event
+that this zsh feature should change in an incompatible way before the next
+stable zsh release, set `zsh_highlight__memo_feature=0` in your .zshrc files to
+disable use of the new feature.
+
+z-sy-h dogfoods the new, unreleased zsh feature because that feature was
+added to zsh at z-sy-h's initiative.  The new feature is used in the fix
+to issue #418.
+
+
+## Other changes:
+
+- Document `$ZSH_HIGHLIGHT_MAXLENGTH`.
+  [#698]
+
+- Optimize highlighting unquoted words (words that are not in single quotes, double quotes, backticks, or dollar-single-quotes)
+  [#730]
+
+- Redirection operators (e.g., `<` and `>`) are now highlighted by default
+  [#646]
+
+- Propertly terminate `noglob` scope in try/always blocks
+  [#577]
+
+- Don't error out when `KSH_ARRAYS` is set in the calling scope
+  [#622, #689]
+
+- Literal semicolons in array assignments (`foo=( bar ; baz )`) are now
+  highlighted as errors.
+  [3ca93f864fb6]
+
+- Command separators in array assignments (`foo=( bar | baz )`) are now
+  highlighted as errors.
+  [#651, 81267ca3130c]
+
+- Support parameter elision in command position (e.g., `$foo ls` where `$foo` is unset or empty)
+  [#667]
+
+- Don't consider the filename in `sudo -e /path/to/file` to be a command position
+  [#678]
+
+- Don't look up absolute directory names in $cdpath
+  [2cc2583f8f12, part of #669]
+
+- Fix `exec 2>&1;` being highlighted as an error.
+  [#676]
+
+- Fix `: $(<*)` being highlighted as globbing.
+  [#582]
+
+- Fix `cat < *` being highlighting as globbing when the `MULTIOS` option is unset.
+  [#583]
+
+- Fix `echo >&2` highlighting the `2` as a filename if a file by that name happened to exist
+  [#694, part of #645]
+
+- Fix `echo >&-` highlighting the `-` as a filename if a file by that name happened to exist
+  [part of #645]
+
+- Fix `echo >&p` highlighting the `p` as a filename if a file by that name happened to exist
+  [part of #645]
+
+- Fix wrong highlighting of unquoted parameter expansions under zsh 5.2 and older
+  [e165f18c758e]
+
+- Highlight global aliases
+  [#700]
+
+- Highlight `: =nosuchcommand' as an error (when the `EQUALS` option hasn't been unset).
+  [#430]
+
+- Highlight reserved word after assignments as errors (e.g., `foo=bar (ls;)`)
+  [#461]
+
+- Correctly highlight `[[ foo && bar || baz ]]`.
+
+- Highlight non-executable files in command position correctly (e.g., `% /etc/passwd`)
+  [#202, #669]
+
+- Highlight directories in command position correctly, including `AUTO_CD` support
+  [#669]
+
+- Recognize `env` as a precommand (e.g., `env FOO=bar ls`)
+
+- Recognize `strace` as a precommand
+
+- Fix an error message on stderr before every prompt when the `WARN_NESTED_VAR` zsh option is set:
+  `_zsh_highlight_main__precmd_hook:1: array parameter _zsh_highlight_main__command_type_cache set in enclosing scope in function _zsh_highlight_main__precmd_hook`
+  [#727, #731, #732, #733]
+
+- Fix highlighting of alias whose definitions use a simple command terminator
+  (such as `;`, `|`, `&&`) before a newline
+  [#677; had regressed in 0.7.0]
+
+- Highlight arithmetic expansions (e.g., `$(( 42 ))`)
+  [#607 #649 #704]
+
+- Highlight the parentheses of array assignments as reserved words (`foo=( bar )`).
+  The `assign` style remains supported and has precedence.
+  [#585]
+
+- Fix interoperability issue with other plugins that use highlighting.  The fix
+  requires zsh 5.8.0.3 or newer.  (zsh 5.8.0.2-dev from the `master` branch,
+  revision zsh-5.8-172-gdd6e702ee or newer is also fine.)
+  [#418, https://github.com/okapia/zsh-viexchange/issues/1]
+
+
+# Changes in version 0.7.1
+
+- Remove out-of-date information from the 0.7.0 changelog.
+
+
+# Changes in version 0.7.0
+
+This is a stable bugfix and feature release.  Major new features and changes include:
+
+- Add `ZSH_HIGHLIGHT_DIRS_BLACKLIST` to disable "path" and "path prefix"
+  highlighting for specific directories
+  [#379]
+
+- Add the "regexp" highlighter, modelled after the pattern highlighter
+  [4e6f60063f1c]
+
+- When a word uses globbing, only the globbing metacharacters will be highlighted as globbing:
+  in `: foo*bar`, only the `*` will be blue.
+  [e48af357532c]
+
+- Highlight pasted quotes (e.g., `: foo"bar"`)
+  [dc1b2f6fa4bb]
+
+- Highlight command substitutions (`` : `ls` ``, `: $(ls)`)
+  [c0e64fe13178 and parents, e86f75a840e7, et al]
+
+- Highlight process substitutions (`: >(nl)`, `: <(pwd)`, `: =(git diff)`)
+  [c0e64fe13178 and parents, e86f75a840e7, et al]
+
+- Highlight command substitutions inside double quotes (``: "`foo`"``)
+  [f16e858f0c83]
+
+- Highlight many precommands (e.g., `nice`, `stdbuf`, `eatmydata`;
+  see `$precommand_options` in the source)
+
+- Highlight numeric globs (e.g., `echo /lib<->`)
+
+- Assorted improvements to aliases highlighting
+  (e.g.,
+   `alias sudo_u='sudo -u'; sudo_u jrandom ls`,
+   `alias x=y y=z z=nosuchcommand; x`,
+   `alias ls='ls -l'; \ls`)
+  [f3410c5862fc, 57386f30aec8, #544, and many others]
+
+- Highlight some more syntax errors
+  [dea05e44e671, 298ef6a2fa30]
+
+- New styles: named file descriptors, `RC_QUOTES`, and unclosed quotes (e.g., `echo "foo<CURSOR>`)
+  [38c794a978cd, 25ae1c01216c, 967335dfc5fd]
+
+- The 'brackets' highlighting no longer treats quotes specially.
+  [ecdda36ef56f]
+
+
+Selected bugfixes include:
+
+- Highlight `sudo` correctly when it's not installed
+  [26a82113b08b]
+
+- Handle some non-default options being set in zshrc
+  [b07ada1255b7, a2a899b41b8, 972ad197c13d, b3f66fc8748f]
+
+- Fix off-by-one highlighting in vi "visual" mode (vicmd keymap)
+  [be3882aeb054]
+
+- The 'yank-pop' widget is not wrapped
+  [#183]
+
+
+Known issues include:
+
+- A multiline alias that uses a simple command terminator (such as `;`, `|`, `&&`)
+  before a newline will incorrectly be highlighted as an error.  See issue #677
+  for examples and workarounds.
+  [#677]
+  [UPDATE: Fixed in 0.8.0]
+
+
 # Changes in version 0.6.0
 
 This is a stable release, featuring bugfixes and minor improvements.
@@ -331,50 +524,66 @@ in this area.
 - incomplete sudo commands
   (a3047a912100, 2f05620b19ae)
 
-        sudo;
-        sudo -u;
+    ```zsh
+    sudo;
+    sudo -u;
+    ```
 
 - command words following reserved words
   (#207, #222, b397b12ac139 et seq, 6fbd2aa9579b et seq, 8b4adbd991b0)
 
-        if ls; then ls; else ls; fi
-        repeat 10 do ls; done
+    ```zsh
+    if ls; then ls; else ls; fi
+    repeat 10 do ls; done
+    ```
 
     (The `ls` are now highlighted as a command.)
 
 - comments (when `INTERACTIVE_COMMENTS` is set)
   (#163, #167, 693de99a9030)
 
-        echo Hello # comment
+    ```zsh
+    echo Hello # comment
+    ```
 
 - closing brackets of arithmetic expansion, subshells, and blocks
   (#226, a59f442d2d34, et seq)
 
-        (( foo ))
-        ( foo )
-        { foo }
+    ```zsh
+    (( foo ))
+    ( foo )
+    { foo }
+    ```
 
 - command names enabled by the `PATH_DIRS` option
   (#228, 96ee5116b182)
 
-        # When ~/bin/foo/bar exists, is executable, ~/bin is in $PATH,
-        # and 'setopt PATH_DIRS' is in effect
-        foo/bar
+    ```zsh
+    # When ~/bin/foo/bar exists, is executable, ~/bin is in $PATH,
+    # and 'setopt PATH_DIRS' is in effect
+    foo/bar
+    ```
 
 - parameter expansions with braces inside double quotes
   (#186, 6e3720f39d84)
 
-        echo "${foo}"
+    ```zsh
+    echo "${foo}"
+    ```
 
 - parameter expansions in command word
   (#101, 4fcfb15913a2)
 
-        x=/bin/ls
-        $x -l
+    ```zsh
+    x=/bin/ls
+    $x -l
+    ```
 
-- the command separators '|&', '&!', '&|'
+- the command separators '\|&', '&!', '&\|'
 
-        view file.pdf &!  ls
+    ```zsh
+    view file.pdf &!  ls
+    ```
 
 
 ## Fixed highlighting of:
@@ -382,23 +591,31 @@ in this area.
 - precommand modifiers at non-command-word position
   (#209, 2c9f8c8c95fa)
 
-        ls command foo
+    ```zsh
+    ls command foo
+    ```
 
 - sudo commands with infix redirections
   (#221, be006aded590, 86e924970911)
 
-        sudo -u >/tmp/foo.out user ls
+    ```zsh
+    sudo -u >/tmp/foo.out user ls
+    ```
 
 - subshells; anonymous functions
   (#166, #194, 0d1bfbcbfa67, 9e178f9f3948)
 
-        (true)
-        () { true }
+    ```zsh
+    (true)
+    () { true }
+    ```
 
 - parameter assignment statements with no command
   (#205, 01d7eeb3c713)
 
-        A=1;
+    ```zsh
+    A=1;
+    ```
 
     (The semicolon used to be highlighted as a mistake)
 
@@ -489,69 +706,95 @@ in this area.
 
 - suffix aliases (requires zsh 5.1.1 or newer):
 
-        alias -s png=display
-        foo.png
+    ```zsh
+    alias -s png=display
+    foo.png
+    ```
 
 - prefix redirections:
 
-        <foo.txt cat
+    ```zsh
+    <foo.txt cat
+    ```
 
 - redirection operators:
 
-        echo > foo.txt
+    ```zsh
+    echo > foo.txt
+    ```
 
 - arithmetic evaluations:
 
-        (( 42 ))
+    ```zsh
+    (( 42 ))
+    ```
 
 - $'' strings, including \x/\octal/\u/\U escapes
 
-        : $'foo\u0040bar'
+    ```zsh
+    : $'foo\u0040bar'
+    ```
 
 - multiline strings:
 
-        % echo "line 1
-        line 2"
+    ```zsh
+    % echo "line 1
+    line 2"
+    ```
 
 - string literals that haven't been finished:
 
-        % echo "Hello, world
-
+    ```zsh
+    % echo "Hello, world
+    ```
 - command words that involve tilde expansion:
 
-        % ~/bin/foo
-
+    ```zsh
+    % ~/bin/foo
+    ```
 
 ## Fixed highlighting of:
 
 - quoted command words:
 
-        % \ls
+    ```zsh
+    % \ls
+    ```
 
 - backslash escapes in "" strings:
 
-        % echo "\x41"
+    ```zsh
+    % echo "\x41"
+    ```
 
 - noglob after command separator:
 
-        % :; noglob echo *
+    ```zsh
+    % :; noglob echo *
+    ```
 
 - glob after command separator, when the first command starts with 'noglob':
 
-        % noglob true; echo *
+    ```zsh
+    % noglob true; echo *
+    ```
 
 - the region (vi visual mode / set-mark-command) (issue #165)
 
 - redirection and command separators that would be highlighted as `path_approx`
 
-        % echo foo;‸
-        % echo <‸
+    ```zsh
+    % echo foo;‸
+    % echo <‸
+    ```
 
     (where `‸` represents the cursor location)
 
 - escaped globbing (outside quotes)
 
-        % echo \*
+    ```zsh
+    % echo \*
+    ```
 
 
 ## Other changes:

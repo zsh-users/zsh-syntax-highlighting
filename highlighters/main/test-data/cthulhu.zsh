@@ -53,8 +53,8 @@ expected_region_highlight=(
   '55 58 double-quoted-argument-unclosed' # "lhu
   '59 62 back-quoted-argument-delimiter' # \\\`
   '64 112 default' # R\\'ly$(echo eh wag\\\`echo h\'nag\\\`'l' fht)agn
-  '70 109 command-substitution' # $(echo eh wag\\\`echo h\'nag\\\`'l' fht)
-  '70 71 command-substitution-delimiter' # $(
+  '70 109 command-substitution-unquoted' # $(echo eh wag\\\`echo h\'nag\\\`'l' fht)
+  '70 71 command-substitution-delimiter-unquoted' # $(
   '72 75 builtin' # echo
   '77 78 default' # eh
   '80 104 default' # wag\\\`echo h\'nag\\\`'l'
@@ -65,6 +65,6 @@ expected_region_highlight=(
   '98 101 back-quoted-argument-delimiter' # \\\`
   '102 104 single-quoted-argument' # 'l'
   '106 108 default' # fht
-  '109 109 command-substitution-delimiter' # )
+  '109 109 command-substitution-delimiter-unquoted' # )
   '113 113 unknown-token' # `
 )

@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2010-2016 zsh-syntax-highlighting contributors
+# Copyright (c) 2010-2020 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,9 +28,9 @@
 # -------------------------------------------------------------------------------------------------
 
 # First of all, ensure predictable parsing.
-zsh_highlight__aliases=`builtin alias -Lm '[^+]*'`
-# In zsh <= 5.2, `alias -L` emits aliases that begin with a plus sign ('alias -- +foo=42')
-# them without a '--' guard, so they don't round trip.
+typeset zsh_highlight__aliases="$(builtin alias -Lm '[^+]*')"
+# In zsh <= 5.2, aliases that begin with a plus sign ('alias -- +foo=42')
+# are emitted by `alias -L` without a '--' guard, so they don't round trip.
 #
 # Hence, we exclude them from unaliasing:
 builtin unalias -m '[^+]*'
@@ -103,9 +103,9 @@ _zsh_highlight__function_callable_p() {
 # zsh-users/zsh@48cadf4 http://www.zsh.org/mla/workers//2017/msg00034.html
 autoload -Uz is-at-least
 if is-at-least 5.4; then
-  zsh_highlight__pat_static_bug=false
+  typeset -g zsh_highlight__pat_static_bug=false
 else
-  zsh_highlight__pat_static_bug=true
+  typeset -g zsh_highlight__pat_static_bug=true
 fi
 
 # Array declaring active highlighters names.
@@ -119,35 +119,99 @@ _zsh_highlight()
 {
   # Store the previous command return code to restore it whatever happens.
   local ret=$?
+  # Make it read-only.  Can't combine this with the previous line when POSIX_BUILTINS may be set.
+  typeset -r ret
+
+  # $region_highlight should be predefined, either by zle or by the test suite's mock (non-special) array.
+  (( ${+region_highlight} )) || {
+    echo >&2 'zsh-syntax-highlighting: error: $region_highlight is not defined'
+    echo >&2 'zsh-syntax-highlighting: (Check whether zsh-syntax-highlighting was installed according to the instructions.)'
+    return $ret
+  }
+
+  # Probe the memo= feature, once.
+  (( ${+zsh_highlight__memo_feature} )) || {
+    region_highlight+=( " 0 0 fg=red, memo=zsh-syntax-highlighting" )
+    case ${region_highlight[-1]} in
+      ("0 0 fg=red")
+        # zsh 5.8 or earlier
+        integer -gr zsh_highlight__memo_feature=0
+        ;;
+      ("0 0 fg=red memo=zsh-syntax-highlighting")
+        # zsh 5.9 or later
+        integer -gr zsh_highlight__memo_feature=1
+        ;;
+      (" 0 0 fg=red, memo=zsh-syntax-highlighting") ;&
+      (*)
+        # We can get here in two ways:
+        #
+        # 1. When not running as a widget.  In that case, $region_highlight is
+        # not a special variable (= one with custom getter/setter functions
+        # written in C) but an ordinary one, so the third case pattern matches
+        # and we fall through to this block.  (The test suite uses this codepath.)
+        #
+        # 2. When running under a future version of zsh that will have changed
+        # the serialization of $region_highlight elements from their underlying
+        # C structs, so that none of the previous case patterns will match.
+        #
+        # In either case, fall back to a version check.
+        #
+        # The memo= feature was added to zsh in commit zsh-5.8-172-gdd6e702ee.
+        # The version number at the time was 5.8.0.2-dev (see Config/version.mk).
+        # Therefore, on 5.8.0.3 and newer the memo= feature is available.
+        #
+        # On zsh version 5.8.0.2 between the aforementioned commit and the
+        # first Config/version.mk bump after it (which, at the time of writing,
+        # is yet to come), this condition will false negative.
+        if is-at-least 5.8.0.3; then
+          integer -gr zsh_highlight__memo_feature=1
+        else
+          integer -gr zsh_highlight__memo_feature=0
+        fi
+        ;;
+    esac
+    region_highlight[-1]=()
+  }
+
+  # Reset region_highlight to build it from scratch
+  if (( zsh_highlight__memo_feature )); then
+    region_highlight=( "${(@)region_highlight:#*memo=zsh-syntax-highlighting*}" )
+  else
+    # Legacy codepath.  Not very interoperable with other plugins (issue #418).
+    region_highlight=()
+  fi
 
   # Remove all highlighting in isearch, so that only the underlining done by zsh itself remains.
   # For details see FAQ entry 'Why does syntax highlighting not work while searching history?'.
   # This disables highlighting during isearch (for reasons explained in README.md) unless zsh is new enough
   # and doesn't have the pattern matching bug
   if [[ $WIDGET == zle-isearch-update ]] && { $zsh_highlight__pat_static_bug || ! (( $+ISEARCHMATCH_ACTIVE )) }; then
-    region_highlight=()
     return $ret
   fi
 
   # Before we 'emulate -L', save the user's options
   local -A zsyh_user_options
   if zmodload -e zsh/parameter; then
-    zsyh_user_options=("${(@kv)options}")
+    zsyh_user_options=("${(kv)options[@]}")
   else
     local canonical_options onoff option raw_options
     raw_options=(${(f)"$(emulate -R zsh; set -o)"})
     canonical_options=(${${${(M)raw_options:#*off}%% *}#no} ${${(M)raw_options:#*on}%% *})
-    for option in $canonical_options; do
+    for option in "${canonical_options[@]}"; do
       [[ -o $option ]]
-      # This variable cannot be eliminated c.f. workers/42101.
-      onoff=${${=:-off on}[2-$?]}
-      zsyh_user_options+=($option $onoff)
+      case $? in
+        (0) zsyh_user_options+=($option on);;
+        (1) zsyh_user_options+=($option off);;
+        (*) # Can't happen, surely?
+            echo "zsh-syntax-highlighting: warning: '[[ -o $option ]]' returned $?"
+            ;;
+      esac
     done
   fi
   typeset -r zsyh_user_options
 
   emulate -L zsh
-  setopt localoptions warncreateglobal
+  setopt localoptions warncreateglobal nobashrematch
   local REPLY # don't leak $REPLY into global scope
 
   # Do not highlight if there are more than 300 chars in the buffer. It's most
@@ -156,10 +220,6 @@ _zsh_highlight()
 
   # Do not highlight if there are pending inputs (copy/paste).
   [[ $PENDING -gt 0 ]] && return $ret
-
-  # Reset region highlight to build it from scratch
-  typeset -ga region_highlight
-  region_highlight=();
 
   {
     local cache_place
@@ -203,24 +263,25 @@ _zsh_highlight()
     # Re-apply zle_highlight settings
 
     # region
-    if (( REGION_ACTIVE == 1 )); then
-      _zsh_highlight_apply_zle_highlight region standout "$MARK" "$CURSOR"
-    elif (( REGION_ACTIVE == 2 )); then
-      () {
+    () {
+      (( REGION_ACTIVE )) || return
+      integer min max
+      if (( MARK > CURSOR )) ; then
+        min=$CURSOR max=$MARK
+      else
+        min=$MARK max=$CURSOR
+      fi
+      if (( REGION_ACTIVE == 1 )); then
+        [[ $KEYMAP = vicmd ]] && (( max++ ))
+      elif (( REGION_ACTIVE == 2 )); then
         local needle=$'\n'
-        integer min max
-        if (( MARK > CURSOR )) ; then
-          min=$CURSOR max=$MARK
-        else
-          min=$MARK max=$CURSOR
-        fi
         # CURSOR and MARK are 0 indexed between letters like region_highlight
         # Do not include the newline in the highlight
         (( min = ${BUFFER[(Ib:min:)$needle]} ))
         (( max = ${BUFFER[(ib:max:)$needle]} - 1 ))
-        _zsh_highlight_apply_zle_highlight region standout "$min" "$max"
-      }
-    fi
+      fi
+      _zsh_highlight_apply_zle_highlight region standout "$min" "$max"
+    }
 
     # yank / paste (zsh-5.1.1 and newer)
     (( $+YANK_ACTIVE )) && (( YANK_ACTIVE )) && _zsh_highlight_apply_zle_highlight paste standout "$YANK_START" "$YANK_END"
@@ -278,7 +339,7 @@ _zsh_highlight_apply_zle_highlight() {
   else
     start=$second end=$first
   fi
-  region_highlight+=("$start $end $region")
+  region_highlight+=("$start $end $region, memo=zsh-syntax-highlighting")
 }
 
 
@@ -318,7 +379,7 @@ _zsh_highlight_add_highlight()
   shift 2
   for highlight; do
     if (( $+ZSH_HIGHLIGHT_STYLES[$highlight] )); then
-      region_highlight+=("$start $end $ZSH_HIGHLIGHT_STYLES[$highlight]")
+      region_highlight+=("$start $end $ZSH_HIGHLIGHT_STYLES[$highlight], memo=zsh-syntax-highlighting")
       break
     fi
   done
@@ -504,6 +565,12 @@ zmodload zsh/parameter 2>/dev/null || true
 
 # Initialize the array of active highlighters if needed.
 [[ $#ZSH_HIGHLIGHT_HIGHLIGHTERS -eq 0 ]] && ZSH_HIGHLIGHT_HIGHLIGHTERS=(main)
+
+if (( $+X_ZSH_HIGHLIGHT_DIRS_BLACKLIST )); then
+  print >&2 'zsh-syntax-highlighting: X_ZSH_HIGHLIGHT_DIRS_BLACKLIST is deprecated. Please use ZSH_HIGHLIGHT_DIRS_BLACKLIST.'
+  ZSH_HIGHLIGHT_DIRS_BLACKLIST=($X_ZSH_HIGHLIGHT_DIRS_BLACKLIST)
+  unset X_ZSH_HIGHLIGHT_DIRS_BLACKLIST
+fi
 
 # Restore the aliases we unned
 eval "$zsh_highlight__aliases"

@@ -40,6 +40,8 @@ use strict;
 
 undef $/; # slurp mode
 print for
-  grep { /^ok.*# TODO/m or /^not ok(?!.*# TODO)/m }
-    split /^(?=#)/m,
+  grep { /^ok.*# TODO/m or /^not ok(?!.*# TODO)/m or /^Bail out!/m }
+    # Split on plan lines and remove them from the output.  (To keep them,
+    # use the lookahead syntax, «(?=…)», to make the match zero-length.)
+    split /^\d+\.\.\d+$/m,
       <STDIN>;

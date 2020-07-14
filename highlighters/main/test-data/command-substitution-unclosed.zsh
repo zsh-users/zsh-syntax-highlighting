@@ -33,12 +33,13 @@ BUFFER=$': foo$(echo bar'
 expected_region_highlight=(
   '1 1 builtin' # :
   '3 15 default' # foo$(echo bar
-  '6 15 command-substitution' # $(echo bar
-  '6 7 command-substitution-delimiter' # $(
+  '6 15 command-substitution-unquoted' # $(echo bar
+  '6 7 command-substitution-delimiter-unquoted' # $(
   '8 11 builtin' # echo
   '13 15 default' # bar
 )
 
 if [[ ${(z):-'$('} == '$( ' ]]; then # ignore zsh 5.0.8 bug
   expected_region_highlight[2]='3 16 default' # foo$(echo bar
+  expected_region_highlight[3]='6 16 command-substitution-unquoted' # $(echo bar
 fi

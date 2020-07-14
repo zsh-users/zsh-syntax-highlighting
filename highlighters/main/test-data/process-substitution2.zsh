@@ -47,4 +47,5 @@ expected_region_highlight=(
 
 if [[ ${(z):-'$('} == '$( ' ]]; then # ignore zsh 5.0.8 bug
   expected_region_highlight[8]='17 27 default' # =(echo foo
+  expected_region_highlight[9]='17 27 process-substitution' # =(echo foo
 fi
