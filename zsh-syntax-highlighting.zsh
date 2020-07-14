@@ -76,6 +76,13 @@ _zsh_highlight()
   # Make it read-only.  Can't combine this with the previous line when POSIX_BUILTINS may be set.
   typeset -r ret
 
+  # $region_highlight should be predefined, either by zle or by the test suite's mock (non-special) array.
+  (( ${+region_highlight} )) || {
+    echo >&2 'zsh-syntax-highlighting: error: $region_highlight is not defined'
+    echo >&2 'zsh-syntax-highlighting: (Check whether zsh-syntax-highlighting was installed according to the instructions.)'
+    return $ret
+  }
+
   # Remove all highlighting in isearch, so that only the underlining done by zsh itself remains.
   # For details see FAQ entry 'Why does syntax highlighting not work while searching history?'.
   # This disables highlighting during isearch (for reasons explained in README.md) unless zsh is new enough
@@ -118,7 +125,6 @@ _zsh_highlight()
   [[ $PENDING -gt 0 ]] && return $ret
 
   # Reset region highlight to build it from scratch
-  typeset -ga region_highlight
   region_highlight=();
 
   {
