@@ -1,5 +1,23 @@
 # Changes in HEAD
 
+## Notice about an improbable-but-not-impossible forward incompatibility
+
+Everyone can probably skip this section.
+
+The `master` branch of zsh-syntax-highlighting uses a zsh feature that has not
+yet appeared in a zsh release: the `memo=` feature, added to zsh in commit
+zsh-5.8-172-gdd6e702ee (after zsh 5.8, before zsh 5.9).  In the unlikely event
+that this zsh feature should change in an incompatible way before the next
+stable zsh release, set `zsh_highlight__memo_feature=0` in your .zshrc files to
+disable use of the new feature.
+
+z-sy-h dogfoods the new, unreleased zsh feature because that feature was
+added to zsh at z-sy-h's initiative.  The new feature is used in the fix
+to issue #418.
+
+
+## Other changes:
+
 - Document `$ZSH_HIGHLIGHT_MAXLENGTH`.
   [#698]
 
@@ -88,6 +106,12 @@
 - Highlight the parentheses of array assignments as reserved words (`foo=( bar )`).
   The `assign` style remains supported and has precedence.
   [#585]
+
+- Fix interoperability issue with other plugins that use highlighting.  The fix
+  requires zsh 5.8.0.3 or newer.  (zsh 5.8.0.2-dev from the `master` branch,
+  revision zsh-5.8-172-gdd6e702ee or newer is also fine.)
+  [#418, https://github.com/okapia/zsh-viexchange/issues/1]
+
 
 # Changes in version 0.7.1
 

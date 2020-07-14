@@ -54,7 +54,7 @@ _zsh_highlight_pattern_highlighter_loop()
   local -a match mbegin mend
   local MATCH; integer MBEGIN MEND
   if [[ "$buf" == (#b)(*)(${~pat})* ]]; then
-    region_highlight+=("$((mbegin[2] - 1)) $mend[2] $ZSH_HIGHLIGHT_PATTERNS[$pat]")
+    region_highlight+=("$((mbegin[2] - 1)) $mend[2] $ZSH_HIGHLIGHT_PATTERNS[$pat], memo=zsh-syntax-highlighting")
     "$0" "$match[1]" "$pat"; return $?
   fi
 }
