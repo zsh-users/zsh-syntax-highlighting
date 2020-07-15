@@ -9,21 +9,21 @@ How to install
 * FreeBSD: `pkg install zsh-syntax-highlighting` (port name: [`shells/zsh-syntax-highlighting`][freebsd-port])
 * Gentoo: [mv overlay][gentoo-overlay]
 * Mac OS X / Homebrew: [brew install zsh-syntax-highlighting][brew-package]
-* Ubuntu: `zsh-syntax-highlighting` package [in Xenial][ubuntu-package] (or in [OBS repository][obs-repository])
-* RHEL / CentOS / Scientific Linux: `zsh-syntax-highlighting` package in [OBS repository][obs-repository]
 * openSUSE / SLE: `zsh-syntax-highlighting` package in [OBS repository][obs-repository]
+* RHEL / CentOS / Scientific Linux: `zsh-syntax-highlighting` package in [OBS repository][obs-repository]
+* Ubuntu: `zsh-syntax-highlighting` package [in Xenial][ubuntu-package] (or in [OBS repository][obs-repository])
 * Void Linux: `zsh-syntax-highlighting package` [in XBPS][void-package]
 
 [arch-package]: https://www.archlinux.org/packages/zsh-syntax-highlighting
 [AUR-package]: https://aur.archlinux.org/packages/zsh-syntax-highlighting-git
-[debian-package]: https://packages.debian.org/zsh-syntax-highlighting
-[freebsd-port]: http://www.freshports.org/textproc/zsh-syntax-highlighting/
-[gentoo-overlay]: http://gpo.zugaina.org/app-shells/zsh-syntax-highlighting
 [brew-package]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-syntax-highlighting.rb
-[ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
+[debian-package]: https://packages.debian.org/zsh-syntax-highlighting
 [fedora-package]: https://apps.fedoraproject.org/packages/zsh-syntax-highlighting
 [fedora-package-alt]: https://bodhi.fedoraproject.org/updates/?packages=zsh-syntax-highlighting
+[freebsd-port]: http://www.freshports.org/textproc/zsh-syntax-highlighting/
+[gentoo-overlay]: http://gpo.zugaina.org/app-shells/zsh-syntax-highlighting
 [obs-repository]: https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-syntax-highlighting&package=zsh-syntax-highlighting
+[ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
 [void-package]: https://github.com/void-linux/void-packages/tree/master/srcpkgs/zsh-syntax-highlighting
 
 See also [repology's cross-distro index](https://repology.org/metapackage/zsh-syntax-highlighting/versions)
