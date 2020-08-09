@@ -1325,7 +1325,7 @@ _zsh_highlight_main_highlighter_highlight_argument()
   # This loop is a hot path.  Keep it fast!
   (( --i ))
   while (( ++i <= $#arg )); do
-    i=${arg[(ib.i.)[\\\'\"\`\$\<\>\*\?]]}
+    i=${arg[(ib.i.)[\\\'\"\`\$\<\>\*\?\[\(\^\#]]}
     case "$arg[$i]" in
       "") break;;
       "\\") (( i += 1 )); continue;;
@@ -1402,7 +1402,13 @@ _zsh_highlight_main_highlighter_highlight_argument()
       *)
         if $highlight_glob &&
            [[ $zsyh_user_options[multios] == on || $in_redirection -eq 0 ]] &&
-           [[ ${arg[$i]} =~ ^[*?] || ${arg:$i-1} =~ ^\<[0-9]*-[0-9]*\> ]]; then
+           [[  ${arg[$i]} =~ ^[*?] ||
+               ${arg:$i-1} =~ ^\\[[^\]]+\\] ||
+               ${arg:$i-1} =~ ^\\\([^\)]*\\\). || ${arg:$i-1} =~ ^\\\([^\)]*\\\|[^\)]*\\\)$ ||
+               ${arg:$i-1} =~ ^\<[0-9]*-[0-9]*\> ||
+               $zsyh_user_options[extendedglob] == on && ${arg[$i]} =~ \\\^ ||
+               $zsyh_user_options[extendedglob] == on && ${arg[$i]} =~ \\\#
+           ]]; then
           highlights+=($(( start_pos + i - 1 )) $(( start_pos + i + $#MATCH - 1)) globbing)
           (( i += $#MATCH - 1 ))
           path_eligible=0
