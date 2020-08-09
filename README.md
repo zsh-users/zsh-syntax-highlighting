@@ -55,7 +55,7 @@ calls and after running `compinit`) in order to be able to wrap all of them.
 Widgets created after z-sy-h is sourced will work, but will not update the
 syntax highlighting.
 
-In zsh 5.3 and newer,
+In zsh newer than 5.8 (not including 5.8 itself),
 zsh-syntax-highlighting uses the `add-zle-hook-widget` facility to install
 a `zle-line-pre-redraw` hook.  Hooks are run in order of registration,
 therefore, z-sy-h must be sourced (and register its hook) after anything else
