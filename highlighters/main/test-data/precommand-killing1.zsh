@@ -29,11 +29,12 @@
 # -------------------------------------------------------------------------------------------------
 
 hash sudo=false
+touch foo
 
-BUFFER='sudo -e /etc/passwd'
+BUFFER='sudo -e ./foo'
 
 expected_region_highlight=(
   '1 4 precommand' # sudo
   '6 7 single-hyphen-option' # -e
-  '9 19 path' # /etc/passwd
+  '9 13 path' # ./foo
 )
