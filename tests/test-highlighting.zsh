@@ -31,6 +31,9 @@
 
 setopt NO_UNSET WARN_CREATE_GLOBAL
 
+# Required for add-zle-hook-widget.
+zmodload zsh/zle
+
 local -r root=${0:h:h}
 local -a anon_argv; anon_argv=("$@")
 

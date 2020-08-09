@@ -49,6 +49,52 @@ if true; then
   fi
 fi
 
+# This function takes a single argument F and returns True iff F is an autoload stub.
+_zsh_highlight__function_is_autoload_stub_p() {
+  if zmodload -e zsh/parameter; then
+    #(( ${+functions[$1]} )) &&
+    [[ "$functions[$1]" == *"builtin autoload -X"* ]]
+  else
+    #[[ $(type -wa -- "$1") == *'function'* ]] &&
+    [[ "${${(@f)"$(which -- "$1")"}[2]}" == $'\t'$histchars[3]' undefined' ]]
+  fi
+  # Do nothing here: return the exit code of the if.
+}
+
+# Return True iff the argument denotes a function name.
+_zsh_highlight__is_function_p() {
+  if zmodload -e zsh/parameter; then
+    (( ${+functions[$1]} ))
+  else
+    [[ $(type -wa -- "$1") == *'function'* ]]
+  fi
+}
+
+# This function takes a single argument F and returns True iff F denotes the
+# name of a callable function.  A function is callable if it is fully defined
+# or if it is marked for autoloading and autoloading it at the first call to it
+# will succeed.  In particular, if a function has been marked for autoloading
+# but is not available in $fpath, then this function will return False therefor.
+#
+# See users/21671 http://www.zsh.org/cgi-bin/mla/redirect?USERNUMBER=21671
+_zsh_highlight__function_callable_p() {
+  if _zsh_highlight__is_function_p "$1" &&
+     ! _zsh_highlight__function_is_autoload_stub_p "$1"
+  then
+    # Already fully loaded.
+    return 0 # true
+  else
+    # "$1" is either an autoload stub, or not a function at all.
+    #
+    # Use a subshell to avoid affecting the calling shell.
+    #
+    # We expect 'autoload +X' to return non-zero if it fails to fully load
+    # the function.
+    ( autoload -U +X -- "$1" 2>/dev/null )
+    return $?
+  fi
+}
+
 # -------------------------------------------------------------------------------------------------
 # Core highlighting update system
 # -------------------------------------------------------------------------------------------------
@@ -347,76 +393,120 @@ _zsh_highlight_add_highlight()
 # $1 is name of widget to call
 _zsh_highlight_call_widget()
 {
-  builtin zle "$@" && 
+  builtin zle "$@" &&
   _zsh_highlight
 }
 
-# Rebind all ZLE widgets to make them invoke _zsh_highlights.
-_zsh_highlight_bind_widgets()
-{
-  setopt localoptions noksharrays
-  typeset -F SECONDS
-  local prefix=orig-s$SECONDS-r$RANDOM # unique each time, in case we're sourced more than once
-
-  # Load ZSH module zsh/zleparameter, needed to override user defined widgets.
-  zmodload zsh/zleparameter 2>/dev/null || {
-    print -r -- >&2 'zsh-syntax-highlighting: failed loading zsh/zleparameter.'
-    return 1
+# Decide whether to use the zle-line-pre-redraw codepath (colloquially known as
+# "feature/redrawhook", after the topic branch's name) or the legacy "bind all
+# widgets" codepath.
+#
+# We use the new codepath under two conditions:
+#
+# 1. If it's available, which we check by testing for add-zle-hook-widget's availability.
+# 
+# 2. If zsh has the memo= feature, which is required for interoperability reasons.
+#    See issues #579 and #735, and the issues referenced from them.
+#
+#    We check this with a plain version number check, since a functional check,
+#    as done by _zsh_highlight, can only be done from inside a widget
+#    function — a catch-22.
+#
+#    See _zsh_highlight for the magic version number.  (The use of 5.8.0.2
+#    rather than 5.8.0.3 as in the _zsh_highlight is deliberate.)
+if is-at-least 5.8.0.2 && _zsh_highlight__function_callable_p add-zle-hook-widget
+then
+  autoload -U add-zle-hook-widget
+  _zsh_highlight__zle-line-finish() {
+    # Reset $WIDGET since the 'main' highlighter depends on it.
+    #
+    # Since $WIDGET is declared by zle as read-only in this function's scope,
+    # a nested function is required in order to shadow its built-in value;
+    # see "User-defined widgets" in zshall.
+    () {
+      local -h -r WIDGET=zle-line-finish
+      _zsh_highlight
+    }
   }
+  _zsh_highlight__zle-line-pre-redraw() {
+    # Set $? to 0 for _zsh_highlight.  Without this, subsequent
+    # zle-line-pre-redraw hooks won't run, since add-zle-hook-widget happens to
+    # call us with $? == 1 in the common case.
+    true && _zsh_highlight "$@"
+  }
+  _zsh_highlight_bind_widgets(){}
+  if [[ -o zle ]]; then
+    add-zle-hook-widget zle-line-pre-redraw _zsh_highlight__zle-line-pre-redraw
+    add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
+  fi
+else
+  # Rebind all ZLE widgets to make them invoke _zsh_highlights.
+  _zsh_highlight_bind_widgets()
+  {
+    setopt localoptions noksharrays
+    typeset -F SECONDS
+    local prefix=orig-s$SECONDS-r$RANDOM # unique each time, in case we're sourced more than once
 
-  # Override ZLE widgets to make them invoke _zsh_highlight.
-  local -U widgets_to_bind
-  widgets_to_bind=(${${(k)widgets}:#(.*|run-help|which-command|beep|set-local-history|yank|yank-pop)})
+    # Load ZSH module zsh/zleparameter, needed to override user defined widgets.
+    zmodload zsh/zleparameter 2>/dev/null || {
+      print -r -- >&2 'zsh-syntax-highlighting: failed loading zsh/zleparameter.'
+      return 1
+    }
 
-  # Always wrap special zle-line-finish widget. This is needed to decide if the
-  # current line ends and special highlighting logic needs to be applied.
-  # E.g. remove cursor imprint, don't highlight partial paths, ...
-  widgets_to_bind+=(zle-line-finish)
+    # Override ZLE widgets to make them invoke _zsh_highlight.
+    local -U widgets_to_bind
+    widgets_to_bind=(${${(k)widgets}:#(.*|run-help|which-command|beep|set-local-history|yank|yank-pop)})
 
-  # Always wrap special zle-isearch-update widget to be notified of updates in isearch.
-  # This is needed because we need to disable highlighting in that case.
-  widgets_to_bind+=(zle-isearch-update)
+    # Always wrap special zle-line-finish widget. This is needed to decide if the
+    # current line ends and special highlighting logic needs to be applied.
+    # E.g. remove cursor imprint, don't highlight partial paths, ...
+    widgets_to_bind+=(zle-line-finish)
 
-  local cur_widget
-  for cur_widget in $widgets_to_bind; do
-    case ${widgets[$cur_widget]:-""} in
+    # Always wrap special zle-isearch-update widget to be notified of updates in isearch.
+    # This is needed because we need to disable highlighting in that case.
+    widgets_to_bind+=(zle-isearch-update)
 
-      # Already rebound event: do nothing.
-      user:_zsh_highlight_widget_*);;
+    local cur_widget
+    for cur_widget in $widgets_to_bind; do
+      case ${widgets[$cur_widget]:-""} in
 
-      # The "eval"'s are required to make $cur_widget a closure: the value of the parameter at function
-      # definition time is used.
-      #
-      # We can't use ${0/_zsh_highlight_widget_} because these widgets are always invoked with
-      # NO_function_argzero, regardless of the option's setting here.
+        # Already rebound event: do nothing.
+        user:_zsh_highlight_widget_*);;
 
-      # User defined widget: override and rebind old one with prefix "orig-".
-      user:*) zle -N $prefix-$cur_widget ${widgets[$cur_widget]#*:}
-              eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget ${(q)prefix}-${(q)cur_widget} -- \"\$@\" }"
-              zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
+        # The "eval"'s are required to make $cur_widget a closure: the value of the parameter at function
+        # definition time is used.
+        #
+        # We can't use ${0/_zsh_highlight_widget_} because these widgets are always invoked with
+        # NO_function_argzero, regardless of the option's setting here.
 
-      # Completion widget: override and rebind old one with prefix "orig-".
-      completion:*) zle -C $prefix-$cur_widget ${${(s.:.)widgets[$cur_widget]}[2,3]} 
-                    eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget ${(q)prefix}-${(q)cur_widget} -- \"\$@\" }"
-                    zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
+        # User defined widget: override and rebind old one with prefix "orig-".
+        user:*) zle -N $prefix-$cur_widget ${widgets[$cur_widget]#*:}
+                eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget ${(q)prefix}-${(q)cur_widget} -- \"\$@\" }"
+                zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
 
-      # Builtin widget: override and make it call the builtin ".widget".
-      builtin) eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget .${(q)cur_widget} -- \"\$@\" }"
-               zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
+        # Completion widget: override and rebind old one with prefix "orig-".
+        completion:*) zle -C $prefix-$cur_widget ${${(s.:.)widgets[$cur_widget]}[2,3]}
+                      eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget ${(q)prefix}-${(q)cur_widget} -- \"\$@\" }"
+                      zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
 
-      # Incomplete or nonexistent widget: Bind to z-sy-h directly.
-      *) 
-         if [[ $cur_widget == zle-* ]] && (( ! ${+widgets[$cur_widget]} )); then
-           _zsh_highlight_widget_${cur_widget}() { :; _zsh_highlight }
-           zle -N $cur_widget _zsh_highlight_widget_$cur_widget
-         else
-      # Default: unhandled case.
-           print -r -- >&2 "zsh-syntax-highlighting: unhandled ZLE widget ${(qq)cur_widget}"
-           print -r -- >&2 "zsh-syntax-highlighting: (This is sometimes caused by doing \`bindkey <keys> ${(q-)cur_widget}\` without creating the ${(qq)cur_widget} widget with \`zle -N\` or \`zle -C\`.)"
-         fi
-    esac
-  done
-}
+        # Builtin widget: override and make it call the builtin ".widget".
+        builtin) eval "_zsh_highlight_widget_${(q)prefix}-${(q)cur_widget}() { _zsh_highlight_call_widget .${(q)cur_widget} -- \"\$@\" }"
+                 zle -N $cur_widget _zsh_highlight_widget_$prefix-$cur_widget;;
+
+        # Incomplete or nonexistent widget: Bind to z-sy-h directly.
+        *)
+           if [[ $cur_widget == zle-* ]] && (( ! ${+widgets[$cur_widget]} )); then
+             _zsh_highlight_widget_${cur_widget}() { :; _zsh_highlight }
+             zle -N $cur_widget _zsh_highlight_widget_$cur_widget
+           else
+        # Default: unhandled case.
+             print -r -- >&2 "zsh-syntax-highlighting: unhandled ZLE widget ${(qq)cur_widget}"
+             print -r -- >&2 "zsh-syntax-highlighting: (This is sometimes caused by doing \`bindkey <keys> ${(q-)cur_widget}\` without creating the ${(qq)cur_widget} widget with \`zle -N\` or \`zle -C\`.)"
+           fi
+      esac
+    done
+  }
+fi
 
 # Load highlighters from directory.
 #

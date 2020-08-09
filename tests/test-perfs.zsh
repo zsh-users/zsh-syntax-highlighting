@@ -29,6 +29,9 @@
 # -------------------------------------------------------------------------------------------------
 
 
+# Required for add-zle-hook-widget.
+zmodload zsh/zle
+
 # Check an highlighter was given as argument.
 [[ -n "$1" ]] || {
   echo >&2 "Bail out! You must provide the name of a valid highlighter as argument."
