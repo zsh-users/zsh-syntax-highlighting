@@ -589,6 +589,20 @@ if (( $+X_ZSH_HIGHLIGHT_DIRS_BLACKLIST )); then
   unset X_ZSH_HIGHLIGHT_DIRS_BLACKLIST
 fi
 
+# Tell users of this branch (feature/redrawhook) to switch back to master.
+#
+# We don't want to nag them on every new shell, because that would be annoying.
+# We can't nag them once and never again, because we can't keep state.
+# Therefore, compromise: warn infrequently.
+#
+# Magic number: 63 is one less than a power of two.
+if (( (RANDOM & 63) == 42 )); then
+  print -r -- $'zsh-syntax-highlighting: You are using the feature/redrawhook branch.'
+  print -r -- $'zsh-syntax-highlighting: That branch has been merged to master and will not receive any further commits.'
+  print -r --  "zsh-syntax-highlighting: Consider switching ${(qq)0:h} back to the 'master' branch."
+fi
+
+
 # Restore the aliases we unned
 eval "$zsh_highlight__aliases"
 builtin unset zsh_highlight__aliases
