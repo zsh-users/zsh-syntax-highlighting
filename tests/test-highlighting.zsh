@@ -159,11 +159,19 @@ run_test_internal() {
   unset ARG
 
   integer print_expected_and_actual=0
+  integer i
 
   if (( unsorted )); then
     region_highlight=("${(@n)region_highlight}")
     expected_region_highlight=("${(@n)expected_region_highlight}")
   fi
+
+  # start offset in expected_region_highlight in test cases is off-by-one to the actual zsh-internal format of region_highlight
+  # convert region_highlight to test-specific format for better readability:
+  for ((i=1; i<=$#region_highlight; i++)); do
+    local -a highlight_zone; highlight_zone=( ${(z)region_highlight[i]} )
+    region_highlight[$i]="$(( highlight_zone[1] + 1 )) ${highlight_zone:2}"
+  done
 
   # Print the plan line, and some comments for human readers
   echo "1..$(( $#expected_region_highlight + 1))"
@@ -171,7 +179,6 @@ run_test_internal() {
   [[ -n $PREBUFFER ]] && printf '# %s\n' "$(typeset_p PREBUFFER)"
   [[ -n $BUFFER ]] && printf '# %s\n' "$(typeset_p BUFFER)"
 
-  local i
   for ((i=1; i<=$#expected_region_highlight; i++)); do
     local -a expected_highlight_zone; expected_highlight_zone=( ${(z)expected_region_highlight[i]} )
     integer exp_start=$expected_highlight_zone[1] exp_end=$expected_highlight_zone[2]
@@ -187,7 +194,7 @@ run_test_internal() {
       continue
     fi
     local -a highlight_zone; highlight_zone=( ${(z)region_highlight[i]} )
-    integer start=$(( highlight_zone[1] + 1 )) end=$highlight_zone[2]
+    integer start=$highlight_zone[1] end=$highlight_zone[2]
     local desc="[$start,$end] «${BUFFER[$start,$end]}»"
     tap_escape $desc; desc=$REPLY
     if
