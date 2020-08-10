@@ -204,6 +204,48 @@ _zsh_highlight_load_highlighters()
 
 autoload -Uz _zsh_highlight_internal
 
+# Probe the memo= feature.
+region_highlight+=( " 0 0 fg=red, memo=zsh-syntax-highlighting" )
+case ${region_highlight[-1]} in
+  ("0 0 fg=red")
+    # zsh 5.8 or earlier
+    integer -gr zsh_highlight__memo_feature=0
+    ;;
+  ("0 0 fg=red memo=zsh-syntax-highlighting")
+    # zsh 5.9 or later
+    integer -gr zsh_highlight__memo_feature=1
+    ;;
+  (" 0 0 fg=red, memo=zsh-syntax-highlighting") ;&
+  (*)
+    # We can get here in two ways:
+    #
+    # 1. When not running as a widget.  In that case, $region_highlight is
+    # not a special variable (= one with custom getter/setter functions
+    # written in C) but an ordinary one, so the third case pattern matches
+    # and we fall through to this block.  (The test suite uses this codepath.)
+    #
+    # 2. When running under a future version of zsh that will have changed
+    # the serialization of $region_highlight elements from their underlying
+    # C structs, so that none of the previous case patterns will match.
+    #
+    # In either case, fall back to a version check.
+    #
+    # The memo= feature was added to zsh in commit zsh-5.8-172-gdd6e702ee.
+    # The version number at the time was 5.8.0.2-dev (see Config/version.mk).
+    # Therefore, on 5.8.0.3 and newer the memo= feature is available.
+    #
+    # On zsh version 5.8.0.2 between the aforementioned commit and the
+    # first Config/version.mk bump after it (which, at the time of writing,
+    # is yet to come), this condition will false negative.
+    if is-at-least 5.8.0.3 $ZSH_VERSION.0.0; then
+      integer -gr zsh_highlight__memo_feature=1
+    else
+      integer -gr zsh_highlight__memo_feature=0
+    fi
+    ;;
+esac
+region_highlight[-1]=()
+
 # Resolve highlighters directory location.
 _zsh_highlight_load_highlighters "${ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR:-${${0:A}:h}/highlighters}" || {
   print -r -- >&2 'zsh-syntax-highlighting: failed loading highlighters, exiting.'
