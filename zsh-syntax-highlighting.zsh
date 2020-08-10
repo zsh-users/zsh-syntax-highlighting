@@ -528,23 +528,30 @@ _zsh_highlight_load_highlighters()
     highlighter="${highlighter_dir:t}"
     [[ -f "$highlighter_dir${highlighter}-highlighter.zsh" ]] &&
       . "$highlighter_dir${highlighter}-highlighter.zsh"
-    if type "_zsh_highlight_highlighter_${highlighter}_paint" &> /dev/null &&
-       type "_zsh_highlight_highlighter_${highlighter}_predicate" &> /dev/null;
-    then
+    if [[ -f "${highlighter_dir}_zsh_highlight_highlighter_${highlighter}_paint" ]] &&
+       [[ -f "${highlighter_dir}_zsh_highlight_highlighter_${highlighter}_predicate" ]]; then
+      # New (0.8.0) autoload style highlighter
+      fpath+=(${highlighter_dir%/})
+      autoload -Uz "_zsh_highlight_highlighter_${highlighter}_paint" "_zsh_highlight_highlighter_${highlighter}_predicate"
+    else
+      if type "_zsh_highlight_highlighter_${highlighter}_paint" &> /dev/null &&
+         type "_zsh_highlight_highlighter_${highlighter}_predicate" &> /dev/null;
+      then
         # New (0.5.0) function names
-    elif type "_zsh_highlight_${highlighter}_highlighter" &> /dev/null &&
-         type "_zsh_highlight_${highlighter}_highlighter_predicate" &> /dev/null;
-    then
+      elif type "_zsh_highlight_${highlighter}_highlighter" &> /dev/null &&
+           type "_zsh_highlight_${highlighter}_highlighter_predicate" &> /dev/null;
+      then
         # Old (0.4.x) function names
         if false; then
-            # TODO: only show this warning for plugin authors/maintainers, not for end users
-            print -r -- >&2 "zsh-syntax-highlighting: warning: ${(qq)highlighter} highlighter uses deprecated entry point names; please ask its maintainer to update it: https://github.com/zsh-users/zsh-syntax-highlighting/issues/329"
+          # TODO: only show this warning for plugin authors/maintainers, not for end users
+          print -r -- >&2 "zsh-syntax-highlighting: warning: ${(qq)highlighter} highlighter uses deprecated entry point names; please ask its maintainer to update it: https://github.com/zsh-users/zsh-syntax-highlighting/issues/329"
         fi
         # Make it work.
         eval "_zsh_highlight_highlighter_${(q)highlighter}_paint() { _zsh_highlight_${(q)highlighter}_highlighter \"\$@\" }"
         eval "_zsh_highlight_highlighter_${(q)highlighter}_predicate() { _zsh_highlight_${(q)highlighter}_highlighter_predicate \"\$@\" }"
-    else
+      else
         print -r -- >&2 "zsh-syntax-highlighting: ${(qq)highlighter} highlighter should define both required functions '_zsh_highlight_highlighter_${highlighter}_paint' and '_zsh_highlight_highlighter_${highlighter}_predicate' in ${(qq):-"$highlighter_dir${highlighter}-highlighter.zsh"}."
+      fi
     fi
   done
 }

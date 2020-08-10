@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2010-2016 zsh-syntax-highlighting contributors
+# Copyright (c) 2010-2011 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,5 +28,4 @@
 # -------------------------------------------------------------------------------------------------
 
 
-# List of keyword and color pairs.
-typeset -gA ZSH_HIGHLIGHT_REGEXP
+_zsh_highlight_buffer_modified
