@@ -157,8 +157,6 @@ _zsh_highlight_add_highlight()
 #   1) Path to the highlighters directory.
 _zsh_highlight_load_highlighters()
 {
-  setopt localoptions noksharrays bareglobqual
-
   # Check the directory exists.
   [[ -d "$1" ]] || {
     print -r -- >&2 "zsh-syntax-highlighting: highlighters directory ${(qq)1} not found."
