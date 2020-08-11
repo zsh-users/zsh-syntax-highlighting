@@ -28,6 +28,10 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
+if type x >/dev/null; then
+  skip_test="Test is written on the assumption that 'x' is not a valid command name, but that assumption does not hold"
+  return 0
+fi
 alias -g x=y
 local s=x
 
