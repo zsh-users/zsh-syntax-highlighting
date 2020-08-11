@@ -52,6 +52,11 @@ Whilst under development, the new implementation was known as the
   [#632]
 
 
+## Other changes
+
+- Add issue #712 to the previous release's changelog (hereinafter).
+
+
 # Changes in 0.8.0-alpha1-pre-redrawhook
 
 ## Notice about an improbable-but-not-impossible forward incompatibility
@@ -186,6 +191,9 @@ to issue #418.
   [#418, https://github.com/okapia/zsh-viexchange/issues/1]
 
 - Improve performance of the `brackets` highlighter.
+
+- Fix highlighting of pre-command redirections (e.g., the `$fn` in `<$fn cat`)
+  [#712]
 
 
 # Changes in version 0.7.1
