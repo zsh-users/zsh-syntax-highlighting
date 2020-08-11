@@ -28,12 +28,12 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-if type x >/dev/null; then
-  skip_test="Test is written on the assumption that 'x' is not a valid command name, but that assumption does not hold"
+if type global_alias >/dev/null; then
+  skip_test="Test is written on the assumption that 'global_alias' is not a valid command name, but that assumption does not hold"
   return 0
 fi
-alias -g x=y
-local s=x
+alias -g global_alias=y
+local s=global_alias
 
 BUFFER=$'$s'
 
