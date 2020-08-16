@@ -91,6 +91,11 @@ _zsh_highlight_add_highlight()
   region_highlight+=("$1 $2 $3")
 }
 
+_zsh_highlight_main_calculate_styles()
+{
+  # Do nothing
+}
+
 # Activate the highlighter.
 ZSH_HIGHLIGHT_HIGHLIGHTERS=($1)
 
