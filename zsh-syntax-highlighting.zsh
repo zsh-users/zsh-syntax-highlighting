@@ -173,26 +173,48 @@ _zsh_highlight()
     region_highlight[-1]=()
   }
 
-  # Reset region_highlight to build it from scratch
-  if (( zsh_highlight__memo_feature )); then
-    region_highlight=( "${(@)region_highlight:#*memo=zsh-syntax-highlighting*}" )
-  else
-    # Legacy codepath.  Not very interoperable with other plugins (issue #418).
-    region_highlight=()
-  fi
-
   # Remove all highlighting in isearch, so that only the underlining done by zsh itself remains.
   # For details see FAQ entry 'Why does syntax highlighting not work while searching history?'.
   # This disables highlighting during isearch (for reasons explained in README.md) unless zsh is new enough
   # and doesn't have the pattern matching bug
-  if [[ $WIDGET == zle-isearch-update ]] && { $zsh_highlight__pat_static_bug || ! (( $+ISEARCHMATCH_ACTIVE )) }; then
+  if [[ $WIDGET == zle-isearch-update ]] && { $zsh_highlight__pat_static_bug || ! (( $+ISEARCHMATCH_ACTIVE )) } ||
+      # Do not highlight if there are more than 300 chars in the buffer. It's most
+      # likely a pasted command or a huge list of files in that case..
+      [[ -n ${ZSH_HIGHLIGHT_MAXLENGTH:-} ]] && (( ${#BUFFER} > ZSH_HIGHLIGHT_MAXLENGTH )) ||
+      # Do not highlight if there are pending inputs (copy/paste).
+      (( PENDING )); then
+    # Reset region_highlight to build it from scratch
+    if (( zsh_highlight__memo_feature )); then
+      region_highlight=( "${(@)region_highlight:#*memo=zsh-syntax-highlighting*}" )
+    else
+      # Legacy codepath.  Not very interoperable with other plugins (issue #418).
+      region_highlight=()
+    fi
     return $ret
   fi
 
   # Before we 'emulate -L', save the user's options
   local -A zsyh_user_options
   if zmodload -e zsh/parameter; then
-    zsyh_user_options=("${(kv)options[@]}")
+    if [[ -n ${ZSH_HIGHLIGHT_HIGHLIGHTERS:#(brackets|cursor|line|main|pattern|regexp|root)} ]]; then
+      # Copy all options if there are user-defined highlighters
+      zsyh_user_options=("${(kv)options[@]}")
+    else
+      # Copy a subset of options used by the bundled highlighters.  This is faster than
+      # copying all options.
+      zsyh_user_options=(
+        ignorebraces        "${options[ignorebraces]}"
+        ignoreclosebraces   "${options[ignoreclosebraces]}"
+        pathdirs            "${options[pathdirs]}"
+        interactivecomments "${options[interactivecomments]}"
+        globassign          "${options[globassign]}"
+        multifuncdef        "${options[multifuncdef]}"
+        autocd              "${options[autocd]}"
+        equals              "${options[equals]}"
+        multios             "${options[multios]}"
+        rcquotes            "${options[rcquotes]}"
+      )
+    fi
   else
     local canonical_options onoff option raw_options
     raw_options=(${(f)"$(emulate -R zsh; set -o)"})
@@ -210,20 +232,16 @@ _zsh_highlight()
   fi
   typeset -r zsyh_user_options
 
-  emulate -L zsh
-  setopt localoptions warncreateglobal nobashrematch
+  local -a new_highlight
+  if (( zsh_highlight__memo_feature )); then
+    new_highlight=( "${(@)region_highlight:#*memo=zsh-syntax-highlighting*}" )
+  fi
+
+  emulate -L zsh -o warncreateglobal -o nobashrematch
   local REPLY # don't leak $REPLY into global scope
 
-  # Do not highlight if there are more than 300 chars in the buffer. It's most
-  # likely a pasted command or a huge list of files in that case..
-  [[ -n ${ZSH_HIGHLIGHT_MAXLENGTH:-} ]] && [[ $#BUFFER -gt $ZSH_HIGHLIGHT_MAXLENGTH ]] && return $ret
-
-  # Do not highlight if there are pending inputs (copy/paste).
-  [[ $PENDING -gt 0 ]] && return $ret
-
   {
-    local cache_place
-    local -a region_highlight_copy
+    local cache_place pred
 
     # Select which highlighters in ZSH_HIGHLIGHT_HIGHLIGHTERS need to be invoked.
     local highlighter; for highlighter in $ZSH_HIGHLIGHT_HIGHLIGHTERS; do
@@ -233,38 +251,37 @@ _zsh_highlight()
       typeset -ga ${cache_place}
 
       # If highlighter needs to be invoked
-      if ! type "_zsh_highlight_highlighter_${highlighter}_predicate" >&/dev/null; then
-        echo "zsh-syntax-highlighting: warning: disabling the ${(qq)highlighter} highlighter as it has not been loaded" >&2
-        # TODO: use ${(b)} rather than ${(q)} if supported
-        ZSH_HIGHLIGHT_HIGHLIGHTERS=( ${ZSH_HIGHLIGHT_HIGHLIGHTERS:#${highlighter}} )
-      elif "_zsh_highlight_highlighter_${highlighter}_predicate"; then
-
-        # save a copy, and cleanup region_highlight
-        region_highlight_copy=("${region_highlight[@]}")
-        region_highlight=()
-
-        # Execute highlighter and save result
-        {
-          "_zsh_highlight_highlighter_${highlighter}_paint"
-        } always {
-          : ${(AP)cache_place::="${region_highlight[@]}"}
-        }
-
-        # Restore saved region_highlight
-        region_highlight=("${region_highlight_copy[@]}")
-
+      pred="_zsh_highlight_highlighter_${highlighter}_predicate"
+      if (( ! $pred )); then
+        if type $pred >&/dev/null; then
+          typeset -gri $pred=1
+        else
+          echo "zsh-syntax-highlighting: warning: disabling the ${(qq)highlighter} highlighter as it has not been loaded" >&2
+          # TODO: use ${(b)} rather than ${(q)} if supported
+          ZSH_HIGHLIGHT_HIGHLIGHTERS=( ${ZSH_HIGHLIGHT_HIGHLIGHTERS:#${highlighter}} )
+          continue
+        fi
       fi
 
-      # Use value form cache if any cached
-      region_highlight+=("${(@P)cache_place}")
+      if $pred; then
+        # Execute highlighter and save result
+        region_highlight=()
+        "_zsh_highlight_highlighter_${highlighter}_paint"
+        : ${(AP)cache_place::="${region_highlight[@]}"}
+        new_highlight+=($region_highlight)
+      else
+        # Use value form cache if any cached
+        new_highlight+=("${(@P)cache_place}")
+      fi
 
     done
+
+    region_highlight=($new_highlight)
 
     # Re-apply zle_highlight settings
 
     # region
-    () {
-      (( REGION_ACTIVE )) || return
+    (( REGION_ACTIVE )) && () {
       integer min max
       if (( MARK > CURSOR )) ; then
         min=$CURSOR max=$MARK
@@ -284,13 +301,13 @@ _zsh_highlight()
     }
 
     # yank / paste (zsh-5.1.1 and newer)
-    (( $+YANK_ACTIVE )) && (( YANK_ACTIVE )) && _zsh_highlight_apply_zle_highlight paste standout "$YANK_START" "$YANK_END"
+    (( YANK_ACTIVE )) && _zsh_highlight_apply_zle_highlight paste standout "$YANK_START" "$YANK_END"
 
     # isearch
-    (( $+ISEARCHMATCH_ACTIVE )) && (( ISEARCHMATCH_ACTIVE )) && _zsh_highlight_apply_zle_highlight isearch underline "$ISEARCHMATCH_START" "$ISEARCHMATCH_END"
+    (( ISEARCHMATCH_ACTIVE )) && _zsh_highlight_apply_zle_highlight isearch underline "$ISEARCHMATCH_START" "$ISEARCHMATCH_END"
 
     # suffix
-    (( $+SUFFIX_ACTIVE )) && (( SUFFIX_ACTIVE )) && _zsh_highlight_apply_zle_highlight suffix bold "$SUFFIX_START" "$SUFFIX_END"
+    (( SUFFIX_ACTIVE )) && _zsh_highlight_apply_zle_highlight suffix bold "$SUFFIX_START" "$SUFFIX_END"
 
 
     return $ret
