@@ -157,6 +157,16 @@ _zsh_highlight_main_calculate_fallback() {
 #
 # The result will be stored in REPLY.
 _zsh_highlight_main__type() {
+  # Cache lookup
+  if (( $+_zsh_highlight_main__command_type_cache )); then
+    REPLY=$_zsh_highlight_main__command_type_cache[$1]
+    if [[ -n "$REPLY" ]]; then
+      REPLY[-1]=
+      [[ -n $REPLY ]]
+      return
+    fi
+  fi
+
   integer -r aliases_allowed=${2-1}
   # We won't cache replies of anything that exists as an alias at all, to
   # ensure the cached value is correct regardless of $aliases_allowed.
@@ -165,36 +175,28 @@ _zsh_highlight_main__type() {
   # ### $aliases_allowed, on the assumption that aliases are the common case.
   integer may_cache=1
 
-  # Cache lookup
-  if (( $+_zsh_highlight_main__command_type_cache )); then
-    REPLY=$_zsh_highlight_main__command_type_cache[(e)$1]
-    if [[ -n "$REPLY" ]]; then
-      return
-    fi
-  fi
-
   # Main logic
   if (( $#options_to_set )); then
     setopt localoptions $options_to_set;
   fi
   unset REPLY
   if zmodload -e zsh/parameter; then
-    if (( $+aliases[(e)$1] )); then
+    if (( $+aliases[$1] )); then
       may_cache=0
     fi
-    if (( ${+galiases[(e)$1]} )) && (( aliases_allowed )); then
+    if (( ${+galiases[$1]} )) && (( aliases_allowed )); then
       REPLY='global alias'
-    elif (( $+aliases[(e)$1] )) && (( aliases_allowed )); then
+    elif (( $+aliases[$1] )) && (( aliases_allowed )); then
       REPLY=alias
-    elif [[ $1 == *.* && -n ${1%.*} ]] && (( $+saliases[(e)${1##*.}] )); then
+    elif [[ $1 == *.* && -n ${1%.*} ]] && (( $+saliases[${1##*.}] )); then
       REPLY='suffix alias'
     elif (( $reswords[(Ie)$1] )); then
       REPLY=reserved
-    elif (( $+functions[(e)$1] )); then
+    elif (( $+functions[$1] )); then
       REPLY=function
-    elif (( $+builtins[(e)$1] )); then
+    elif (( $+builtins[$1] )); then
       REPLY=builtin
-    elif (( $+commands[(e)$1] )); then
+    elif (( $+commands[$1] )); then
       REPLY=command
     # None of the special hashes had a match, so fall back to 'type -w', for
     # forward compatibility with future versions of zsh that may add new command
@@ -206,6 +208,12 @@ _zsh_highlight_main__type() {
     # falling through to the $() below, incurring a fork.  (Issue #354.)
     #
     # The first disjunct mimics the isrelative() C call from the zsh bug.
+    elif [[ $1 == */* || $ZSH_VERSION != (5.<9->*|<6->.*) ]]; then
+      if [[ -n $1(#qN.*) || -o path_dirs && -n ${^path}/$1(#qN.*) ]]; then
+        REPLY=command
+      else
+        REPLY=none
+      fi
     elif {  [[ $1 != */* ]] || is-at-least 5.3 } &&
          # Add a subshell to avoid a zsh upstream bug; see issue #606.
          # ### Remove the subshell when we stop supporting zsh 5.7.1 (I assume 5.8 will have the bugfix).
@@ -231,11 +239,10 @@ _zsh_highlight_main__type() {
   fi
 
   # Cache population
-  if (( may_cache )) && (( $+_zsh_highlight_main__command_type_cache )); then
-    _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
+  if (( may_cache && $+_zsh_highlight_main__command_type_cache )); then
+    _zsh_highlight_main__command_type_cache[$1]=$REPLY.
   fi
   [[ -n $REPLY ]]
-  return $?
 }
 
 # Checks whether $1 is something that can be run.
@@ -1241,7 +1248,7 @@ _zsh_highlight_main_highlighter_check_path()
           fi
           return 0
         elif [[ ! -d $expanded_path ]]; then
-          # ### This seems unreachable for the current callers
+          REPLY=command
           return 0
         fi
       fi
