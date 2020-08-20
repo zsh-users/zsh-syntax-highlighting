@@ -204,7 +204,7 @@ _zsh_highlight()
       # copying all options.
       zsyh_user_options=(
         ignorebraces        "${options[ignorebraces]}"
-        ignoreclosebraces   "${options[ignoreclosebraces]}"
+        ignoreclosebraces   "${options[ignoreclosebraces]-off}"
         pathdirs            "${options[pathdirs]}"
         interactivecomments "${options[interactivecomments]}"
         globassign          "${options[globassign]}"
@@ -237,7 +237,8 @@ _zsh_highlight()
     new_highlight=( "${(@)region_highlight:#*memo=zsh-syntax-highlighting*}" )
   fi
 
-  emulate -L zsh -o warncreateglobal -o nobashrematch
+  emulate -L zsh
+  setopt warncreateglobal nobashrematch
   local REPLY # don't leak $REPLY into global scope
 
   {

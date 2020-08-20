@@ -99,7 +99,8 @@ _zsh_highlight_main_calculate_styles() {
   local config="${(pj:\0:)${(@kv)ZSH_HIGHLIGHT_STYLES}}".
   [[ $config == $_zsh_highlight_main__config ]] && return
   _zsh_highlight_main__config=$config
-  typeset -gA _zsh_highlight_main__styles=("${(@kv)ZSH_HIGHLIGHT_STYLES}")
+  typeset -gA _zsh_highlight_main__styles
+  _zsh_highlight_main__styles=("${(@kv)ZSH_HIGHLIGHT_STYLES}")
 
   integer finished
   local key val
@@ -131,16 +132,11 @@ _zsh_highlight_main_calculate_fallback() {
 #
 # If $2 is 0, do not consider aliases.
 #
-# The result will be stored in REPLY.
+# The result will be stored in REPLY. It's guaranteed to be non-empty.
 _zsh_highlight_main__type() {
   # Cache lookup
   if (( $+_zsh_highlight_main__command_type_cache )); then
-    REPLY=$_zsh_highlight_main__command_type_cache[$1]
-    if [[ -n "$REPLY" ]]; then
-      REPLY[-1]=
-      [[ -n $REPLY ]]
-      return
-    fi
+    [[ -n ${REPLY::=$_zsh_highlight_main__command_type_cache[$1]} ]] && return
   fi
 
   integer -r aliases_allowed=${2-1}
@@ -152,9 +148,6 @@ _zsh_highlight_main__type() {
   integer may_cache=1
 
   # Main logic
-  if (( $#options_to_set )); then
-    setopt localoptions $options_to_set;
-  fi
   unset REPLY
   if zmodload -e zsh/parameter; then
     if (( $+aliases[$1] )); then
@@ -174,41 +167,27 @@ _zsh_highlight_main__type() {
       REPLY=builtin
     elif (( $+commands[$1] )); then
       REPLY=command
-    # None of the special hashes had a match, so fall back to 'type -w', for
-    # forward compatibility with future versions of zsh that may add new command
-    # types.
-    #
-    # zsh 5.2 and older have a bug whereby running 'type -w ./sudo' implicitly
-    # runs 'hash ./sudo=/usr/local/bin/./sudo' (assuming /usr/local/bin/sudo
-    # exists and is in $PATH).  Avoid triggering the bug, at the expense of
-    # falling through to the $() below, incurring a fork.  (Issue #354.)
-    #
-    # The first disjunct mimics the isrelative() C call from the zsh bug.
-    elif [[ $1 == */* || $ZSH_VERSION != (5.<9->*|<6->.*) ]]; then
-      if [[ -n $1(#qN.*) || -o path_dirs && -n ${^path}/$1(#qN.*) ]]; then
+    # ZSH_VERSION >= 5.1 allows the use of #q. ZSH_VERSION <= 5.8 allows skipping
+    # 'type -w' calls that are necessary for forward compatibility.
+    elif [[ $ZSH_VERSION == 5.<1-8>(|.*) ]]; then
+      if [[ -n $1(#qN-.*) ||
+            $1 == [^/]*/* && $zsyh_user_options[pathdirs] == on && -n ${^path}/$1(#q-N.*) ]]; then
         REPLY=command
       else
         REPLY=none
       fi
-    elif {  [[ $1 != */* ]] || is-at-least 5.3 } &&
-         # Add a subshell to avoid a zsh upstream bug; see issue #606.
-         # ### Remove the subshell when we stop supporting zsh 5.7.1 (I assume 5.8 will have the bugfix).
-         ! (builtin type -w -- "$1") >/dev/null 2>&1; then
-      REPLY=none
     fi
   fi
-  if ! (( $+REPLY )); then
+  if (( ! $+REPLY )); then
     # zsh/parameter not available or had no matches.
     #
     # Note that 'type -w' will run 'rehash' implicitly.
     #
     # We 'unalias' in a subshell, so the parent shell is not affected.
-    #
-    # The colon command is there just to avoid a command substitution that
-    # starts with an arithmetic expression [«((…))» as the first thing inside
-    # «$(…)»], which is area that has had some parsing bugs before 5.6
-    # (approximately).
-    REPLY="${$(:; (( aliases_allowed )) || unalias -- "$1" 2>/dev/null; LC_ALL=C builtin type -w -- "$1" 2>/dev/null)##*: }"
+    REPLY="${${$(
+      [[ $zsyh_user_options[pathdirs] == on ]] && setopt pathdirs
+      (( aliases_allowed )) || unalias -- "$1" 2>/dev/null
+      LC_ALL=C builtin type -w -- "$1" 2>/dev/null)##*: }:-none}"
     if [[ $REPLY == 'alias' ]]; then
       may_cache=0
     fi
@@ -216,20 +195,16 @@ _zsh_highlight_main__type() {
 
   # Cache population
   if (( may_cache && $+_zsh_highlight_main__command_type_cache )); then
-    _zsh_highlight_main__command_type_cache[$1]=$REPLY.
+    _zsh_highlight_main__command_type_cache[$1]=$REPLY
   fi
-  [[ -n $REPLY ]]
 }
 
 # Checks whether $1 is something that can be run.
 #
-# Return 0 if runnable, 1 if not runnable, 2 if trouble.
+# Return 0 if runnable, 1 if not runnable.
 _zsh_highlight_main__is_runnable() {
-  if _zsh_highlight_main__type "$1"; then
-    [[ $REPLY != none ]]
-  else
-    return 2
-  fi
+  _zsh_highlight_main__type "$1"
+  [[ $REPLY != none ]]
 }
 
 # Check whether the first argument is a redirection operator token.
@@ -301,7 +276,7 @@ _zsh_highlight_highlighter_main_paint()
     return
   fi
 
-  local -a options_to_set reply # used in callees
+  local -a reply # used in callees
   local REPLY
 
   # $flags_with_argument is a set of letters, corresponding to the option letters
@@ -325,10 +300,6 @@ _zsh_highlight_highlighter_main_paint()
     local -i right_brace_is_recognised_everywhere=0
   else
     local -i right_brace_is_recognised_everywhere=1
-  fi
-
-  if [[ $zsyh_user_options[pathdirs] == on ]]; then
-    options_to_set+=( PATH_DIRS )
   fi
 
   if (( $+X_ZSH_HIGHLIGHT_DIRS_BLACKLIST )); then
@@ -1227,7 +1198,8 @@ _zsh_highlight_main_highlighter_highlight_argument()
 {
   if (( $+_zsh_highlight_main__arg_cache )); then
     local cache_key=$1$'\0'$2$'\0'$arg$'\0'$last_arg$'\0'$has_end$'\0'$highlight_glob$'\0'$in_redirection$'\0'$zsyh_user_options[multios]
-    local -a cache_val=(${(@0)_zsh_highlight_main__arg_cache[$cache_key]})
+    local -a cache_val
+    cache_val=(${(@0)_zsh_highlight_main__arg_cache[$cache_key]})
     if (( $#cache_val )); then
       integer offset=$(( start_pos - $cache_val[-1] ))
       local start end_ style
@@ -1788,7 +1760,8 @@ else
 fi
 typeset -ga ZSH_HIGHLIGHT_DIRS_BLACKLIST
 
-typeset -gA _zsh_highlight_main__precommand_options=(
+typeset -gA _zsh_highlight_main__precommand_options
+_zsh_highlight_main__precommand_options=(
   # Precommand modifiers as of zsh 5.6.2 cf. zshmisc(1).
   '-' ''
   'builtin' ''
@@ -1825,7 +1798,8 @@ typeset -gA _zsh_highlight_main__precommand_options=(
 #    flock
 #    ssh
 
-typeset -ga _zsh_highlight_main__tokens_commandseparator=(
+typeset -ga _zsh_highlight_main__tokens_commandseparator
+_zsh_highlight_main__tokens_commandseparator=(
   '|' '||' ';' '&' '&&'
   $'\n' # ${(z)} returns ';' but we convert it to $'\n'
   '|&'
@@ -1836,7 +1810,8 @@ typeset -ga _zsh_highlight_main__tokens_commandseparator=(
 
 # Tokens that, at (naively-determined) "command position", are followed by
 # a de jure command position.  All of these are reserved words.
-typeset -ga _zsh_highlight_main__tokens_control_flow=(
+typeset -ga _zsh_highlight_main__tokens_control_flow
+_zsh_highlight_main__tokens_control_flow=(
   $'\x7b' # block
   $'\x28' # subshell
   '()' # anonymous function
@@ -1852,7 +1827,8 @@ typeset -ga _zsh_highlight_main__tokens_control_flow=(
   '!' # reserved word; unrelated to $histchars[1]
 )
 
-typeset -gA _zsh_highlight_main__fallback_of=(
+typeset -gA _zsh_highlight_main__fallback_of
+_zsh_highlight_main__fallback_of=(
   alias arg0
   suffix-alias arg0
   global-alias dollar-double-quoted-argument
