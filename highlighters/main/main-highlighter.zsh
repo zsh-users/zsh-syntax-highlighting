@@ -170,9 +170,17 @@ _zsh_highlight_main__type() {
     # ZSH_VERSION >= 5.1 allows the use of #q. ZSH_VERSION <= 5.8 allows skipping
     # 'type -w' calls that are necessary for forward compatibility.
     elif [[ $ZSH_VERSION == 5.<1-8>(|.*) ]]; then
-      if [[ -n $1(#qN-.*) ||
+      if [[ $1 == */* && -n $1(#qN-.*) ||
             $1 == [^/]*/* && $zsyh_user_options[pathdirs] == on && -n ${^path}/$1(#q-N.*) ]]; then
         REPLY=command
+      elif (( _zsh_highlight_main__rehash )); then
+        builtin rehash
+        _zsh_highlight_main__rehash=0
+        if (( $+commands[$1] )); then
+          REPLY=command
+        else
+          REPLY=none
+        fi
       else
         REPLY=none
       fi
@@ -1135,7 +1143,7 @@ _zsh_highlight_main_highlighter_check_path()
           fi
           return 0
         elif [[ ! -d $expanded_path ]]; then
-          REPLY=command
+          # ### This seems unreachable for the current callers
           return 0
         fi
       fi
@@ -1744,6 +1752,8 @@ _zsh_highlight_main__precmd_hook() {
   _zsh_highlight_main__path_cache=()
   _zsh_highlight_main__arg_cache=()
 
+  _zsh_highlight_main__rehash=1
+
   if [[ $ZSH_VERSION != (5.<9->*|<6->.*) ]]; then
     _zsh_highlight_main_calculate_styles
   fi
@@ -1753,10 +1763,12 @@ autoload -Uz add-zsh-hook
 if add-zsh-hook precmd _zsh_highlight_main__precmd_hook 2>/dev/null; then
   # Initialize caches
   typeset -gA _zsh_highlight_main__command_type_cache _zsh_highlight_main__path_cache _zsh_highlight_main__arg_cache
+  typeset -gi _zsh_highlight_main__rehash=1
 else
   print -r -- >&2 'zsh-syntax-highlighting: Failed to load add-zsh-hook. Some speed optimizations will not be used.'
   # Make sure the caches are unset
   unset _zsh_highlight_main__command_type_cache _zsh_highlight_main__path_cache _zsh_highlight_main__arg_cache
+  unset _zsh_highlight_main__rehash
 fi
 typeset -ga ZSH_HIGHLIGHT_DIRS_BLACKLIST
 
