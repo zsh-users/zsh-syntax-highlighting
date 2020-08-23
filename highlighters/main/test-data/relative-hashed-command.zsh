@@ -1,4 +1,3 @@
-#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
 # Copyright (c) 2020 zsh-syntax-highlighting contributors
 # All rights reserved.
@@ -28,12 +27,20 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-hash sudo=/usr/bin/env
+if [[ $OSTYPE == msys ]]; then
+  skip_test='Cannot chmod +x in msys2'
+else
+  mkdir foo
+  print >foo/bar
+  chmod +x foo/bar
+  hash zsyh-hashed-command=foo/bar
+  hash subdir/zsyh-hashed-command=foo/bar
 
-BUFFER='sudo -e /does/not/exist'
+  BUFFER='zsyh-hashed-command; subdir/zsyh-hashed-command'
 
-expected_region_highlight=(
-  '1 4 precommand' # sudo
-  '6 7 single-hyphen-option' # -e
-  '9 23 default' # /does/not/exist
-)
+  expected_region_highlight=(
+    "1 19 hashed-command"
+    "20 20 commandseparator"
+    "22 47 unknown-token"
+  )
+fi

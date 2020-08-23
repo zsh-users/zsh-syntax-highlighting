@@ -1,4 +1,3 @@
-#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
 # Copyright (c) 2020 zsh-syntax-highlighting contributors
 # All rights reserved.
@@ -28,12 +27,9 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-hash sudo=/usr/bin/env
-
-BUFFER='sudo -e /does/not/exist'
+hash zsyh-hashed-command=/doesnotexist
+BUFFER='zsyh-hashed-command'
 
 expected_region_highlight=(
-  '1 4 precommand' # sudo
-  '6 7 single-hyphen-option' # -e
-  '9 23 default' # /does/not/exist
+  "1 19 unknown-token"
 )

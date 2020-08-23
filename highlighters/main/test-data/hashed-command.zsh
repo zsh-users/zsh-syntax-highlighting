@@ -27,9 +27,9 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-hash zsh_syntax_highlighting_hash=/doesnotexist
+hash zsh_syntax_highlighting_hash=/usr/bin/env
 BUFFER='zsh_syntax_highlighting_hash'
 
 expected_region_highlight=(
-  "1 28 hashed-command 'zsh/parameter cannot distinguish between hashed and command'"
+  "1 28 hashed-command"
 )

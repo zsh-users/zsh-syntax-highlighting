@@ -147,6 +147,8 @@ _zsh_highlight_main__type() {
   # ### $aliases_allowed, on the assumption that aliases are the common case.
   integer may_cache=1
 
+  local cmd
+
   # Main logic
   unset REPLY
   if zmodload -e zsh/parameter; then
@@ -165,22 +167,29 @@ _zsh_highlight_main__type() {
       REPLY=function
     elif (( $+builtins[$1] )); then
       REPLY=builtin
-    elif (( $+commands[$1] )); then
-      REPLY=command
+    elif [[ $1 != */* && -x ${cmd::=${commands[$1]-}} ]]; then
+      # There is one case where the following logic incorrectly sets REPLY=command
+      # instead of REPLY=hashed.
+      #
+      #   % hash zsh=$commands[zsh]
+      #   % zsh  # <-- here the type of `zsh` is "command" rather than "hashed"
+      if [[ $cmd == /(|*/)$1 && $path[(Ie)${cmd:h}] != 0 ]]; then
+        REPLY=command
+      else
+        REPLY=hashed
+      fi
     # ZSH_VERSION >= 5.1 allows the use of #q. ZSH_VERSION <= 5.8 allows skipping
     # 'type -w' calls that are necessary for forward compatibility.
     elif [[ $ZSH_VERSION == 5.<1-8>(|.*) ]]; then
-      if [[ $1 == */* && -n $1(#qN-.*) ||
-            $1 == [^/]*/* && $zsyh_user_options[pathdirs] == on && -n ${^path}/$1(#q-N.*) ]]; then
-        REPLY=command
-      elif (( _zsh_highlight_main__rehash )); then
-        builtin rehash
-        _zsh_highlight_main__rehash=0
-        if (( $+commands[$1] )); then
+      if [[ $1 == */* ]]; then
+        if [[ -n $1(#q-.*N) ||
+              $1 != /* && $zsyh_user_options[pathdirs] == on && -n ${^path}/$1(#q-.*N) ]]; then
           REPLY=command
         else
           REPLY=none
         fi
+      elif [[ -n ${^path}/$1(#q-.*N) ]]; then
+        REPLY=command
       else
         REPLY=none
       fi
@@ -198,6 +207,8 @@ _zsh_highlight_main__type() {
       LC_ALL=C builtin type -w -- "$1" 2>/dev/null)##*: }:-none}"
     if [[ $REPLY == 'alias' ]]; then
       may_cache=0
+    elif [[ $REPLY == 'hashed' && ( -n $cmd || $1 == */* ) ]]; then
+      REPLY=none
     fi
   fi
 
@@ -1752,8 +1763,6 @@ _zsh_highlight_main__precmd_hook() {
   _zsh_highlight_main__path_cache=()
   _zsh_highlight_main__arg_cache=()
 
-  _zsh_highlight_main__rehash=1
-
   if [[ $ZSH_VERSION != (5.<9->*|<6->.*) ]]; then
     _zsh_highlight_main_calculate_styles
   fi
@@ -1763,12 +1772,10 @@ autoload -Uz add-zsh-hook
 if add-zsh-hook precmd _zsh_highlight_main__precmd_hook 2>/dev/null; then
   # Initialize caches
   typeset -gA _zsh_highlight_main__command_type_cache _zsh_highlight_main__path_cache _zsh_highlight_main__arg_cache
-  typeset -gi _zsh_highlight_main__rehash=1
 else
   print -r -- >&2 'zsh-syntax-highlighting: Failed to load add-zsh-hook. Some speed optimizations will not be used.'
   # Make sure the caches are unset
   unset _zsh_highlight_main__command_type_cache _zsh_highlight_main__path_cache _zsh_highlight_main__arg_cache
-  unset _zsh_highlight_main__rehash
 fi
 typeset -ga ZSH_HIGHLIGHT_DIRS_BLACKLIST
 
@@ -1874,4 +1881,3 @@ _zsh_highlight_main__fallback_of=(
   process-substitution{-delimiter,}
   back-quoted-argument{-delimiter,}
 )
-

@@ -28,7 +28,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-hash sudo='false'
+hash sudo=/usr/bin/env
 BUFFER='sudo --askpass ls'
 
 expected_region_highlight=(
