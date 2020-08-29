@@ -28,5 +28,4 @@
 # -------------------------------------------------------------------------------------------------
 
 
-# List of keyword and color pairs.
-typeset -gA ZSH_HIGHLIGHT_REGEXP
+_zsh_highlight_buffer_modified
