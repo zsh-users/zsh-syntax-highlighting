@@ -96,9 +96,13 @@ _zsh_highlight_main_add_many_region_highlights() {
 }
 
 _zsh_highlight_main_calculate_styles() {
+  # The trailing dot is intentional.
   local config="${(pj:\0:)${(@kv)ZSH_HIGHLIGHT_STYLES}}".
-  [[ $config == $_zsh_highlight_main__config ]] && return
-  _zsh_highlight_main__config=$config
+  [[ $config == ${_zsh_highlight_main__config-} ]] && return
+
+  emulate -L zsh
+
+  typeset -g _zsh_highlight_main__config=$config
   typeset -gA _zsh_highlight_main__styles
   _zsh_highlight_main__styles=("${(@kv)ZSH_HIGHLIGHT_STYLES}")
 
@@ -1873,15 +1877,17 @@ _zsh_highlight_main__fallback_of=(
   path_pathseparator path
   path_prefix_pathseparator path_prefix
 
-  single-quoted-argument{-unclosed,}
-  double-quoted-argument{-unclosed,}
-  dollar-quoted-argument{-unclosed,}
-  back-quoted-argument{-unclosed,}
+  single-quoted-argument-unclosed single-quoted-argument
+  double-quoted-argument-unclosed double-quoted-argument
+  dollar-quoted-argument-unclosed dollar-quoted-argument
+  back-quoted-argument-unclosed   back-quoted-argument
 
-  command-substitution{-quoted,,-unquoted,}
-  command-substitution-delimiter{-quoted,,-unquoted,}
+  command-substitution-quoted             command-substitution
+  command-substitution-unquoted           command-substitution
+  command-substitution-delimiter-quoted   command-substitution-delimiter
+  command-substitution-delimiter-unquoted command-substitution-delimiter
 
-  command-substitution{-delimiter,}
-  process-substitution{-delimiter,}
-  back-quoted-argument{-delimiter,}
+  command-substitution-delimiter command-substitution
+  process-substitution-delimiter process-substitution
+  back-quoted-argument-delimiter back-quoted-argument
 )
