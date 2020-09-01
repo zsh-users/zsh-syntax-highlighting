@@ -30,8 +30,10 @@
 hash zsyh-hashed-command=/usr/bin/env
 BUFFER='doesnotexist; zsyh-hashed-command'
 
+# Test that highlighting "doesnotexist" does not invoke the "rehash" builtin,
+# which would delete hashed commands (such as "zsyh-hashed-command").
 expected_region_highlight=(
-  "1 12 unknown-token"
-  "13 13 commandseparator"
-  "15 33 hashed-command"
+  "1 12 unknown-token"     # doesnotexist
+  "13 13 commandseparator" # ;
+  "15 33 hashed-command"   # zsyh-hashed-command
 )
