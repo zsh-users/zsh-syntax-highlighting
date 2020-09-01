@@ -1765,7 +1765,7 @@ _zsh_highlight_main__precmd_hook() {
   _zsh_highlight_main__path_cache=()
   _zsh_highlight_main__arg_cache=()
 
-  if [[ $ZSH_VERSION != (5.<9->*|<6->.*) ]]; then
+  if [[ $ZSH_VERSION == (<0-4>.*|5.<0-8>(|.*)) ]]; then
     _zsh_highlight_main_calculate_styles
   fi
 }
