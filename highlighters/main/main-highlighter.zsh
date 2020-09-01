@@ -181,7 +181,8 @@ _zsh_highlight_main__type() {
         REPLY=hashed
       fi
     # ZSH_VERSION >= 5.1 allows the use of #q. ZSH_VERSION <= 5.8 allows skipping
-    # 'type -w' calls that are necessary for forward compatibility.
+    # 'type -w' calls that are necessary for forward compatibility (5.8 is the latest
+    # zsh release at the time of writing).
     elif [[ $ZSH_VERSION == 5.<1-8>(|.*) ]]; then
       if [[ $1 == */* ]]; then
         if [[ -n $1(#q-.*N) ||
@@ -1765,6 +1766,7 @@ _zsh_highlight_main__precmd_hook() {
   _zsh_highlight_main__path_cache=()
   _zsh_highlight_main__arg_cache=()
 
+  # 5.8 is the latest zsh release at the time of writing.
   if [[ $ZSH_VERSION == (<0-4>.*|5.<0-8>(|.*)) ]]; then
     _zsh_highlight_main_calculate_styles
   fi
