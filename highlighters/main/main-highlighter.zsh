@@ -189,6 +189,7 @@ _zsh_highlight_main__type() {
     # zsh release at the time of writing).
     elif [[ $ZSH_VERSION == 5.<1-8>(|.*) ]]; then
       if [[ $1 == */* ]]; then
+        # [[ -n $1(#q-.*N) ]] is a faster version of [[ -f $1 && -x $1 ]].
         if [[ -n $1(#q-.*N) ||
               $1 != /* && $zsyh_user_options[pathdirs] == on && -n ${^path}/$1(#q-.*N) ]]; then
           REPLY=command
