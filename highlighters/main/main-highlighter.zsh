@@ -173,6 +173,8 @@ _zsh_highlight_main__type() {
       #
       #   % hash zsh=$commands[zsh]
       #   % zsh  # <-- here the type of `zsh` is "command" rather than "hashed"
+      #
+      # See highlighters/main/test-data/ambiguous-hashed-command.zsh.
       if [[ $cmd == /(|*/)$1 && $path[(Ie)${cmd:h}] != 0 ]]; then
         REPLY=command
       else
