@@ -140,25 +140,15 @@ _zsh_highlight_main_calculate_fallback() {
 _zsh_highlight_main__type() {
   # Cache lookup
   if (( $+_zsh_highlight_main__command_type_cache )); then
-    [[ -n ${REPLY::=$_zsh_highlight_main__command_type_cache[$1]} ]] && return
+    [[ -n ${REPLY::=$_zsh_highlight_main__command_type_cache[$1$2]} ]] && return
   fi
 
-  integer -r aliases_allowed=${2-1}
-  # We won't cache replies of anything that exists as an alias at all, to
-  # ensure the cached value is correct regardless of $aliases_allowed.
-  #
-  # ### We probably _should_ cache them in a cache that's keyed on the value of
-  # ### $aliases_allowed, on the assumption that aliases are the common case.
-  integer may_cache=1
-
+  integer -r aliases_allowed=$2
   local cmd
 
   # Main logic
   unset REPLY
   if zmodload -e zsh/parameter; then
-    if (( $+aliases[$1] )); then
-      may_cache=0
-    fi
     if (( ${+galiases[$1]} )) && (( aliases_allowed )); then
       REPLY='global alias'
     elif (( $+aliases[$1] )) && (( aliases_allowed )); then
@@ -211,16 +201,14 @@ _zsh_highlight_main__type() {
       [[ $zsyh_user_options[pathdirs] == on ]] && setopt pathdirs
       (( aliases_allowed )) || unalias -- "$1" 2>/dev/null
       LC_ALL=C builtin type -w -- "$1" 2>/dev/null)##*: }:-none}"
-    if [[ $REPLY == 'alias' ]]; then
-      may_cache=0
-    elif [[ $REPLY == 'hashed' && ( -n $cmd || $1 == */* ) ]]; then
+    if [[ $REPLY == 'hashed' && ( -n $cmd || $1 == */* ) ]]; then
       REPLY=none
     fi
   fi
 
   # Cache population
-  if (( may_cache && $+_zsh_highlight_main__command_type_cache )); then
-    _zsh_highlight_main__command_type_cache[$1]=$REPLY
+  if (( $+_zsh_highlight_main__command_type_cache )); then
+    _zsh_highlight_main__command_type_cache[$1$2]=$REPLY
   fi
 }
 
@@ -228,7 +216,7 @@ _zsh_highlight_main__type() {
 #
 # Return 0 if runnable, 1 if not runnable.
 _zsh_highlight_main__is_runnable() {
-  _zsh_highlight_main__type "$1"
+  _zsh_highlight_main__type "$1" 1
   [[ $REPLY != none ]]
 }
 
@@ -636,10 +624,12 @@ _zsh_highlight_main_highlighter_highlight_list()
         fi
         (( in_redirection++ )) # Stall this arg
         continue
-      else
+      elif [[ $res == "none" ]]; then
         _zsh_highlight_main_highlighter_expand_path $arg
-        _zsh_highlight_main__type "$REPLY" 0
-        res="$REPLY"
+        if [[ $REPLY != $res ]]; then
+          _zsh_highlight_main__type "$REPLY" 0
+          res="$REPLY"
+        fi
       fi
     fi
 
