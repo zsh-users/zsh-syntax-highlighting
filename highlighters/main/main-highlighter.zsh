@@ -171,7 +171,7 @@ _zsh_highlight_main__type() {
       REPLY=function
     elif (( $+builtins[$1] )); then
       REPLY=builtin
-    elif [[ $1 != */* && -x ${cmd::=${commands[$1]-}} ]]; then
+    elif [[ $1 != */* && -x ${cmd::=${commands[$1]-}} && -f $cmd ]]; then
       # There is one case where the following logic incorrectly sets REPLY=command
       # instead of REPLY=hashed.
       #
@@ -184,22 +184,20 @@ _zsh_highlight_main__type() {
       else
         REPLY=hashed
       fi
+    elif [[ $1 == */* && -x $1 && -f $1 ]]; then
+      REPLY=command
     # ZSH_VERSION >= 5.1 allows the use of #q. ZSH_VERSION <= 5.8 allows skipping
     # 'type -w' calls that are necessary for forward compatibility (5.8 is the latest
     # zsh release at the time of writing).
     elif [[ $ZSH_VERSION == 5.<1-8>(|.*) ]]; then
-      if [[ $1 == */* ]]; then
-        # [[ -n $1(#q-.*N) ]] is a faster version of [[ -f $1 && -x $1 ]].
-        if [[ -n $1(#q-.*N) ||
-              $1 != /* && $zsyh_user_options[pathdirs] == on && -n ${^path}/$1(#q-.*N) ]]; then
-          REPLY=command
-        else
-          REPLY=none
-        fi
-      elif [[ -n ${^path}/$1(#q-.*N) ]]; then
-        REPLY=command
-      else
-        REPLY=none
+      REPLY=none
+      if [[ $1 != */* || ($1 != /* && $zsyh_user_options[pathdirs] == on) ]]; then
+        for cmd in ${^path}/$1(#q-.*N); do
+          if [[ -x $cmd ]]; then
+            REPLY=command
+            break
+          fi
+        done
       fi
     fi
   fi
