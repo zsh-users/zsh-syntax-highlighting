@@ -1767,6 +1767,10 @@ _zsh_highlight_main__precmd_hook() {
     unsetopt warnnestedvar
   fi
 
+  # NOTE: Caches are invalidated (cleared) only in the precmd hook. This means that
+  # highlighting may not reflect state changes after the last precmd hook. For example,
+  # if a zle widget or another process deletes /bin/ls while ls is highlighted as a
+  # command, it'll keep being highlighted that way until the precmd hook is executed.
   _zsh_highlight_main__command_type_cache=()
   _zsh_highlight_main__path_cache=()
   _zsh_highlight_main__arg_cache=()
