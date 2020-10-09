@@ -879,6 +879,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         next_word=':start:'
         highlight_glob=true
         saw_assignment=false
+        seen_alias=()
         if [[ $arg != '|' && $arg != '|&' ]]; then
           next_word+=':start_of_pipeline:'
         fi
