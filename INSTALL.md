@@ -9,6 +9,7 @@ How to install
 * FreeBSD: `pkg install zsh-syntax-highlighting` (port name: [`shells/zsh-syntax-highlighting`][freebsd-port])
 * Gentoo: [app-shells/zsh-syntax-highlighting][gentoo-repository]
 * Mac OS X / Homebrew: [brew install zsh-syntax-highlighting][brew-package]
+* NetBSD: `pkg_add zsh-syntax-highlighting` (port name: [`shells/zsh-syntax-highlighting`][netbsd-port])
 * OpenBSD: `pkg_add zsh-syntax-highlighting` (port name: [`shells/zsh-syntax-highlighting`][openbsd-port])
 * openSUSE / SLE: `zsh-syntax-highlighting` package in [OBS repository][obs-repository]
 * RHEL / CentOS / Scientific Linux: `zsh-syntax-highlighting` package in [OBS repository][obs-repository]
@@ -23,8 +24,9 @@ How to install
 [fedora-package-alt]: https://bodhi.fedoraproject.org/updates/?packages=zsh-syntax-highlighting
 [freebsd-port]: http://www.freshports.org/textproc/zsh-syntax-highlighting/
 [gentoo-repository]: https://packages.gentoo.org/packages/app-shells/zsh-syntax-highlighting
+[netbsd-port]: http://cvsweb.netbsd.org/bsdweb.cgi/pkgsrc/shells/zsh-syntax-highlighting/
 [obs-repository]: https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-syntax-highlighting&package=zsh-syntax-highlighting
-[openbsd-package]: https://cvsweb.openbsd.org/ports/shells/zsh-syntax-highlighting/
+[openbsd-port]: https://cvsweb.openbsd.org/ports/shells/zsh-syntax-highlighting/
 [ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
 [void-package]: https://github.com/void-linux/void-packages/tree/master/srcpkgs/zsh-syntax-highlighting
 
