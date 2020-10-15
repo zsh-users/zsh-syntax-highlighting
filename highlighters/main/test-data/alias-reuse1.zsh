@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
 # Copyright (c) 2020 zsh-syntax-highlighting contributors
 # All rights reserved.
@@ -27,13 +28,12 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-hash zsyh-hashed-command=/usr/bin/env
-BUFFER='doesnotexist; zsyh-hashed-command'
+alias a=: b='a | a'
 
-# Test that highlighting "doesnotexist" does not invoke the "rehash" builtin,
-# which would delete hashed commands (such as "zsyh-hashed-command").
+BUFFER='b | b'
+
 expected_region_highlight=(
-  "1 12 unknown-token"     # doesnotexist
-  "13 13 commandseparator" # ;
-  "15 33 hashed-command"   # zsyh-hashed-command
+  '1 1 alias' # b
+  '3 3 commandseparator' # |
+  '5 5 alias' # b
 )
