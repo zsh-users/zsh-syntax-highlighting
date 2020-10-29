@@ -601,6 +601,12 @@ _zsh_highlight_main_highlighter_highlight_list()
       (( in_alias[1]-- ))
       # Remove leading 0 entries
       in_alias=($in_alias[$in_alias[(i)<1->],-1])
+      (){
+        local alias_name
+        for alias_name in ${(k)seen_alias[(R)<$#in_alias->]}; do
+          unset "seen_alias[$alias_name]"
+        done
+      }
       if (( $#in_alias == 0 )); then
         seen_alias=()
         # start_pos and end_pos are of the alias (previous $arg) here
@@ -699,7 +705,7 @@ _zsh_highlight_main_highlighter_highlight_list()
           _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
           continue
         fi
-        seen_alias[$arg]=1
+        seen_alias[$arg]=$#in_alias
         _zsh_highlight_main__resolve_alias $arg
         local -a alias_args
         # Elision is desired in case alias x=''
@@ -881,7 +887,12 @@ _zsh_highlight_main_highlighter_highlight_list()
         next_word=':start:'
         highlight_glob=true
         saw_assignment=false
-        seen_alias=()
+        (){
+          local alias_name
+          for alias_name in ${(k)seen_alias[(R)<$#in_alias->]}; do
+            unset "seen_alias[$alias_name]"
+          done
+        }
         if [[ $arg != '|' && $arg != '|&' ]]; then
           next_word+=':start_of_pipeline:'
         fi
