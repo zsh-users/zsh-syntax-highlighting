@@ -1,4 +1,3 @@
-#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
 # Copyright (c) 2020 zsh-syntax-highlighting contributors
 # All rights reserved.
@@ -28,12 +27,18 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-hash sudo=/usr/bin/env
+if [[ $OSTYPE == msys ]]; then
+  skip_test='Cannot chmod +x in msys2'
+else
+  path+=($PWD/foo)
+  : $+commands[zsyh-new-command]
+  mkdir foo
+  print >foo/zsyh-new-command
+  chmod +x foo/zsyh-new-command
 
-BUFFER='sudo -e /does/not/exist'
+  BUFFER='zsyh-new-command'
 
-expected_region_highlight=(
-  '1 4 precommand' # sudo
-  '6 7 single-hyphen-option' # -e
-  '9 23 default' # /does/not/exist
-)
+  expected_region_highlight=(
+    "1 16 command"
+  )
+fi

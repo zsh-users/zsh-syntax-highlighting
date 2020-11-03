@@ -1,6 +1,5 @@
-#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2020 zsh-syntax-highlighting contributors
+# Copyright (c) 2015 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,12 +27,15 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-hash sudo=/usr/bin/env
+hash sh=/bin/sh
+BUFFER='sh'
 
-BUFFER='sudo -e /does/not/exist'
-
-expected_region_highlight=(
-  '1 4 precommand' # sudo
-  '6 7 single-hyphen-option' # -e
-  '9 23 default' # /does/not/exist
-)
+if zmodload -e zsh/parameter; then
+  expected_region_highlight=(
+    "1 2 hashed-command 'hashed command found in PATH classified as plain command'"
+  )
+else
+  expected_region_highlight=(
+    "1 2 hashed-command"
+  )
+fi

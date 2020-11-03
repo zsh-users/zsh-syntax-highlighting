@@ -1,6 +1,5 @@
-#!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2020 zsh-syntax-highlighting contributors
+# Copyright (c) 2015 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,12 +27,9 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-hash sudo=/usr/bin/env
-
-BUFFER='sudo -e /does/not/exist'
+hash zsh_syntax_highlighting_hash=/usr/bin/env
+BUFFER='zsh_syntax_highlighting_hash'
 
 expected_region_highlight=(
-  '1 4 precommand' # sudo
-  '6 7 single-hyphen-option' # -e
-  '9 23 default' # /does/not/exist
+  "1 28 hashed-command"
 )
