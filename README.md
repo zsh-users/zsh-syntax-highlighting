@@ -1,4 +1,4 @@
-zsh-syntax-highlighting [![Build Status][build-status-image]][build-status-travis]
+zsh-syntax-highlighting [![Build Status][build-status-image]][build-status]
 =======================
 
 **[Fish shell][fish]-like syntax highlighting for [Zsh][zsh].**
@@ -93,5 +93,5 @@ Syntax highlighting is done by pluggable highlighter scripts.  See the
 [documentation on highlighters](docs/highlighters.md) for details and
 configuration settings.
 
-[build-status-image]: https://travis-ci.org/zsh-users/zsh-syntax-highlighting.svg?branch=master
-[build-status-travis]: https://travis-ci.org/zsh-users/zsh-syntax-highlighting
+[build-status]: https://github.com/zsh-users/zsh-syntax-highlighting/actions
+[build-status-image]: https://github.com/zsh-users/zsh-syntax-highlighting/workflows/Tests/badge.svg

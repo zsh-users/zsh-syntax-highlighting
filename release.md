@@ -5,7 +5,7 @@
 - Check open issues and outstanding pull requests
 - Confirm `make test` passes
   - check with multiple zsh versions
-    (easiest to check travis: https://travis-ci.org/zsh-users/zsh-syntax-highlighting/)
+    (easiest to check GitHub Actions: https://github.com/zsh-users/zsh-syntax-highlighting/actions)
 - Update changelog.md
   `tig --abbrev=12  --abbrev-commit 0.4.1..upstream/master`
 - Make sure there are no local commits and that `git status` is clean;
