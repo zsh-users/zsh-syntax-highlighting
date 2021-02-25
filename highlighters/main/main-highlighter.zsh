@@ -421,6 +421,11 @@ _zsh_highlight_highlighter_main_paint()
     unset X_ZSH_HIGHLIGHT_DIRS_BLACKLIST
   fi
 
+  # seen_alias is a map of aliases already seen to avoid loops like alias a=b b=a
+  #     must be local above _highlight_list for cases where _highlight_list is reentered
+  #     e.g. alias ls='echo $(ls)'
+  local -A seen_alias
+
   _zsh_highlight_main_highlighter_highlight_list -$#PREBUFFER '' 1 "$PREBUFFER$BUFFER"
 
   # end is a reserved word
@@ -510,8 +515,6 @@ _zsh_highlight_main_highlighter_highlight_list()
   # in_param is analogous for parameter expansions
   integer in_param=0 len=$#buf
   local -a in_alias match mbegin mend list_highlights
-  # seen_alias is a map of aliases already seen to avoid loops like alias a=b b=a
-  local -A seen_alias
   # Pattern for parameter names
   readonly parameter_name_pattern='([A-Za-z_][A-Za-z0-9_]*|[0-9]+)'
   list_highlights=()
