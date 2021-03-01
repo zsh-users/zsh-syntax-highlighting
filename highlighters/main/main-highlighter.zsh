@@ -916,8 +916,8 @@ _zsh_highlight_main_highlighter_highlight_list()
         next_word=${next_word//:regular:/}
         next_word+=':sudo_opt:'
         next_word+=':start:'
-        if [[ $arg == 'exec' ]]; then
-          # To allow "exec 2>&1;" where there's no command word
+        if [[ $arg == 'exec' || $arg == 'env' ]]; then
+          # To allow "exec 2>&1;" and "env | grep" where there's no command word
           next_word+=':regular:'
         fi
       else
