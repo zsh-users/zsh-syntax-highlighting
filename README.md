@@ -6,7 +6,7 @@ zsh-syntax-highlighting [![Build Status][build-status-image]][build-status]
 *Requirements: zsh 4.3.11+.*
 
 [fish]: https://fishshell.com/
-[zsh]: http://www.zsh.org/
+[zsh]: https://www.zsh.org/
 
 This package provides syntax highlighting for the shell zsh.  It enables
 highlighting of commands whilst they are typed at a zsh prompt into an
