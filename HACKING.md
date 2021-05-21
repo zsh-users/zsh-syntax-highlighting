@@ -95,5 +95,5 @@ zstyle ':completion:*:*:*:*:globbed-files' ignored-patterns {'*/',}zsh-syntax-hi
 IRC channel
 -----------
 
-We're on #zsh-syntax-highlighting on freenode.
+We're on #zsh-syntax-highlighting on Libera.Chat.
 

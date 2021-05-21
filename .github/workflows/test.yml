@@ -68,6 +68,7 @@ jobs:
         name: Notify IRC
         uses: Gottox/irc-message-action@v1
         with:
+          server: irc.libera.chat
           channel: '#zsh-syntax-highlighting'
           nickname: zsyh-gh-bot
           message: '${{ github.ref }} failed tests: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
