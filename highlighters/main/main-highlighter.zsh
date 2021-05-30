@@ -362,6 +362,7 @@ _zsh_highlight_highlighter_main_paint()
     'env' u:i
     'ionice' cn:t:pPu # util-linux 2.33.1-0.1
     'strace' IbeaosXPpEuOS:ACdfhikqrtTvVxyDc # strace 4.26-0.2
+    'proxychains' q:f # proxychains 4.4.0
 
     # As of OpenSSH 8.1p1
     'ssh-agent' aEPt:csDd:k
