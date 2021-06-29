@@ -477,7 +477,11 @@ _zsh_highlight_main_highlighter__try_expand_parameter()
             ;;
           (*)
             # scalar, presumably
-            words=( ${(P)MATCH} )
+            if [[ $zsyh_user_options[shwordsplit] == on ]]; then
+              words=( ${(P)=MATCH} )
+            else
+              words=( ${(P)MATCH} )
+            fi
             ;;
         esac
         reply=( "${words[@]}" )

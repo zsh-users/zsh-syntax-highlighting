@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2020 zsh-syntax-highlighting contributors
+# Copyright (c) 2021 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,13 +28,11 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-setopt shwordsplit
-local EDITOR='ed -s'
+setopt sh_word_split
+local foo='echo foo'
 
-ed() { command ed "$@" }
-
-BUFFER=$'$EDITOR'
+BUFFER='$foo'
 
 expected_region_highlight=(
-  '1 7 function' # $EDITOR
+  '1 4 builtin' # $foo
 )
