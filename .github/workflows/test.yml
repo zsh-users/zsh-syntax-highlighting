@@ -53,7 +53,7 @@ jobs:
           - 4.3.12
           - 4.3.11
     container:
-      image: zshusers/zsh:${{ matrix.version }}
+      image: ghcr.io/zsh-users/zsh:${{ matrix.version }}
     steps:
       - uses: actions/checkout@v2
       - run: install_packages bsdmainutils make procps
