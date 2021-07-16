@@ -5,12 +5,12 @@ How to install
 * [In your ~/.zshrc](#In-your-~/.zshrc)
 * [Using packages](#Using-packages)
 * [With a plugin manager](#With-a-plugin-manager)
-  - [Antigen](#[Antigen](https://github.com/zsh-users/antigen))
-  - [Oh-my-zsh](#[Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh))
-  - [Prezo](#[Prezto](https://github.com/sorin-ionescu/prezto))
-  - [zgen](#[zgen](https://github.com/tarjoilija/zgen))
-  - [zplus](#[zplug](https://github.com/zplug/zplug))
-  - [zplugin](#[zplugin](https://github.com/psprint/zplugin))
+  * [Antigen](#Antigen)
+  * [Oh-my-zsh](#Oh-my-zsh)
+  * [Prezo](#Prezto)
+  * [zgen](#zgen)
+  * [zplus](#zplug)
+  * [zplugin](#zplugin)
 * [System-wide installation](#System-wide-installation)
 
 ### Using packages
@@ -82,12 +82,12 @@ This list is incomplete as there are too many
 
 [framework-list]: https://github.com/unixorn/awesome-zsh-plugins#frameworks
 
-#### [Antigen](https://github.com/zsh-users/antigen)
+#### Antigen
 
 Add `antigen bundle zsh-users/zsh-syntax-highlighting` as the last bundle in
 your `.zshrc`.
 
-#### [Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
+#### Oh-my-zsh
 
 1. Clone this repository in oh-my-zsh's plugins directory:
 
@@ -103,22 +103,22 @@ your `.zshrc`.
 
 3. Restart zsh (such as by opening a new instance of your terminal emulator).
 
-#### [Prezto](https://github.com/sorin-ionescu/prezto)
+#### Prezto]
 
 Zsh-syntax-highlighting is included with Prezto. See the
 [Prezto documentation][prezto-docs] to enable and configure highlighters.
 
 [prezto-docs]: https://github.com/sorin-ionescu/prezto/tree/master/modules/syntax-highlighting
 
-#### [zgen](https://github.com/tarjoilija/zgen)
+#### zgen
 
 Add `zgen load zsh-users/zsh-syntax-highlighting` to the end of your `.zshrc`.
 
-#### [zplug](https://github.com/zplug/zplug)
+#### zplug
 
 Add `zplug "zsh-users/zsh-syntax-highlighting", defer:2` to your `.zshrc`.
 
-#### [zplugin](https://github.com/psprint/zplugin)
+#### zplugin
 
 Add `zplugin load zsh-users/zsh-syntax-highlighting` to the end of your
 `.zshrc`.
