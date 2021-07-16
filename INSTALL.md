@@ -1,6 +1,18 @@
 How to install
 --------------
 
+* [Using packages](#Using-packages)
+* [In your ~/.zshrc](#In-your-~/.zshrc)
+* [Using packages](#Using-packages)
+* [With a plugin manager](#With-a-plugin-manager)
+  - [Antigen](#[Antigen](https://github.com/zsh-users/antigen))
+  - [Oh-my-zsh](#[Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh))
+  - [Prezo](#[Prezto](https://github.com/sorin-ionescu/prezto))
+  - [zgen](#[zgen](https://github.com/tarjoilija/zgen))
+  - [zplus](#[zplug](https://github.com/zplug/zplug))
+  - [zplugin](#[zplugin](https://github.com/psprint/zplugin))
+* [System-wide installation](#System-wide-installation)
+
 ### Using packages
 
 * Arch Linux: [community/zsh-syntax-highlighting][arch-package] / [AUR/zsh-syntax-highlighting-git][AUR-package]
