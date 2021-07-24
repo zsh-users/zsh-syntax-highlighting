@@ -7,9 +7,9 @@ How to install
 * [With a plugin manager](#With-a-plugin-manager)
   - [Antigen](#Antigen)
   - [Oh-my-zsh](#oh-my-zsh)
-  - [Prezo](#Prezto)
+  - [Prezto](#Prezto)
   - [zgen](#zgen)
-  - [zplus](#zplug)
+  - [zplus](#zplus)
   - [zplugin](#zplugin)
 * [System-wide installation](#System-wide-installation)
 
