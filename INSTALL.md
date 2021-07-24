@@ -6,7 +6,7 @@ How to install
 * [Using packages](#Using-packages)
 * [With a plugin manager](#With-a-plugin-manager)
   * [Antigen](#Antigen)
-  * [Oh-my-zsh](<####[Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)>)
+  * [Oh-my-zsh](####[Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh))
   * [Prezo](#Prezto)
   * [zgen](#zgen)
   * [zplus](#zplug)
