@@ -5,12 +5,12 @@ How to install
 * [In your ~/.zshrc](#In-your-~/.zshrc)
 * [Using packages](#Using-packages)
 * [With a plugin manager](#With-a-plugin-manager)
-  * [Antigen](#Antigen)
-  * [Oh-my-zsh](#In-[Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh))
-  * [Prezo](#Prezto)
-  * [zgen](#zgen)
-  * [zplus](#zplug)
-  * [zplugin](#zplugin)
+  - [Antigen](#Antigen-([source](https://github.com/zsh-users/antigen)))
+  - [Oh-my-zsh](#([Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)))
+  - [Prezo](#[Prezto](https://github.com/sorin-ionescu/prezto))
+  - [zgen](#[zgen](https://github.com/tarjoilija/zgen))
+  - [zplus](#[zplug](https://github.com/zplug/zplug))
+  - [zplugin](#[zplugin](https://github.com/psprint/zplugin))
 * [System-wide installation](#System-wide-installation)
 
 ### Using packages
@@ -82,12 +82,12 @@ This list is incomplete as there are too many
 
 [framework-list]: https://github.com/unixorn/awesome-zsh-plugins#frameworks
 
-#### Antigen
+#### Antigen ([source](https://github.com/zsh-users/antigen))
 
 Add `antigen bundle zsh-users/zsh-syntax-highlighting` as the last bundle in
 your `.zshrc`.
 
-#### In [Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
+#### ([Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh))
 
 1. Clone this repository in oh-my-zsh's plugins directory:
 
