@@ -5,7 +5,7 @@ How to install
 * [In your ~/.zshrc](#In-your-~/.zshrc)
 * [Using packages](#Using-packages)
 * [With a plugin manager](#With-a-plugin-manager)
-  - [Antigen](#Antigen-([source](https://github.com/zsh-users/antigen)))
+  - [Antigen](#Antigen)
   - [Oh-my-zsh](#([Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)))
   - [Prezo](#[Prezto](https://github.com/sorin-ionescu/prezto))
   - [zgen](#[zgen](https://github.com/tarjoilija/zgen))
