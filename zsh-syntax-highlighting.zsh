@@ -33,7 +33,7 @@ typeset zsh_highlight__aliases="$(builtin alias -Lm '[^+]*')"
 # are emitted by `alias -L` without a '--' guard, so they don't round trip.
 #
 # Hence, we exclude them from unaliasing:
-builtin unalias -m '[^+]*'
+builtin unalias -m '^+.*'
 
 # Set $0 to the expected value, regardless of functionargzero.
 0=${(%):-%N}
