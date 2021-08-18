@@ -32,6 +32,14 @@ How to install
 
 See also [repology's cross-distro index](https://repology.org/metapackage/zsh-syntax-highlighting/versions)
 
+We need to tell the shell that we want to use zsh-syntax-highlighting.
+
+On Debian and derivatives (Ubuntu, Mint, etc.):
+```zsh
+echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
+```
+Then restart zsh (such as by opening a new instance of your terminal emulator).\
+Note the `source` command must be **at the end** of `~/.zshrc`.
 
 ### In your ~/.zshrc
 
