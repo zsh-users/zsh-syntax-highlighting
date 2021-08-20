@@ -91,7 +91,6 @@ to issue #418.
 
 [zshcompsys-Standard-Styles]: https://zsh.sourceforge.io/Doc/Release/Completion-System.html#Standard-Styles
 [zshcompsys-Standard-Styles-format]: https://zsh.sourceforge.io/Doc/Release/Completion-System.html#index-format_002c-completion-style
-  
 
 
 ## Other changes:
@@ -881,4 +880,3 @@ in this area.
 # Version 0.2.1
 
 (Start of changelog.)
-
