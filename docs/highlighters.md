@@ -25,7 +25,7 @@ By default, all command lines are highlighted.  However, it is possible to
 prevent command lines longer than a fixed number of characters from being
 highlighted by setting the variable `${ZSH_HIGHLIGHT_MAXLENGTH}` to the maximum
 length (in characters) of command lines to be highlighter.  This is useful when
-editing very long comand lines (for example, with the [`fned`][fned] utility
+editing very long command lines (for example, with the [`fned`][fned] utility
 function).  Example:
 
 [fned]: http://zsh.sourceforge.net/Doc/Release/User-Contributions.html#index-zed

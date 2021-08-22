@@ -744,7 +744,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     # Analyse the current word.
     if _zsh_highlight_main__is_redirection $arg ; then
       if (( in_redirection == 1 )); then
-        # Two consecuive redirection operators is an error.
+        # Two consecutive redirection operators is an error.
         _zsh_highlight_main_add_region_highlight $start_pos $end_pos unknown-token
       else
         in_redirection=2
