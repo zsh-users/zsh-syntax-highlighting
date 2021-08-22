@@ -3,6 +3,8 @@ How to install
 
 ### Using packages
 
+First, install the package:
+
 * Arch Linux: [community/zsh-syntax-highlighting][arch-package] / [AUR/zsh-syntax-highlighting-git][AUR-package]
 * Debian: `zsh-syntax-highlighting` package [in `stretch`][debian-package] (or in [OBS repository][obs-repository])
 * Fedora: [zsh-syntax-highlighting package][fedora-package-alt] in Fedora 24+ (or in [OBS repository][obs-repository])
@@ -32,14 +34,13 @@ How to install
 
 See also [repology's cross-distro index](https://repology.org/metapackage/zsh-syntax-highlighting/versions)
 
-We need to tell the shell that we want to use zsh-syntax-highlighting.
+Second, enable zsh-syntax-highlighting by adding the following line to the end of your .zshrc,
 
-On Debian and derivatives (Ubuntu, Mint, etc.):
-```zsh
-echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
-```
-Then restart zsh (such as by opening a new instance of your terminal emulator).\
-Note the `source` command must be **at the end** of `~/.zshrc`.
+* On most Linux distributions (except perhaps NixOS): `source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
+* Mac OS X / Homebrew: `somewhere under /opt under Homebrew (please confirm)`
+* NetBSD and OpenBSD: `source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
+
+ Then restart zsh (such as by opening a new instance of your terminal emulator).
 
 ### In your ~/.zshrc
 
