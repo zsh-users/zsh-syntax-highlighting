@@ -42,10 +42,16 @@ Second, enable zsh-syntax-highlighting by sourcing the script. Running this comm
  echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"  ${ZDOTDIR:-$HOME}/.zshrc
 ```
 
-* Mac OS X / Homebrew, NetBSD and OpenBSD:
+* NetBSD and OpenBSD:
 
 ```zsh
  echo "source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"  ${ZDOTDIR:-$HOME}/.zshrc
+```
+
+* Mac OS X / Homebrew:
+
+```
+script location for source is unknown. If you do, please submit a documentation patch/issue.
 ```
 
 Then restart zsh (such as by opening a new instance of your terminal emulator).
@@ -54,7 +60,7 @@ Then restart zsh (such as by opening a new instance of your terminal emulator).
 
 * On most Linux distributions (except perhaps NixOS):  
 `source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
-* Mac OS X / Homebrew, NetBSD and OpenBSD:  
+* NetBSD and OpenBSD:  
 `source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
 
 Then restart zsh.
