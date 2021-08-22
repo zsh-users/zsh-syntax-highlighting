@@ -34,13 +34,30 @@ First, install the package:
 
 See also [repology's cross-distro index](https://repology.org/metapackage/zsh-syntax-highlighting/versions)
 
-Second, enable zsh-syntax-highlighting by adding the following line to the end of your .zshrc,
+Second, enable zsh-syntax-highlighting by sourcing the script. Running this command on the terminal will add the source line to the end of your .zshrc:
 
-* On most Linux distributions (except perhaps NixOS): `source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
-* Mac OS X / Homebrew: `somewhere under /opt under Homebrew (please confirm)`
-* NetBSD and OpenBSD: `source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
+* On most Linux distributions (except perhaps NixOS):
 
- Then restart zsh (such as by opening a new instance of your terminal emulator).
+```zsh
+ echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"  ${ZDOTDIR:-$HOME}/.zshrc
+```
+
+* Mac OS X / Homebrew, NetBSD and OpenBSD:
+
+```zsh
+ echo "source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"  ${ZDOTDIR:-$HOME}/.zshrc
+```
+
+Then restart zsh (such as by opening a new instance of your terminal emulator).
+
+ If your .zshrc file is somewhere other than `/home`, or if above the command fails, add the `source` command manually **at the end** of your `.zshrc`:
+
+* On most Linux distributions (except perhaps NixOS):  
+`source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
+* Mac OS X / Homebrew, NetBSD and OpenBSD:  
+`source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
+
+Then restart zsh.
 
 ### In your ~/.zshrc
 
