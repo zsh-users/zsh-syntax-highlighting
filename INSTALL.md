@@ -56,7 +56,7 @@ script location for source is unknown. If you do, please submit a documentation 
 
 Then restart zsh (such as by opening a new instance of your terminal emulator).
 
- If your .zshrc file is somewhere other than `/home`, or if above the command fails, add the `source` command manually **at the end** of your `.zshrc`:
+ Alternatively, add the `source` command manually **at the end** of your `.zshrc`:
 
 * On most Linux distributions (except perhaps NixOS):  
 `source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh`
