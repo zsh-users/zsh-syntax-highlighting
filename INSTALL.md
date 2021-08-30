@@ -50,7 +50,9 @@ Second, enable zsh-syntax-highlighting by sourcing the script. Running this comm
 
 * Mac OS X / Homebrew:
 
-    *Location of script to be sourced is unknown. If you know, please submit a documentation patch/issue.*
+    ```zsh
+    echo "source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
+    ```
 
 Then restart zsh (such as by opening a new instance of your terminal emulator).
 
