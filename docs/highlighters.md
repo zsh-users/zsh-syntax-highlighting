@@ -6,6 +6,7 @@ Syntax highlighting is done by pluggable highlighters:
 * `main` - the base highlighter, and the only one [active by default][main].
 * `brackets` - [matches brackets][brackets] and parenthesis.
 * `pattern` - matches [user-defined patterns][pattern].
+* `regexp` - matches [user-defined regular expressions][regexp].
 * `cursor` - matches [the cursor position][cursor].
 * `root` - highlights the whole command line [if the current user is root][root].
 * `line` - applied to [the whole command line][line].
@@ -13,6 +14,7 @@ Syntax highlighting is done by pluggable highlighters:
 [main]: highlighters/main.md
 [brackets]: highlighters/brackets.md
 [pattern]: highlighters/pattern.md
+[regexp]: highlighters/regexp.md
 [cursor]: highlighters/cursor.md
 [root]: highlighters/root.md
 [line]: highlighters/line.md
