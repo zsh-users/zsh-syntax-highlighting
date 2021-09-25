@@ -219,7 +219,8 @@ _zsh_highlight()
   [[ -n ${ZSH_HIGHLIGHT_MAXLENGTH:-} ]] && [[ $#BUFFER -gt $ZSH_HIGHLIGHT_MAXLENGTH ]] && return $ret
 
   # Do not highlight if there are pending inputs (copy/paste).
-  [[ $PENDING -gt 0 ]] && return $ret
+  (( KEYS_QUEUED_COUNT > 0 )) && return $ret
+  (( PENDING > 0 )) && return $ret
 
   {
     local cache_place
