@@ -41,8 +41,8 @@ This highlighter defines the following styles:
 * `dollar-double-quoted-argument` - parameter expansion inside double quotes (`$foo` inside `""`)
 * `dollar-quoted-argument` - dollar-quoted arguments (`` $'foo' ``)
 * `dollar-quoted-argument-unclosed` - unclosed dollar-quoted arguments (`` $'foo ``)
-* `double-quoted-argument` - double-quoted arguments (`` "foo" ``)
 * `double-hyphen-option` - double-hyphen options (`--option`)
+* `double-quoted-argument` - double-quoted arguments (`` "foo" ``)
 * `double-quoted-argument-unclosed` - unclosed double-quoted arguments (`` "foo ``)
 * `function` - function names
 * `global-alias` - global aliases
