@@ -73,8 +73,8 @@ _zsh_highlight__is_function_p() {
 # This function takes a single argument F and returns True iff F denotes the
 # name of a callable function.  A function is callable if it is fully defined
 # or if it is marked for autoloading and autoloading it at the first call to it
-# will succeed.  In particular, if a function has been marked for autoloading
-# but is not available in $fpath, then this function will return False therefor.
+# will succeed.  In particular, if F has been marked for autoloading
+# but is not available in $fpath, then calling this function on F will return False.
 #
 # See users/21671 http://www.zsh.org/cgi-bin/mla/redirect?USERNUMBER=21671
 _zsh_highlight__function_callable_p() {
