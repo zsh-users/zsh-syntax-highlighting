@@ -38,7 +38,7 @@ See also [repology's cross-distro index](https://repology.org/metapackage/zsh-sy
 Simply clone this repository and source the script:
 
 ```zsh
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git
 echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
 ```
 
@@ -80,7 +80,7 @@ your `.zshrc`.
 1. Clone this repository in oh-my-zsh's plugins directory:
 
     ```zsh
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
     ```
 
 2. Activate the plugin in `~/.zshrc`:
