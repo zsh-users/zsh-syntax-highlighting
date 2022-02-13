@@ -1,5 +1,6 @@
 # Release procedure (for developers):
 
+- Ensure every `is-at-least` invocation passes a stable zsh release's version number as the first argument
 - For minor (A.B.0) releases:
   - Check whether the release uses any not-yet-released zsh features
 - Check open issues and outstanding pull requests

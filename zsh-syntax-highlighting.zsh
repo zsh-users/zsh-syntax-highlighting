@@ -158,12 +158,15 @@ _zsh_highlight()
         #
         # The memo= feature was added to zsh in commit zsh-5.8-172-gdd6e702ee.
         # The version number at the time was 5.8.0.2-dev (see Config/version.mk).
-        # Therefore, on 5.8.0.3 and newer the memo= feature is available.
+        # Therefore, on zsh master 5.8.0.3 and newer the memo= feature is available.
+        # However, there's also the zsh 5.8.1 release, which doesn't have the
+        # memo= feature.
         #
-        # On zsh version 5.8.0.2 between the aforementioned commit and the
-        # first Config/version.mk bump after it (which, at the time of writing,
-        # is yet to come), this condition will false negative.
-        if is-at-least 5.8.0.3 $ZSH_VERSION.0.0; then
+        # On zsh master 5.8.0.2 between the aforementioned commit and the
+        # first Config/version.mk bump after it (zsh-5.8-607-g75c1edde5, the
+        # bump to 5.8.1.1-dev following the backport to master of the bump
+        # to 5.8.1), this condition will false negative.
+        if is-at-least 5.8.1.1 $ZSH_VERSION.0.0; then
           integer -gr zsh_highlight__memo_feature=1
         else
           integer -gr zsh_highlight__memo_feature=0
@@ -413,9 +416,8 @@ _zsh_highlight_call_widget()
 #    as done by _zsh_highlight, can only be done from inside a widget
 #    function — a catch-22.
 #
-#    See _zsh_highlight for the magic version number.  (The use of 5.8.0.2
-#    rather than 5.8.0.3 as in the _zsh_highlight is deliberate.)
-if is-at-least 5.8.0.2 $ZSH_VERSION.0.0 && _zsh_highlight__function_callable_p add-zle-hook-widget
+#    See _zsh_highlight for the magic version number.
+if is-at-least 5.8.1.1 $ZSH_VERSION.0.0 && _zsh_highlight__function_callable_p add-zle-hook-widget
 then
   autoload -U add-zle-hook-widget
   _zsh_highlight__zle-line-finish() {
