@@ -7,9 +7,9 @@ The changes in this section were fixed by switching to a `zle-line-pre-redraw`-b
 implementation.
 
 Note: The new implementation will only be used on future zsh releases,
-numbered 5.8.0.3 and newer, due to interoperability issues with other plugins
+numbered 5.8.1.1 and newer, due to interoperability issues with other plugins
 (issues #418 and #579).  The underlying zsh feature has been available since
-zsh 5.2.
+zsh 5.3.
 
 Whilst under development, the new implementation was known as the
 "feature/redrawhook" topic branch.
