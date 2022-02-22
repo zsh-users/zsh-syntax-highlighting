@@ -89,8 +89,8 @@ to issue #418.
 
     (#90, part of #245 (feature/redrawhook))
 
-[zshcompsys-Standard-Styles]: http://zsh.sourceforge.net/Doc/Release/Completion-System.html#Standard-Styles
-[zshcompsys-Standard-Styles-format]: http://zsh.sourceforge.net/Doc/Release/Completion-System.html#index-format_002c-completion-style
+[zshcompsys-Standard-Styles]: https://zsh.sourceforge.io/Doc/Release/Completion-System.html#Standard-Styles
+[zshcompsys-Standard-Styles-format]: https://zsh.sourceforge.io/Doc/Release/Completion-System.html#index-format_002c-completion-style
   
 
 
@@ -289,7 +289,7 @@ This is a stable release, featuring bugfixes and minor improvements.
 - The `isearch` and `suffix` [`$zle_highlight` settings][zshzle-Character-Highlighting].
   (79e4d3d12405, 15db71abd0cc, b56ee542d619; requires zsh 5.3 for `$ISEARCHMATCH_ACTIVE` / `$SUFFIX_ACTIVE` support)
 
-[zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
+[zshzle-Character-Highlighting]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 
 - Possible history expansions in double-quoted strings.
   (76ea9e1df316)

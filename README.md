@@ -73,7 +73,7 @@ enough information to allow computing the highlighting correctly.)
 
 See issues [#288][i288] and [#415][i415] for details.
 
-[zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
+[zshzle-Character-Highlighting]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 [i288]: https://github.com/zsh-users/zsh-syntax-highlighting/pull/288
 [i415]: https://github.com/zsh-users/zsh-syntax-highlighting/pull/415
 

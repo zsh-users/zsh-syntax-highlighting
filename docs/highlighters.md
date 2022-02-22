@@ -30,7 +30,7 @@ length (in characters) of command lines to be highlighter.  This is useful when
 editing very long command lines (for example, with the [`fned`][fned] utility
 function).  Example:
 
-[fned]: http://zsh.sourceforge.net/Doc/Release/User-Contributions.html#index-zed
+[fned]: https://zsh.sourceforge.io/Doc/Release/User-Contributions.html#index-zed
 
 ```zsh
 ZSH_HIGHLIGHT_MAXLENGTH=512
@@ -61,7 +61,7 @@ same as the syntax of "types of highlighting" of the zsh builtin
 `$zle_highlight` array, which is documented in [the `zshzle(1)` manual
 page][zshzle-Character-Highlighting].
 
-[zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
+[zshzle-Character-Highlighting]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 
 Some highlighters support additional configuration parameters; see each
 highlighter's documentation for details and examples.

@@ -116,6 +116,6 @@ of that (new) kind will be highlighted by the style `arg0_$kind`,
 where `$kind` is the output of `type -w` on the new kind of command word.  If that
 style is not defined, then the style `arg0` will be used instead.
 
-[zshmisc-Simple-Commands-And-Pipelines]: http://zsh.sourceforge.net/Doc/Release/Shell-Grammar.html#Simple-Commands-_0026-Pipelines
+[zshmisc-Simple-Commands-And-Pipelines]: https://zsh.sourceforge.io/Doc/Release/Shell-Grammar.html#Simple-Commands-_0026-Pipelines
 
-[zshzle-Character-Highlighting]: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
+[zshzle-Character-Highlighting]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
