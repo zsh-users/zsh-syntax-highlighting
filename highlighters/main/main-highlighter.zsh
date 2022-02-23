@@ -374,6 +374,9 @@ _zsh_highlight_highlighter_main_paint()
     'chronic' :ev
     'ifne' :n
 
+    # grc - a "generic colouriser" (that's their spelling, not mine)
+    'grc' :se
+
   )
   # Commands that would need to skip one positional argument:
   #    flock
