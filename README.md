@@ -93,5 +93,9 @@ Syntax highlighting is done by pluggable highlighter scripts.  See the
 [documentation on highlighters](docs/highlighters.md) for details and
 configuration settings.
 
+Colors are taken from the terminal's settings. Colorblind users may wish to use
+a more suitable terminal color scheme, such as the one found [here](https://github.com/Pound-Hash/colorblind_themes)
+designed for red-green (green-weak) colorblindness.
+
 [build-status]: https://github.com/zsh-users/zsh-syntax-highlighting/actions
 [build-status-image]: https://github.com/zsh-users/zsh-syntax-highlighting/workflows/Tests/badge.svg
