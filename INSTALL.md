@@ -83,13 +83,12 @@ your `.zshrc`.
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
     ```
 
-2. Activate the plugin in `~/.zshrc`:
+2. Activate the plugin:
 
     ```zsh
-    plugins=( [plugins...] zsh-syntax-highlighting)
+    omz plugin enable zsh-syntax-highlighting
     ```
-
-3. Restart zsh (such as by opening a new instance of your terminal emulator).
+This updates your `.zshrc` file and enables the plugin in your current session as well.
 
 #### [Prezto](https://github.com/sorin-ionescu/prezto)
 
