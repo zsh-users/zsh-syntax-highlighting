@@ -75,7 +75,7 @@ This list is incomplete as there are too many
 Add `antigen bundle zsh-users/zsh-syntax-highlighting` as the last bundle in
 your `.zshrc`.
 
-### [Fig](https://fig.io)
+#### [Fig](https://fig.io)
 
 Fig adds apps, shortcuts, and autocomplete to your existing terminal.
 
