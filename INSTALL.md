@@ -75,6 +75,12 @@ This list is incomplete as there are too many
 Add `antigen bundle zsh-users/zsh-syntax-highlighting` as the last bundle in
 your `.zshrc`.
 
+#### [Fig](https://fig.io)
+
+Click the `Install Plugin` button on the [Fig plugin page][fig-plugin].
+
+[fig-plugin]: https://fig.io/plugins/other/zsh-syntax-highlighting
+
 #### [Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
 
 1. Clone this repository in oh-my-zsh's plugins directory:
