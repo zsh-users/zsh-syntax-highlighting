@@ -75,6 +75,14 @@ This list is incomplete as there are too many
 Add `antigen bundle zsh-users/zsh-syntax-highlighting` as the last bundle in
 your `.zshrc`.
 
+### [Fig](https://fig.io)
+
+Fig adds apps, shortcuts, and autocomplete to your existing terminal.
+
+Install Zsh Syntax Highlighting in just one click.
+
+<a href="https://fig.io/plugins/other/zsh-syntax-highlighting" target="_blank"><img src="https://fig.io/badges/install-with-fig.svg" /></a>
+
 #### [Oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
 
 1. Clone this repository in oh-my-zsh's plugins directory:
