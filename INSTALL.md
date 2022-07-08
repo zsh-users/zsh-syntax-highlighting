@@ -1,65 +1,9 @@
 # Installation
 
+* [Manual (preferred)](#manual-git-clone)
 * [Packages](#packages)
-* [Antigen](#antigen)
+* [Plugin Managers](#plugin-managers)
 * [Oh My Zsh](#oh-my-zsh)
-* [Manual](#manual-git-clone)
-* [Other](#other)
-
-## Packages
-
-| System  | Package |
-| ------------- | ------------- |
-| Ubuntu | [zsh-syntax-highlighting OBS repository][obs-repository], [zsh-syntax-highlighting in Xenial][ubuntu-package] |
-| Debian | [zsh-syntax-highlighting OBS repository][obs-repository], [zsh-syntax-highlighting in Stretch][debian-package] |
-| Fedora / CentOS / RHEL / Scientific Linux | [zsh-syntax-highlighting OBS repository][obs-repository], [zsh-syntax-highlighting in Fedora 24+][fedora-package-alt] |
-| Arch Linux / Manjaro / Antergos / Hyperbola | [zsh-syntax-highlighting][arch-package], [zsh-syntax-highlighting-git][AUR-package] |
-| OpenSUSE / SLE | [zsh-syntax-highlighting OBS repository][obs-repository] |
-| NetBSD / FreeBSD | [shells/zsh-syntax-highlighting][freebsd-port] |
-| OpenBSD | [shells/zsh-syntax-highlighting][openbsd-port] |
-| Gentoo | [app-shells/zsh-syntax-highlighting][gentoo-repository] |
-| Void Linux | [zsh-syntax-highlighting in XBPS][void-package] |
-| Mac OS | [brew install zsh-syntax-highlighting][brew-package] |
-
-[arch-package]: https://www.archlinux.org/packages/zsh-syntax-highlighting
-[AUR-package]: https://aur.archlinux.org/packages/zsh-syntax-highlighting-git
-[brew-package]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-syntax-highlighting.rb
-[debian-package]: https://packages.debian.org/zsh-syntax-highlighting
-[fedora-package]: https://apps.fedoraproject.org/packages/zsh-syntax-highlighting
-[fedora-package-alt]: https://bodhi.fedoraproject.org/updates/?packages=zsh-syntax-highlighting
-[freebsd-port]: http://www.freshports.org/textproc/zsh-syntax-highlighting/
-[gentoo-repository]: https://packages.gentoo.org/packages/app-shells/zsh-syntax-highlighting
-[netbsd-port]: http://cvsweb.netbsd.org/bsdweb.cgi/pkgsrc/shells/zsh-syntax-highlighting/
-[obs-repository]: https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-syntax-highlighting&package=zsh-syntax-highlighting
-[openbsd-port]: https://cvsweb.openbsd.org/ports/shells/zsh-syntax-highlighting/
-[ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
-[void-package]: https://github.com/void-linux/void-packages/tree/master/srcpkgs/zsh-syntax-highlighting
-
-See also [repology's cross-distro index](https://repology.org/metapackage/zsh-syntax-highlighting/versions)
-
-## Antigen
-
-1. Add the following to your `.zshrc`:
-
-    ```sh
-    antigen bundle zsh-users/zsh-syntax-highlighting
-    ```
-
-## Oh My Zsh
-
-1. Clone this repository in oh-my-zsh's plugins directory:
-
-    ```zsh
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-    ```
-
-2. Activate the plugin in `~/.zshrc`:
-
-    ```zsh
-    plugins=( [plugins...] zsh-syntax-highlighting)
-    ```
-
-3. Start a new terminal session.
 
 ## Manual (Git Clone)
 
@@ -83,7 +27,54 @@ See also [repology's cross-distro index](https://repology.org/metapackage/zsh-sy
 
 3. Start a new terminal session.
 
-## Other
+## Packages
+
+| System  | Package |
+| ------------- | ------------- |
+| Arch Linux / Antergos / Manjaro / Hyperbola | [zsh-syntax-highlighting][arch-package], [zsh-syntax-highlighting-git][AUR-package] |
+| Debian | [zsh-syntax-highlighting OBS repository][obs-repository], [zsh-syntax-highlighting in Stretch][debian-package] |
+| CentOS / Fedora / RHEL / Scientific Linux | [zsh-syntax-highlighting OBS repository][obs-repository], [zsh-syntax-highlighting in Fedora 24+][fedora-package-alt] |
+| FreeBSD / NetBSD | [shells/zsh-syntax-highlighting][freebsd-port] |
+| Gentoo | [app-shells/zsh-syntax-highlighting][gentoo-repository] |
+| macOS | [brew install zsh-syntax-highlighting][brew-package] |
+| OpenBSD | [shells/zsh-syntax-highlighting][openbsd-port] |
+| OpenSUSE / SLE | [zsh-syntax-highlighting OBS repository][obs-repository] |
+| Ubuntu | [zsh-syntax-highlighting OBS repository][obs-repository], [zsh-syntax-highlighting in Xenial][ubuntu-package] |
+| Void Linux | [zsh-syntax-highlighting in XBPS][void-package] |
+
+[arch-package]: https://www.archlinux.org/packages/zsh-syntax-highlighting
+[AUR-package]: https://aur.archlinux.org/packages/zsh-syntax-highlighting-git
+[brew-package]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-syntax-highlighting.rb
+[debian-package]: https://packages.debian.org/zsh-syntax-highlighting
+[fedora-package]: https://apps.fedoraproject.org/packages/zsh-syntax-highlighting
+[fedora-package-alt]: https://bodhi.fedoraproject.org/updates/?packages=zsh-syntax-highlighting
+[freebsd-port]: http://www.freshports.org/textproc/zsh-syntax-highlighting/
+[gentoo-repository]: https://packages.gentoo.org/packages/app-shells/zsh-syntax-highlighting
+[netbsd-port]: http://cvsweb.netbsd.org/bsdweb.cgi/pkgsrc/shells/zsh-syntax-highlighting/
+[obs-repository]: https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-syntax-highlighting&package=zsh-syntax-highlighting
+[openbsd-port]: https://cvsweb.openbsd.org/ports/shells/zsh-syntax-highlighting/
+[ubuntu-package]: https://launchpad.net/ubuntu/+source/zsh-syntax-highlighting
+[void-package]: https://github.com/void-linux/void-packages/tree/master/srcpkgs/zsh-syntax-highlighting
+
+See also [repology's cross-distro index](https://repology.org/metapackage/zsh-syntax-highlighting/versions)
+
+## Oh My Zsh
+
+1. Clone this repository in oh-my-zsh's plugins directory:
+
+    ```zsh
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    ```
+
+2. Activate the plugin in `~/.zshrc`:
+
+    ```zsh
+    plugins=( [plugins...] zsh-syntax-highlighting)
+    ```
+
+3. Start a new terminal session.
+
+## Plugin Managers
 
 Note that `zsh-syntax-highlighting` must be the last plugin sourced.
 
@@ -94,6 +85,11 @@ This list is incomplete as there are too many
 [frameworks / plugin managers][framework-list] to list them all here.
 
 [framework-list]: https://github.com/unixorn/awesome-zsh-plugins#frameworks
+
+
+#### [Antigen](https://github.com/zsh-users/antigen)
+
+Add `antigen bundle zsh-users/zsh-syntax-highlighting` to your `.zshrc`.
 
 #### [Prezto](https://github.com/sorin-ionescu/prezto)
 
