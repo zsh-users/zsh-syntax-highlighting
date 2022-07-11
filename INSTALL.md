@@ -3,7 +3,6 @@
 * [Manual (preferred)](#manual-git-clone)
 * [Packages](#packages)
 * [Plugin Managers](#plugin-managers)
-* [Oh My Zsh](#oh-my-zsh)
 
 ## Manual (Git Clone)
 
@@ -58,22 +57,6 @@
 
 See also [repology's cross-distro index](https://repology.org/metapackage/zsh-syntax-highlighting/versions)
 
-## Oh My Zsh
-
-1. Clone this repository in oh-my-zsh's plugins directory:
-
-    ```zsh
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-    ```
-
-2. Activate the plugin in `~/.zshrc`:
-
-    ```zsh
-    plugins=( [plugins...] zsh-syntax-highlighting)
-    ```
-
-3. Start a new terminal session.
-
 ## Plugin Managers
 
 Note that `zsh-syntax-highlighting` must be the last plugin sourced.
@@ -90,6 +73,22 @@ This list is incomplete as there are too many
 #### [Antigen](https://github.com/zsh-users/antigen)
 
 Add `antigen bundle zsh-users/zsh-syntax-highlighting` to your `.zshrc`.
+
+#### [Oh My Zsh](https://github.com/ohmyzsh/ohmyzsh)
+
+1. Clone this repository in oh-my-zsh's plugins directory:
+
+    ```zsh
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    ```
+
+2. Activate the plugin in `~/.zshrc` by adding `zsh-syntax-highlighting` to the plugin list:
+
+    ```zsh
+    plugins=( [plugins...] zsh-syntax-highlighting)
+    ```
+
+3. Start a new terminal session.
 
 #### [Prezto](https://github.com/sorin-ionescu/prezto)
 
