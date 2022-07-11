@@ -3,6 +3,7 @@
 * [Manual (preferred)](#manual-git-clone)
 * [Packages](#packages)
 * [Plugin Managers](#plugin-managers)
+* [System-Wide Installation](#system-wide-installation)
 
 ## Manual (Git Clone)
 
@@ -109,3 +110,21 @@ Add `zplug "zsh-users/zsh-syntax-highlighting", defer:2` to your `.zshrc`.
 
 Add `zplugin load zsh-users/zsh-syntax-highlighting` to the end of your
 `.zshrc`.
+
+## System-Wide Installation
+
+Any of the above methods is suitable for a single-user installation,
+which requires no special privileges. If, however, you desire to install
+`zsh-syntax-highlighting` system-wide, you may do so by running
+
+```zsh
+make install
+```
+
+and directing your users to add
+
+```zsh
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+```
+
+to their `.zshrc`s.
