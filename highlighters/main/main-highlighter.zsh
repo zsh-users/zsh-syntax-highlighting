@@ -364,6 +364,8 @@ _zsh_highlight_highlighter_main_paint()
     'ionice' cn:t:pPu # util-linux 2.33.1-0.1
     'strace' IbeaosXPpEuOS:ACdfhikqrtTvVxyDc # strace 4.26-0.2
     'proxychains' q:f # proxychains 4.4.0
+    'torsocks' idq:upaP # Torsocks 2.3.0
+    'torify' idq:upaP # Torsocks 2.3.0
     'ssh-agent' aEPt:csDd:k # As of OpenSSH 8.1p1
     'tabbed' gnprtTuU:cdfhs:v # suckless-tools v44
     'chronic' :ev # moreutils 0.62-1
