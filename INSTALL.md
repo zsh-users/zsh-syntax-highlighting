@@ -89,11 +89,13 @@ Click the `Install Plugin` button on the [Fig plugin page][fig-plugin].
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
     ```
 
-2. Activate the plugin in `~/.zshrc`:
+2. Activate the plugin **at the bottom** of `~/.zshrc`:
 
     ```zsh
     plugins=( [plugins...] zsh-syntax-highlighting)
     ```
+
+See the [FAQ](https://github.com/zsh-users/zsh-syntax-highlighting#why-must-zsh-syntax-highlightingzsh-be-sourced-at-the-end-of-the-zshrc-file) for more details.
 
 3. Restart zsh (such as by opening a new instance of your terminal emulator).
 
