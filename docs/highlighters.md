@@ -40,15 +40,13 @@ ZSH_HIGHLIGHT_MAXLENGTH=512
 How to activate highlighters
 ----------------------------
 
-To activate an highlighter, add it to the `ZSH_HIGHLIGHT_HIGHLIGHTERS` array in
-`~/.zshrc`, for example:
+To activate an highlighter, add it to the `ZSH_HIGHLIGHT_HIGHLIGHTERS` array.
+By default `ZSH_HIGHLIGHT_HIGHLIGHTERS` is `(main)`. For example to activate
+`brackets`, `pattern`, and `cursor` highlighters, in `~/.zshrc` do:
 
 ```zsh
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
+ZSH_HIGHLIGHT_HIGHLIGHTERS+=(brackets pattern cursor)
 ```
-
-By default, `$ZSH_HIGHLIGHT_HIGHLIGHTERS` is unset and only the `main`
-highlighter is active.
 
 
 How to tweak highlighters
