@@ -18,7 +18,7 @@ How to install
 
 [arch-package]: https://www.archlinux.org/packages/zsh-syntax-highlighting
 [AUR-package]: https://aur.archlinux.org/packages/zsh-syntax-highlighting-git
-[brew-package]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-syntax-highlighting.rb
+[brew-package]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/z/zsh-syntax-highlighting.rb
 [debian-package]: https://packages.debian.org/zsh-syntax-highlighting
 [fedora-package]: https://apps.fedoraproject.org/packages/zsh-syntax-highlighting
 [fedora-package-alt]: https://bodhi.fedoraproject.org/updates/?packages=zsh-syntax-highlighting
