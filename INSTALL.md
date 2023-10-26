@@ -140,14 +140,14 @@ Zsh-syntax-highlighting is included with Prezto. See the
 
 Add `zgen load zsh-users/zsh-syntax-highlighting` to the end of your `.zshrc`.
 
+#### [zinit](https://github.com/zdharma-continuum/zinit)
+
+Add `zinit light zsh-users/zsh-syntax-highlighting` to the end of your
+`.zshrc`.
+
 #### [zplug](https://github.com/zplug/zplug)
 
 Add `zplug "zsh-users/zsh-syntax-highlighting", defer:2` to your `.zshrc`.
-
-#### [zplugin](https://github.com/psprint/zplugin)
-
-Add `zplugin load zsh-users/zsh-syntax-highlighting` to the end of your
-`.zshrc`.
 
 
 ### System-wide installation
