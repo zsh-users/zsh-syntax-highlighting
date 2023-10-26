@@ -56,6 +56,28 @@ Whilst under development, the new implementation was known as the
 
 - Add issue #712 to the previous release's changelog (hereinafter).
 
+- Fix highlighting when using an alias twice inside another alias
+  [#769, #775]
+
+- Remove lint warning for `env` followed by a pipe
+  [#797]
+
+- Recognize `proxychains` as a precommand
+  [#814, #914]
+
+- Honor shwordsplit when expanding parameters
+  [#687, #818]
+
+- Skip highlighting when keys are still pending in more cases
+  [#835]
+
+- Recognize `grc` as a precommand
+
+- Recognize `torsocks` and `torift` as precommands
+  [#898]
+
+- Recognize `cpulimit` as a precommand
+  [#897]
 
 # Changes in 0.8.0-alpha1-pre-redrawhook
 
@@ -167,6 +189,8 @@ to issue #418.
   [#669]
 
 - Recognize `env` as a precommand (e.g., `env FOO=bar ls`)
+
+- Recognize `ionice` as a precommand
 
 - Recognize `strace` as a precommand
 
