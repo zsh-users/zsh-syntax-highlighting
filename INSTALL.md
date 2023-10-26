@@ -24,7 +24,7 @@ First, install the package:
 [debian-package]: https://packages.debian.org/zsh-syntax-highlighting
 [fedora-package]: https://apps.fedoraproject.org/packages/zsh-syntax-highlighting
 [fedora-package-alt]: https://bodhi.fedoraproject.org/updates/?packages=zsh-syntax-highlighting
-[freebsd-port]: http://www.freshports.org/textproc/zsh-syntax-highlighting/
+[freebsd-port]: https://www.freshports.org/textproc/zsh-syntax-highlighting/
 [gentoo-repository]: https://packages.gentoo.org/packages/app-shells/zsh-syntax-highlighting
 [netbsd-port]: http://cvsweb.netbsd.org/bsdweb.cgi/pkgsrc/shells/zsh-syntax-highlighting/
 [obs-repository]: https://software.opensuse.org/download.html?project=shells%3Azsh-users%3Azsh-syntax-highlighting&package=zsh-syntax-highlighting

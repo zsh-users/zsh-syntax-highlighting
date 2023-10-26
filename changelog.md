@@ -735,7 +735,7 @@ in this area.
 
 ## Developer-visible changes:
 
-- Test harness converted to [TAP](http://testanything.org/tap-specification.html) format
+- Test harness converted to [TAP](https://testanything.org/tap-specification.html) format
   (d99aa58aaaef, et seq)
 
 - Run each test in a separate subprocess, isolating them from each other

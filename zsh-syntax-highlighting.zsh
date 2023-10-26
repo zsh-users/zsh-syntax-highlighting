@@ -76,7 +76,7 @@ _zsh_highlight__is_function_p() {
 # will succeed.  In particular, if F has been marked for autoloading
 # but is not available in $fpath, then calling this function on F will return False.
 #
-# See users/21671 http://www.zsh.org/cgi-bin/mla/redirect?USERNUMBER=21671
+# See users/21671 https://www.zsh.org/cgi-bin/mla/redirect?USERNUMBER=21671
 _zsh_highlight__function_callable_p() {
   if _zsh_highlight__is_function_p "$1" &&
      ! _zsh_highlight__function_is_autoload_stub_p "$1"
@@ -100,7 +100,7 @@ _zsh_highlight__function_callable_p() {
 # -------------------------------------------------------------------------------------------------
 
 # Use workaround for bug in ZSH?
-# zsh-users/zsh@48cadf4 http://www.zsh.org/mla/workers//2017/msg00034.html
+# zsh-users/zsh@48cadf4 https://www.zsh.org/mla/workers/2017/msg00034.html
 autoload -Uz is-at-least
 if is-at-least 5.4; then
   typeset -g zsh_highlight__pat_static_bug=false

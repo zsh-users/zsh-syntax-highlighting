@@ -104,7 +104,7 @@ By default, the results of all tests will be printed; to show only "interesting"
 results (tests that failed but were expected to succeed, or vice-versa), run
 `make quiet-test` (or `make test QUIET=y`).
 
-[TAP]: http://testanything.org/
+[TAP]: https://testanything.org/
 
 
 Performance test

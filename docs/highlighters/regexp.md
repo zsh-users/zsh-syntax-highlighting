@@ -59,7 +59,7 @@ See also: [regular expressions tutorial][perlretut], zsh regexp operator `=~`
 in [the `zshmisc(1)` manual page][zshmisc-Conditional-Expressions]
 
 [zshzle-Character-Highlighting]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
-[perlretut]: http://perldoc.perl.org/perlretut.html
+[perlretut]: https://perldoc.perl.org/perlretut
 [zshmisc-Conditional-Expressions]: https://zsh.sourceforge.io/Doc/Release/Conditional-Expressions.html#Conditional-Expressions
 [MAN_ZSH_REGEX]: https://zsh.sourceforge.io/Doc/Release/Zsh-Modules.html#The-zsh_002fregex-Module
 [pcresyntax]: https://www.pcre.org/original/doc/html/pcresyntax.html
