@@ -79,6 +79,9 @@ Whilst under development, the new implementation was known as the
 - Recognize `cpulimit` as a precommand
   [#897]
 
+- Recognize `ktrace` as a precommand
+
+
 # Changes in 0.8.0-alpha1-pre-redrawhook
 
 ## Notice about an improbable-but-not-impossible forward incompatibility

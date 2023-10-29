@@ -372,6 +372,7 @@ _zsh_highlight_highlighter_main_paint()
     'ifne' :n # moreutils 0.62-1
     'grc' :se # grc - a "generic colouriser" (that's their spelling, not mine)
     'cpulimit' elp:ivz # cpulimit 0.2
+    'ktrace' fgpt:aBCcdiT
   )
   # Commands that would need to skip one positional argument:
   #    flock
