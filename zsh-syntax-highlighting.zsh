@@ -123,7 +123,7 @@ _zsh_highlight()
   typeset -r ret
 
   # $region_highlight should be predefined, either by zle or by the test suite's mock (non-special) array.
-  (( ${+region_highlight} )) || {
+  (( ${+region_highlight[@]} )) || {
     echo >&2 'zsh-syntax-highlighting: error: $region_highlight is not defined'
     echo >&2 'zsh-syntax-highlighting: (Check whether zsh-syntax-highlighting was installed according to the instructions.)'
     return $ret
