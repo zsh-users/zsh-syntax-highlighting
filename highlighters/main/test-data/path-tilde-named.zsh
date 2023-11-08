@@ -31,9 +31,11 @@ mkdir mydir
 touch mydir/path-tilde-named.test
 hash -d D=mydir
 
-BUFFER='ls ~D/path-tilde-named.test'
+BUFFER='ls ~D/path-tilde-named.test ~"D"'
 
 expected_region_highlight=(
   "1 2  command" # ls
-  "4 27 path"    # ~D/path-tilde-named.test
+  "4 27 path" # ~D/path-tilde-named.test
+  "29 32 path" # ~"D"
+  "30 32 double-quoted-argument" # "D"
 )
