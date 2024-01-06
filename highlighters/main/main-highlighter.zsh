@@ -1215,6 +1215,12 @@ _zsh_highlight_main_highlighter_check_path()
     integer autocd=0
   fi
 
+  if [[ $zsyh_user_options[cdablevars] == on ]]; then
+    integer cdablevars=1
+  else
+    integer cdablevars=0
+  fi
+
   if (( in_command_position )); then
     # ### Currently, this value is never returned: either it's overwritten
     # ### below, or the return code is non-zero
@@ -1254,6 +1260,9 @@ _zsh_highlight_main_highlighter_check_path()
         # ### This seems unreachable for the current callers
         return 0
       fi
+    elif (( autocd && cdablevars && $+nameddirs[(e)$expanded_path] )) && [[ -x $nameddirs[$expanded_path] ]]; then
+      REPLY=hashed-command
+      return 0
     fi
   else
     if [[ -L $expanded_path || -e $expanded_path ]]; then
