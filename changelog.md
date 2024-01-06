@@ -1,3 +1,10 @@
+# Changes in HEAD
+
+
+- Highlight `&>` `>&|` `>&!` `&>|` and `&>!` as redirection.
+  [#942]
+
+
 # Changes in 0.8.0
 
 This is a stable bugfix and feature release.  Major new features and changes include:

@@ -254,10 +254,9 @@ _zsh_highlight_main__is_runnable() {
 _zsh_highlight_main__is_redirection() {
   # A redirection operator token:
   # - starts with an optional single-digit number;
-  # - then, has a '<' or '>' character;
-  # - is not a process substitution [<(...) or >(...)].
-  # - is not a numeric glob <->
-  [[ $1 == (<0-9>|)(\<|\>)* ]] && [[ $1 != (\<|\>)$'\x28'* ]] && [[ $1 != *'<'*'-'*'>'* ]]
+  # - is one of the tokens listed in zshmisc(1)
+  # - however (z) normalizes ! to |
+  [[ ${1#[0-9]} == (\<|\<\>|(\>|\>\>)(|\|)|\<\<(|-)|\<\<\<|\<\&|\&\<|(\>|\>\>)\&(|\|)|\&(\>|\>\>)(|\||\!)) ]]
 }
 
 # Resolve alias.
