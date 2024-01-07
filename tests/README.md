@@ -20,11 +20,11 @@ that is, `$i` and `$j` specify a range, 1-indexed, inclusive of both endpoints.
 If `$todo` exists, the test point is marked as TODO (the failure of that test
 point will not fail the test), and `$todo` is used as the explanation.
 
-2. 
+2.
 If a test sets `$skip_test` to a non-empty string, the test will be skipped
 with the provided string as the reason.
 
-3. 
+3.
 If a test sets `$fail_test` to a non-empty string, the test will be skipped
 with the provided string as the reason.
 

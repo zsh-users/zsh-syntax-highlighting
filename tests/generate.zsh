@@ -87,7 +87,7 @@ print 'expected_region_highlight=('
   local i
   local PREBUFFER
   local BUFFER
-  
+
   PREBUFFER=""
   BUFFER="$buffer"
   region_highlight=()
