@@ -36,6 +36,7 @@
 : ${ZSH_HIGHLIGHT_STYLES[bracket-level-4]:=fg=yellow,bold}
 : ${ZSH_HIGHLIGHT_STYLES[bracket-level-5]:=fg=cyan,bold}
 : ${ZSH_HIGHLIGHT_STYLES[cursor-matchingbracket]:=standout}
+: ${ZSH_HIGHLIGHT_STYLES[cursor-containing-brackets]:=}
 
 # Whether the brackets highlighter should be called or not.
 _zsh_highlight_highlighter_brackets_predicate()
@@ -47,31 +48,49 @@ _zsh_highlight_highlighter_brackets_predicate()
 _zsh_highlight_highlighter_brackets_paint()
 {
   local char style
-  local -i bracket_color_size=${#ZSH_HIGHLIGHT_STYLES[(I)bracket-level-*]} buflen=${#BUFFER} level=0 matchingpos pos
-  local -A levelpos lastoflevel matching
+  local -i bracket_color_size=${#ZSH_HIGHLIGHT_STYLES[(I)bracket-level-*]} buflen=${#BUFFER} escaped_state level=0 matchingpos pos
+  local -A containing levelpos lastoflevel matching
 
   # Find all brackets and remember which one is matching
   pos=0
+  escaped_state=0
   for char in ${(s..)BUFFER} ; do
     (( ++pos ))
+    if [[ $char = "\\" ]]; then
+      (( escaped_state = !escaped_state ))
+      containing[$pos]=$containing[$(( pos - 1 ))]
+      continue
+    fi
     case $char in
       ["([{"])
-        levelpos[$pos]=$((++level))
-        lastoflevel[$level]=$pos
+        if (( escaped_state )); then
+          containing[$pos]=$containing[$(( pos - 1 ))]
+        else
+          levelpos[$pos]=$((++level))
+          lastoflevel[$level]=$pos
+          containing[$pos]=$pos
+        fi
         ;;
       [")]}"])
-        if (( level > 0 )); then
+        if (( escaped_state )); then
+          containing[$pos]=$containing[$(( pos - 1 ))]
+        elif (( level > 0 )); then
           matchingpos=$lastoflevel[$level]
           levelpos[$pos]=$((level--))
           if _zsh_highlight_brackets_match $matchingpos $pos; then
             matching[$matchingpos]=$pos
             matching[$pos]=$matchingpos
+            containing[$pos]=containing[$(( matchingpos - 1))]
           fi
         else
           levelpos[$pos]=-1
+          containing[$pos]=$containing[$(( pos - 1 ))]
         fi
         ;;
+      *)
+        containing[$pos]=$containing[$(( pos - 1 ))]
     esac
+    escaped_state=0
   done
 
   # Now highlight all found brackets
@@ -85,12 +104,24 @@ _zsh_highlight_highlighter_brackets_paint()
     fi
   done
 
-  # If cursor is on a bracket, then highlight corresponding bracket, if any.
   if [[ $WIDGET != zle-line-finish ]]; then
+    # If cursor is on a bracket, then highlight corresponding bracket, if any.
     pos=$((CURSOR + 1))
     if (( $+levelpos[$pos] )) && (( $+matching[$pos] )); then
       local -i otherpos=$matching[$pos]
       _zsh_highlight_add_highlight $((otherpos - 1)) $otherpos cursor-matchingbracket
+    fi
+    if [[ -n $ZSH_HIGHLIGHT_STYLES[cursor-containing-brackets] ]]; then
+      # If cursor is inside a balanced pair, highlight the pair
+      pos=$CURSOR
+      if (( containing[$pos] > 0 )); then
+        local -i opener=$containing[$pos]
+        local -i closer=$matching[$opener]
+        if (( closer )); then
+          _zsh_highlight_add_highlight $((opener - 1)) $opener cursor-containing-brackets
+          _zsh_highlight_add_highlight $((closer - 1)) $closer cursor-containing-brackets
+        fi
+      fi
     fi
   fi
 }
