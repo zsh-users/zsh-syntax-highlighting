@@ -30,6 +30,8 @@
 
 # Define default styles.
 : ${ZSH_HIGHLIGHT_STYLES[bracket-error]:=fg=red,bold}
+: ${ZSH_HIGHLIGHT_STYLES[bracket-error-open]:=}
+: ${ZSH_HIGHLIGHT_STYLES[bracket-error-close]:=}
 : ${ZSH_HIGHLIGHT_STYLES[bracket-level-1]:=fg=blue,bold}
 : ${ZSH_HIGHLIGHT_STYLES[bracket-level-2]:=fg=green,bold}
 : ${ZSH_HIGHLIGHT_STYLES[bracket-level-3]:=fg=magenta,bold}
@@ -80,6 +82,12 @@ _zsh_highlight_highlighter_brackets_paint()
       if (( bracket_color_size )); then
         _zsh_highlight_add_highlight $((pos - 1)) $pos bracket-level-$(( (levelpos[$pos] - 1) % bracket_color_size + 1 ))
       fi
+    elif [[ -n $ZSH_HIGHLIGHT_STYLES[bracket-error-open] ]] && \
+        [[ ${BUFFER[$pos]} = '[' || ${BUFFER[$pos]} = '(' || ${BUFFER[$pos]} = '{' ]]; then
+      _zsh_highlight_add_highlight $((pos - 1)) $pos bracket-error-open
+    elif [[ -n $ZSH_HIGHLIGHT_STYLES[bracket-error-close] ]] && \
+        [[ ${BUFFER[$pos]} = ']' || ${BUFFER[$pos]} = ')' || ${BUFFER[$pos]} = '}' ]]; then
+      _zsh_highlight_add_highlight $((pos - 1)) $pos bracket-error-close
     else
       _zsh_highlight_add_highlight $((pos - 1)) $pos bracket-error
     fi
