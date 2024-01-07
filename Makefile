@@ -4,7 +4,7 @@ INSTALL?=install -c
 PREFIX?=/usr/local
 SHARE_DIR?=$(DESTDIR)$(PREFIX)/share/$(NAME)
 DOC_DIR?=$(DESTDIR)$(PREFIX)/share/doc/$(NAME)
-ZSH?=zsh # zsh binary to run tests with
+ZSH?="`which zsh`" # zsh binary to run tests with
 
 all:
 	cd docs && \

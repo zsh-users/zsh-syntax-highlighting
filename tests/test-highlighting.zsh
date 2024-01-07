@@ -29,6 +29,7 @@
 # -------------------------------------------------------------------------------------------------
 
 
+export PATH
 setopt NO_UNSET WARN_CREATE_GLOBAL
 
 # Required for add-zle-hook-widget.
