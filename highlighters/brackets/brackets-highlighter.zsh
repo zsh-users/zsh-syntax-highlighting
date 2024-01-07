@@ -47,20 +47,29 @@ _zsh_highlight_highlighter_brackets_predicate()
 _zsh_highlight_highlighter_brackets_paint()
 {
   local char style
-  local -i bracket_color_size=${#ZSH_HIGHLIGHT_STYLES[(I)bracket-level-*]} buflen=${#BUFFER} level=0 matchingpos pos
+  local -i bracket_color_size=${#ZSH_HIGHLIGHT_STYLES[(I)bracket-level-*]} buflen=${#BUFFER} escaped_state level=0 matchingpos pos
   local -A levelpos lastoflevel matching
 
   # Find all brackets and remember which one is matching
   pos=0
+  escaped_state=0
   for char in ${(s..)BUFFER} ; do
     (( ++pos ))
+    if [[ $char = "\\" ]]; then
+      (( escaped_state = !escaped_state ))
+      continue
+    fi
     case $char in
       ["([{"])
-        levelpos[$pos]=$((++level))
-        lastoflevel[$level]=$pos
+        if (( ! escaped_state )); then
+          levelpos[$pos]=$((++level))
+          lastoflevel[$level]=$pos
+        fi
         ;;
       [")]}"])
-        if (( level > 0 )); then
+        if (( escaped_state )); then
+          :
+        elif (( level > 0 )); then
           matchingpos=$lastoflevel[$level]
           levelpos[$pos]=$((level--))
           if _zsh_highlight_brackets_match $matchingpos $pos; then
@@ -72,6 +81,7 @@ _zsh_highlight_highlighter_brackets_paint()
         fi
         ;;
     esac
+    escaped_state=0
   done
 
   # Now highlight all found brackets
