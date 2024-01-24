@@ -19,6 +19,8 @@ ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 
 The syntax for values is the same as the syntax of "types of highlighting" of
 the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`
-manual page][zshzle-Character-Highlighting].
+manual page][zshzle-Character-Highlighting]. Note: if you would like to define this
+variable before you source zsh-syntax-highlighting, you will need to declare it first with:
+`typeset -gA ZSH_HIGHLIGHT_PATTERNS`.
 
 [zshzle-Character-Highlighting]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
