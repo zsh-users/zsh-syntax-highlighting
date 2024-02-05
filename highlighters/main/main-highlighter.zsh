@@ -1234,14 +1234,18 @@ _zsh_highlight_main_highlighter_check_path()
   if [[ $expanded_path[1] == / ]]; then
     tmp_path=$expanded_path
   else
-    tmp_path=$PWD/$expanded_path
+    # Unlike $PWD, ${(%):-%/} predictably expands to '.' if the current
+    # working directory doesn't exist.
+    tmp_path=${(%):-%/}/$expanded_path
   fi
   tmp_path=$tmp_path:a
 
-  while [[ $tmp_path != / ]]; do
-    [[ -n ${(M)ZSH_HIGHLIGHT_DIRS_BLACKLIST:#$tmp_path} ]] && return 1
-    tmp_path=$tmp_path:h
-  done
+  if [[ $tmp_path == /* ]]; then
+    while [[ $tmp_path != / ]]; do
+      [[ -n ${(M)ZSH_HIGHLIGHT_DIRS_BLACKLIST:#$tmp_path} ]] && return 1
+      tmp_path=$tmp_path:h
+    done
+  fi
 
   if (( in_command_position )); then
     if [[ -x $expanded_path ]]; then
