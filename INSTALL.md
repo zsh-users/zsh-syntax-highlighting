@@ -5,7 +5,7 @@ How to install
 
 First, install the package:
 
-* Arch Linux: [community/zsh-syntax-highlighting][arch-package] / [AUR/zsh-syntax-highlighting-git][AUR-package]
+* Arch Linux: [Extra/zsh-syntax-highlighting][arch-package] / [AUR/zsh-syntax-highlighting-git][AUR-package]
 * Debian: `zsh-syntax-highlighting` package [in `stretch`][debian-package] (or in [OBS repository][obs-repository])
 * Fedora: [zsh-syntax-highlighting package][fedora-package-alt] in Fedora 24+ (or in [OBS repository][obs-repository])
 * FreeBSD: `pkg install zsh-syntax-highlighting` (port name: [`shells/zsh-syntax-highlighting`][freebsd-port])
@@ -36,12 +36,18 @@ See also [repology's cross-distro index](https://repology.org/metapackage/zsh-sy
 
 Second, enable zsh-syntax-highlighting by sourcing the script. Running this command on the terminal will add the source line to the end of your .zshrc:
 
-* On most Linux distributions (except perhaps NixOS):
+* On most Linux distributions (except Arch Linux and perhaps NixOS):
 
     ```zsh
     echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
     ```
 
+* Arch Linux
+  
+    ```zsh
+    echo "source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
+    ```
+  
 * NetBSD and OpenBSD:
 
     ```zsh
