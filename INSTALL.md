@@ -48,6 +48,12 @@ Second, enable zsh-syntax-highlighting by sourcing the script. Running this comm
     echo "source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
     ```
 
+* Arch:
+
+    ```zsh
+    echo "source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
+    ```
+
 * Mac OS X / Homebrew:
 
     ```zsh
