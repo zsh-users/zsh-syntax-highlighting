@@ -27,7 +27,7 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER='ps aux | grep java'
+BUFFER='id bob | grep java'
 
 expected_region_highlight=(
   "1  2  command" # ps
