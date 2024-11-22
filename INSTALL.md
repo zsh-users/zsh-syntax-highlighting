@@ -71,13 +71,17 @@ Simply clone this repository and source the script:
 
 ```zsh
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+```
+
+Optional:
+```zsh
 echo "source ${(q-)PWD}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
 ```
 
   Then, enable syntax highlighting in the current interactive shell:
 
 ```zsh
-source ./zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ```
 
   If `git` is not installed, download and extract a snapshot of the latest
