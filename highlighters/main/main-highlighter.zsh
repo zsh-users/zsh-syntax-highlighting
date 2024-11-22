@@ -354,6 +354,7 @@ _zsh_highlight_highlighter_main_paint()
     'pkexec' '' # doesn't take short options; immune to #121 because it's usually not passed --option flags
     # Not listed: -h, which has two different meanings.
     'sudo' Cgprtu:AEHPSbilns:eKkVv # as of sudo 1.8.21p2
+    'run0' ugD:h # systemd 256.6
     'stdbuf' ioe:
     'eatmydata' ''
     'catchsegv' ''
