@@ -1815,8 +1815,11 @@ _zsh_highlight_main_highlighter_expand_path()
 
   # The $~1 syntax normally performs filename generation, but not when it's on the right-hand side of ${x:=y}.
   setopt localoptions nonomatch
-  unset REPLY
-  : ${REPLY:=${(Q)${~1}}}
+  if [[ ${1[1]} == '~' ]]; then
+    REPLY=${~${(Q)1}}
+  else
+    REPLY=${(Q)1}
+  fi
 }
 
 # -------------------------------------------------------------------------------------------------
