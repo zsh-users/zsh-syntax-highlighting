@@ -95,7 +95,7 @@ _zsh_highlight_highlighter_brackets_paint()
   fi
 }
 
-# Helper function to differentiate type 
+# Helper function to differentiate type
 _zsh_highlight_brackets_match()
 {
   case $BUFFER[$1] in

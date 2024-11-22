@@ -31,7 +31,7 @@
 type perl sponge >/dev/null || { print -ru2 -- "$0: This script requires perl(1) and sponge(1) [from moreutils]"; exit 1; }
 
 local editor=( "${(@Q)${(z)${VISUAL:-${EDITOR:-vi}}}}" )
-() { 
+() {
   > "$2" perl -nE '$highlighter = $1 if /^Running test (\S*)/; say "highlighters/${highlighter}/test-data/$1.zsh" if /^## (\S*)/' "$1"
   >>"$2" echo ""
   >>"$2" cat <"$1"

@@ -42,6 +42,6 @@ _zsh_highlight_highlighter_cursor_predicate()
 _zsh_highlight_highlighter_cursor_paint()
 {
   [[ $WIDGET == zle-line-finish ]] && return
-  
+
   _zsh_highlight_add_highlight $CURSOR $(( $CURSOR + 1 )) cursor
 }

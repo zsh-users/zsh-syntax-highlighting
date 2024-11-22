@@ -96,4 +96,3 @@ IRC channel
 -----------
 
 We're on #zsh-syntax-highlighting on Libera.Chat.
-
