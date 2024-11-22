@@ -1537,7 +1537,7 @@ _zsh_highlight_main_highlighter_highlight_double_quote()
               (( i += 2 ))
               _zsh_highlight_main_highlighter_highlight_list $(( start_pos + i - 1 )) S $has_end $arg[i,-1]
               ret=$?
-              (( i += REPLY ))
+              (( i += $REPLY ))
               last_break=$(( start_pos + i ))
               reply=(
                 $saved_reply
