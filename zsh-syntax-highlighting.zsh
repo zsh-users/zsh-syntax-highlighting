@@ -165,6 +165,11 @@ _zsh_highlight()
     region_highlight[-1]=()
   }
 
+  # Do not highlight if there are pending inputs (copy/paste).
+  # Placed before the region_highlight reset to preserve existing highlights.
+  (( KEYS_QUEUED_COUNT > 0 )) && return $ret
+  (( PENDING > 0 )) && return $ret
+
   # Reset region_highlight to build it from scratch
   if (( zsh_highlight__memo_feature )); then
     region_highlight=( "${(@)region_highlight:#*memo=zsh-syntax-highlighting*}" )
@@ -209,10 +214,6 @@ _zsh_highlight()
   # Do not highlight if there are more than 300 chars in the buffer. It's most
   # likely a pasted command or a huge list of files in that case..
   [[ -n ${ZSH_HIGHLIGHT_MAXLENGTH:-} ]] && [[ $#BUFFER -gt $ZSH_HIGHLIGHT_MAXLENGTH ]] && return $ret
-
-  # Do not highlight if there are pending inputs (copy/paste).
-  (( KEYS_QUEUED_COUNT > 0 )) && return $ret
-  (( PENDING > 0 )) && return $ret
 
   {
     local cache_place
