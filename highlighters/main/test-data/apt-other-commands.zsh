@@ -28,15 +28,27 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-function apt-get() {}
 function apt-cache() {}
+hash apt-get=/bin/true
 
-BUFFER='apt-get isntall; apt-cache isntall'
+_zsh_highlight_main__apt_get_subcommands=(
+  install 1
+  dselect-upgrade 1
+)
+_zsh_highlight_main__apt_get_subcommands_loaded=1
+
+BUFFER='apt-get install; apt-get dselect-upgrade; apt-get isntall; apt-cache isntall'
 
 expected_region_highlight=(
-  '1 7 function' # apt-get
-  '9 15 default' # isntall
+  '1 7 command' # apt-get
+  '9 15 command' # install
   '16 16 commandseparator' # ;
-  '18 26 function' # apt-cache
-  '28 34 default' # isntall
+  '18 24 command' # apt-get
+  '26 40 command' # dselect-upgrade
+  '41 41 commandseparator' # ;
+  '43 49 command' # apt-get
+  '51 57 unknown-token' # isntall
+  '58 58 commandseparator' # ;
+  '60 68 function' # apt-cache
+  '70 76 default' # isntall
 )

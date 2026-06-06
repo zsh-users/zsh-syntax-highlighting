@@ -300,6 +300,37 @@ _zsh_highlight_main__is_apt_subcommand() {
   (( ${+_zsh_highlight_main__apt_subcommands[$1]} ))
 }
 
+# Check whether $1 is an apt-get subcommand.
+#
+# Return 0 if it is, 1 if it is not, and 2 if the subcommand list could not be
+# obtained.  The list is loaded once, on first use.
+_zsh_highlight_main__is_apt_get_subcommand() {
+  if (( ! _zsh_highlight_main__apt_get_subcommands_loaded )); then
+    local line
+    local -a words
+    local output
+
+    _zsh_highlight_main__apt_get_subcommands=(
+      help 1
+      indextargets 1
+      markauto 1
+      unmarkauto 1
+    )
+    output="$(LC_ALL=C command apt-get help 2>/dev/null)" || return 2
+
+    for line in ${(f)output}; do
+      if [[ $line == '  '*' - '* ]]; then
+        words=(${=line})
+        (( $#words )) && _zsh_highlight_main__apt_get_subcommands[$words[1]]=1
+      fi
+    done
+
+    _zsh_highlight_main__apt_get_subcommands_loaded=1
+  fi
+
+  (( ${+_zsh_highlight_main__apt_get_subcommands[$1]} ))
+}
+
 # Check whether the first argument is a redirection operator token.
 # Report result via the exit code.
 _zsh_highlight_main__is_redirection() {
@@ -1155,6 +1186,8 @@ _zsh_highlight_main_highlighter_highlight_list()
         esac
         if [[ $arg == apt && $res == (command|hashed) ]]; then
           next_word+=':apt-subcommand:'
+        elif [[ $arg == apt-get && $res == (command|hashed) ]]; then
+          next_word+=':apt-get-subcommand:'
         fi
       fi
       if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} ]]; then
@@ -1217,6 +1250,15 @@ _zsh_highlight_main_highlighter_highlight_list()
                     :
                   elif [[ $this_word == *':apt-subcommand:'* ]]; then
                     if _zsh_highlight_main__is_apt_subcommand ${(Q)arg}; then
+                      style=command
+                    elif (( $? == 1 )); then
+                      style=unknown-token
+                    else
+                      _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 != in_redirection ))
+                      continue
+                    fi
+                  elif [[ $this_word == *':apt-get-subcommand:'* ]]; then
+                    if _zsh_highlight_main__is_apt_get_subcommand ${(Q)arg}; then
                       style=command
                     elif (( $? == 1 )); then
                       style=unknown-token
@@ -1909,4 +1951,6 @@ else
 fi
 typeset -gA _zsh_highlight_main__apt_subcommands
 typeset -gi _zsh_highlight_main__apt_subcommands_loaded=0
+typeset -gA _zsh_highlight_main__apt_get_subcommands
+typeset -gi _zsh_highlight_main__apt_get_subcommands_loaded=0
 typeset -ga ZSH_HIGHLIGHT_DIRS_BLACKLIST
