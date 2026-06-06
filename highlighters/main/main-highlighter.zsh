@@ -249,6 +249,43 @@ _zsh_highlight_main__is_runnable() {
   fi
 }
 
+# Check whether $1 is a Git subcommand.
+#
+# Return 0 if it is, 1 if it is not, and 2 if the subcommand list could not be
+# obtained.  The list is loaded once, on first use.
+_zsh_highlight_main__is_git_subcommand() {
+  if (( ! _zsh_highlight_main__git_subcommands_loaded )); then
+    local line section
+    local -a words
+    local output
+
+    _zsh_highlight_main__git_subcommands=()
+    output="$(LC_ALL=C command git help -a 2>/dev/null)" || return 2
+
+    for line in ${(f)output}; do
+      if [[ $line != ' '* ]]; then
+        section=$line
+        continue
+      fi
+      if [[ $section == *Commands* || $section == 'External commands' ]]; then
+        words=(${=line})
+        (( $#words )) && _zsh_highlight_main__git_subcommands[$words[1]]=1
+      fi
+    done
+
+    # Include git-* executables that an older Git may omit from `git help -a`.
+    if zmodload -e zsh/parameter; then
+      for line in ${(k)commands[(I)git-*]}; do
+        _zsh_highlight_main__git_subcommands[${line#git-}]=1
+      done
+    fi
+
+    _zsh_highlight_main__git_subcommands_loaded=1
+  fi
+
+  (( ${+_zsh_highlight_main__git_subcommands[$1]} ))
+}
+
 # Check whether the first argument is a redirection operator token.
 # Report result via the exit code.
 _zsh_highlight_main__is_redirection() {
@@ -1102,6 +1139,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                         continue
                         ;;
         esac
+        if [[ $arg == git && $res == (command|hashed) ]]; then
+          next_word+=':git-subcommand:'
+        fi
       fi
       if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} ]]; then
         next_word=':start::start_of_pipeline:'
@@ -1161,6 +1201,15 @@ _zsh_highlight_main_highlighter_highlight_list()
                     :
                   elif [[ $arg == $'\x5d' ]] && _zsh_highlight_main__stack_pop 'Q' builtin; then
                     :
+                  elif [[ $this_word == *':git-subcommand:'* ]]; then
+                    if _zsh_highlight_main__is_git_subcommand ${(Q)arg}; then
+                      style=command
+                    elif (( $? == 1 )); then
+                      style=unknown-token
+                    else
+                      _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 != in_redirection ))
+                      continue
+                    fi
                   else
                     _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 != in_redirection ))
                     continue
@@ -1844,4 +1893,6 @@ else
   # Make sure the cache is unset
   unset _zsh_highlight_main__command_type_cache
 fi
+typeset -gA _zsh_highlight_main__git_subcommands
+typeset -gi _zsh_highlight_main__git_subcommands_loaded=0
 typeset -ga ZSH_HIGHLIGHT_DIRS_BLACKLIST
