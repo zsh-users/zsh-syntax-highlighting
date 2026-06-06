@@ -249,6 +249,57 @@ _zsh_highlight_main__is_runnable() {
   fi
 }
 
+# Check whether $1 is an Apt subcommand.
+#
+# Return 0 if it is, 1 if it is not, and 2 if the subcommand list could not be
+# obtained.  The list is loaded once, on first use.
+_zsh_highlight_main__is_apt_subcommand() {
+  if (( ! _zsh_highlight_main__apt_subcommands_loaded )); then
+    local line
+    local -a words
+    local output
+
+    # `apt help` only lists the most commonly used commands, so start with
+    # established commands that it omits and merge the current version's list.
+    _zsh_highlight_main__apt_subcommands=(
+      build-dep 1
+      changelog 1
+      check 1
+      clean 1
+      autoclean 1
+      depends 1
+      dist-upgrade 1
+      download 1
+      dump 1
+      dumpavail 1
+      help 1
+      indextargets 1
+      moo 1
+      pkgnames 1
+      policy 1
+      purge 1
+      rdepends 1
+      showpkg 1
+      showsrc 1
+      source 1
+      stats 1
+      unmet 1
+    )
+    output="$(LC_ALL=C command apt help 2>/dev/null)" || return 2
+
+    for line in ${(f)output}; do
+      if [[ $line == '  '*' - '* ]]; then
+        words=(${=line})
+        (( $#words )) && _zsh_highlight_main__apt_subcommands[$words[1]]=1
+      fi
+    done
+
+    _zsh_highlight_main__apt_subcommands_loaded=1
+  fi
+
+  (( ${+_zsh_highlight_main__apt_subcommands[$1]} ))
+}
+
 # Check whether the first argument is a redirection operator token.
 # Report result via the exit code.
 _zsh_highlight_main__is_redirection() {
@@ -1102,6 +1153,9 @@ _zsh_highlight_main_highlighter_highlight_list()
                         continue
                         ;;
         esac
+        if [[ $arg == apt && $res == (command|hashed) ]]; then
+          next_word+=':apt-subcommand:'
+        fi
       fi
       if [[ -n ${(M)ZSH_HIGHLIGHT_TOKENS_CONTROL_FLOW:#"$arg"} ]]; then
         next_word=':start::start_of_pipeline:'
@@ -1161,6 +1215,15 @@ _zsh_highlight_main_highlighter_highlight_list()
                     :
                   elif [[ $arg == $'\x5d' ]] && _zsh_highlight_main__stack_pop 'Q' builtin; then
                     :
+                  elif [[ $this_word == *':apt-subcommand:'* ]]; then
+                    if _zsh_highlight_main__is_apt_subcommand ${(Q)arg}; then
+                      style=command
+                    elif (( $? == 1 )); then
+                      style=unknown-token
+                    else
+                      _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 != in_redirection ))
+                      continue
+                    fi
                   else
                     _zsh_highlight_main_highlighter_highlight_argument 1 $(( 1 != in_redirection ))
                     continue
@@ -1844,4 +1907,6 @@ else
   # Make sure the cache is unset
   unset _zsh_highlight_main__command_type_cache
 fi
+typeset -gA _zsh_highlight_main__apt_subcommands
+typeset -gi _zsh_highlight_main__apt_subcommands_loaded=0
 typeset -ga ZSH_HIGHLIGHT_DIRS_BLACKLIST
