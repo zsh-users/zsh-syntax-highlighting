@@ -579,9 +579,16 @@ if (( $+X_ZSH_HIGHLIGHT_DIRS_BLACKLIST )); then
   unset X_ZSH_HIGHLIGHT_DIRS_BLACKLIST
 fi
 
-# Restore the aliases we unned
-eval "$zsh_highlight__aliases"
-builtin unset zsh_highlight__aliases
+# Restore the aliases we unned.
+#
+# We use 'builtin' here (and not just when capturing them above) in case the
+# 'alias' command has itself been aliased or overridden by the user; see
+# issue #972.
+typeset zsh_highlight__alias
+for zsh_highlight__alias in ${(f)zsh_highlight__aliases}; do
+  eval "builtin $zsh_highlight__alias"
+done
+builtin unset zsh_highlight__aliases zsh_highlight__alias
 
 # Set $?.
 true
