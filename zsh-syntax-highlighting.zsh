@@ -579,7 +579,7 @@ if (( $+X_ZSH_HIGHLIGHT_DIRS_BLACKLIST )); then
   unset X_ZSH_HIGHLIGHT_DIRS_BLACKLIST
 fi
 
-# Restore the aliases we unned.
+# Restore the aliases that were unaliased above (via 'builtin unalias').
 #
 # We use 'builtin' here (and not just when capturing them above) in case the
 # 'alias' command has itself been aliased or overridden by the user; see
