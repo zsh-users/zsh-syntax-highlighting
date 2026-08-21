@@ -86,7 +86,7 @@ grow ways to set `$PREBUFFER` to inject free-form code into the generated file.
 Highlighting test
 -----------------
 
-[`test-highlighting.zsh`](tests/test-highlighting.zsh) tests the correctness of
+[`test-highlighting.zsh`](test-highlighting.zsh) tests the correctness of
 the highlighting. Usage:
 
 ```zsh
@@ -110,7 +110,7 @@ results (tests that failed but were expected to succeed, or vice-versa), run
 Performance test
 ----------------
 
-[`test-perfs.zsh`](tests/test-perfs.zsh) measures the time spent doing the
+[`test-perfs.zsh`](test-perfs.zsh) measures the time spent doing the
 highlighting. Usage:
 
 ```zsh
