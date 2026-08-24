@@ -706,7 +706,18 @@ _zsh_highlight_main_highlighter_highlight_list()
     if [[ $this_word == *':start:'* ]] && ! (( in_redirection )); then
       # Expand aliases.
       # An alias is ineligible for expansion while it's being expanded (see #652/#653).
-      _zsh_highlight_main__type "$arg" "$(( ! ${+seen_alias[$arg]} ))"
+      () {
+        # :sudo_opt: marks every word from a recognised precommand (sudo,
+        # env, nice, ...) up to and including its actual command word.  Those
+        # precommands spawn their target via execvp(3)-style lookup, which
+        # (unlike the shell's own PATH_DIRS option) never searches $path for
+        # a name containing a slash -- so PATH_DIRS must not be honoured
+        # while classifying this word, or e.g. "sudo foo/bar" gets
+        # highlighted as a valid command when sudo itself would fail to find
+        # it (issue #595).
+        [[ $this_word == *':sudo_opt:'* ]] && local -a options_to_set=( ${options_to_set:#PATH_DIRS} )
+        _zsh_highlight_main__type "$arg" "$(( ! ${+seen_alias[$arg]} ))"
+      }
       local res="$REPLY"
       if [[ $res == "alias" ]]; then
         # Mark insane aliases as unknown-token (cf. #263).
@@ -737,7 +748,10 @@ _zsh_highlight_main_highlighter_highlight_list()
         continue
       else
         _zsh_highlight_main_highlighter_expand_path $arg
-        _zsh_highlight_main__type "$REPLY" 0
+        () {
+          [[ $this_word == *':sudo_opt:'* ]] && local -a options_to_set=( ${options_to_set:#PATH_DIRS} )
+          _zsh_highlight_main__type "$REPLY" 0
+        }
         res="$REPLY"
       fi
     fi
