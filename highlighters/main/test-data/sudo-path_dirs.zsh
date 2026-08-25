@@ -32,6 +32,13 @@
 # PATH_DIRS option (see option-path_dirs.zsh). So even though PATH_DIRS makes
 # 'bar/testing-issue-228' resolve to a real command when run directly, the
 # same word after 'sudo' should not, since sudo itself wouldn't find it (#595).
+#
+# The two occurrences in one buffer are deliberate: _zsh_highlight_main__type's
+# command-type cache is keyed on the command name alone and persists for the
+# whole buffer (reset only on precmd), so this also guards against the first,
+# plain-command occurrence (correctly classified "command" under PATH_DIRS)
+# poisoning the cache and leaking that result into the second, sudo-prefixed
+# occurrence of the exact same name.
 if [[ $OSTYPE == msys ]]; then
   skip_test='Cannot chmod +x in msys2'
 else
@@ -41,10 +48,12 @@ else
   chmod  +x foo/bar/testing-issue-228
   path+=( "$PWD"/foo )
 
-  BUFFER='sudo bar/testing-issue-228'
+  BUFFER='bar/testing-issue-228; sudo bar/testing-issue-228'
 
   expected_region_highlight=(
-    "1 4 precommand" # sudo
-    "6 26 unknown-token" # bar/testing-issue-228 -- not found via sudo's own lookup
+    "1 21 command" # bar/testing-issue-228 (plain, PATH_DIRS applies)
+    "22 22 commandseparator" # ;
+    "24 27 precommand" # sudo
+    "29 49 unknown-token" # bar/testing-issue-228 -- not found via sudo's own lookup, even though the name was just cached as "command" above
   )
 fi

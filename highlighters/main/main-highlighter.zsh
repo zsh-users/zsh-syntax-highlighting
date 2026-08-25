@@ -158,6 +158,12 @@ _zsh_highlight_main_calculate_fallback() {
 # The result will be stored in REPLY.
 _zsh_highlight_main__type() {
   integer -r aliases_allowed=${2-1}
+  # $3: if non-zero, bypass the cache entirely (neither read nor write it).
+  # Needed by callers that vary $options_to_set per call (see
+  # _zsh_highlight_main__type_maybe_no_pathdirs below) -- the cache is keyed
+  # on the command name alone, so without this a result computed under one
+  # $options_to_set could be served back under a different one.
+  integer -r no_cache=${3-0}
   # We won't cache replies of anything that exists as an alias at all, to
   # ensure the cached value is correct regardless of $aliases_allowed.
   #
@@ -166,7 +172,7 @@ _zsh_highlight_main__type() {
   integer may_cache=1
 
   # Cache lookup
-  if (( $+_zsh_highlight_main__command_type_cache )); then
+  if (( ! no_cache )) && (( $+_zsh_highlight_main__command_type_cache )); then
     REPLY=$_zsh_highlight_main__command_type_cache[(e)$1]
     if [[ -n "$REPLY" ]]; then
       return
@@ -231,11 +237,39 @@ _zsh_highlight_main__type() {
   fi
 
   # Cache population
-  if (( may_cache )) && (( $+_zsh_highlight_main__command_type_cache )); then
+  if (( ! no_cache )) && (( may_cache )) && (( $+_zsh_highlight_main__command_type_cache )); then
     _zsh_highlight_main__command_type_cache[(e)$1]=$REPLY
   fi
   [[ -n $REPLY ]]
   return $?
+}
+
+# Wrapper around _zsh_highlight_main__type() for a word that may be the
+# target of a recognised precommand (sudo, env, nice, ...; see :sudo_opt: in
+# the main loop below).  Those precommands spawn their target via
+# execvp(3)-style lookup, which (unlike the shell's own PATH_DIRS option)
+# never searches $path for a name containing a slash -- so PATH_DIRS must
+# not be honoured while classifying such a word, or e.g. "sudo foo/bar" gets
+# highlighted as a valid command when sudo itself would fail to find it
+# (issue #595).
+#
+# When PATH_DIRS is actually removed for this call, also bypasses the
+# command-type cache: it's keyed on the command name alone, so a result
+# computed with PATH_DIRS off must not be read back (or written) as if it
+# applied unconditionally -- that would either poison a later plain-command
+# lookup of the same name, or (going the other way) let an earlier
+# plain-command lookup's cached "command" leak into this precommand-target
+# classification, defeating the PATH_DIRS removal above entirely.
+_zsh_highlight_main__type_maybe_no_pathdirs() {
+  integer no_cache=0
+  if [[ $this_word == *':sudo_opt:'* ]]; then
+    local -a filtered=( ${options_to_set:#PATH_DIRS} )
+    if (( $#filtered != $#options_to_set )); then
+      local -a options_to_set=( $filtered )
+      no_cache=1
+    fi
+  fi
+  _zsh_highlight_main__type "$1" "$2" $no_cache
 }
 
 # Checks whether $1 is something that can be run.
@@ -706,18 +740,7 @@ _zsh_highlight_main_highlighter_highlight_list()
     if [[ $this_word == *':start:'* ]] && ! (( in_redirection )); then
       # Expand aliases.
       # An alias is ineligible for expansion while it's being expanded (see #652/#653).
-      () {
-        # :sudo_opt: marks every word from a recognised precommand (sudo,
-        # env, nice, ...) up to and including its actual command word.  Those
-        # precommands spawn their target via execvp(3)-style lookup, which
-        # (unlike the shell's own PATH_DIRS option) never searches $path for
-        # a name containing a slash -- so PATH_DIRS must not be honoured
-        # while classifying this word, or e.g. "sudo foo/bar" gets
-        # highlighted as a valid command when sudo itself would fail to find
-        # it (issue #595).
-        [[ $this_word == *':sudo_opt:'* ]] && local -a options_to_set=( ${options_to_set:#PATH_DIRS} )
-        _zsh_highlight_main__type "$arg" "$(( ! ${+seen_alias[$arg]} ))"
-      }
+      _zsh_highlight_main__type_maybe_no_pathdirs "$arg" "$(( ! ${+seen_alias[$arg]} ))"
       local res="$REPLY"
       if [[ $res == "alias" ]]; then
         # Mark insane aliases as unknown-token (cf. #263).
@@ -748,10 +771,7 @@ _zsh_highlight_main_highlighter_highlight_list()
         continue
       else
         _zsh_highlight_main_highlighter_expand_path $arg
-        () {
-          [[ $this_word == *':sudo_opt:'* ]] && local -a options_to_set=( ${options_to_set:#PATH_DIRS} )
-          _zsh_highlight_main__type "$REPLY" 0
-        }
+        _zsh_highlight_main__type_maybe_no_pathdirs "$REPLY" 0
         res="$REPLY"
       fi
     fi
