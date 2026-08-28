@@ -58,6 +58,17 @@ jobs:
       image: ghcr.io/zsh-users/zsh:${{ matrix.version }}
     steps:
       - uses: actions/checkout@v4
+      # Debian 10 "buster" -- the base of every ghcr.io/zsh-users/zsh image --
+      # is end-of-life and has been dropped from the live mirrors, so
+      # install_packages fails at apt-get update before any test can run.
+      # The buster guard keeps this a no-op once the images move to a
+      # supported release, so it cannot redirect a live suite to the archive.
+      - name: Point apt at archive.debian.org (buster is EOL)
+        run: |
+          if grep -q ' buster' /etc/apt/sources.list; then
+            sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|' /etc/apt/sources.list
+            sed -i 's|http://security.debian.org/|http://archive.debian.org/debian-security|' /etc/apt/sources.list
+          fi
       - run: install_packages bsdmainutils make procps
       - run: make test
 
