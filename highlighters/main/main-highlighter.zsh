@@ -463,9 +463,10 @@ _zsh_highlight_main_highlighter__try_expand_parameter()
       else
         parameter_name=${arg:1}
       fi
+      # HOME is special, but reading it has no side effects.
       if [[ $res == none ]] && 
          [[ ${parameter_name} =~ ^${~parameter_name_pattern}$ ]] &&
-         [[ ${(tP)MATCH} != *special* ]]
+         [[ ${(tP)MATCH} != *special* || $MATCH == HOME ]]
       then
         # Set $arg and update $res.
         case ${(tP)MATCH} in
