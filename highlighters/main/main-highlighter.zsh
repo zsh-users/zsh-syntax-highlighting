@@ -1259,6 +1259,16 @@ _zsh_highlight_main_highlighter_check_path()
     fi
   else
     if [[ -L $expanded_path || -e $expanded_path ]]; then
+      for key in ${(k)ZSH_HIGHLIGHT_STYLES}; do
+        case $key in
+          "*."*) ;;
+          *) continue ;;
+        esac
+        case $arg in
+          *.$key[3,-1]) REPLY=$key ;;
+        esac
+      done
+
       return 0
     fi
   fi
@@ -1442,6 +1452,9 @@ _zsh_highlight_main_highlighter_highlight_argument()
     if (( in_redirection )) && [[ $last_arg == *['<>']['&'] && $arg[$1,-1] == (<0->|p|-) ]]; then
       if [[ $arg[$1,-1] == (p|-) ]]; then
         base_style=redirection
+        if _zsh_highlight_main_highlighter_check_path $arg[$1,-1] 0; then
+          base_style=$REPLY
+        fi
       else
         base_style=numeric-fd
       fi
