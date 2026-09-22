@@ -37,7 +37,8 @@
 : ${ZSH_HIGHLIGHT_STYLES[precommand]:=fg=green,underline}
 : ${ZSH_HIGHLIGHT_STYLES[commandseparator]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[autodirectory]:=fg=green,underline}
-: ${ZSH_HIGHLIGHT_STYLES[path]:=underline}
+: ${ZSH_HIGHLIGHT_STYLES[path]:=underline,bold}
+: ${ZSH_HIGHLIGHT_STYLES[partial-path]:=underline}
 : ${ZSH_HIGHLIGHT_STYLES[path_pathseparator]:=}
 : ${ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]:=}
 : ${ZSH_HIGHLIGHT_STYLES[globbing]:=fg=blue}
@@ -1094,6 +1095,8 @@ _zsh_highlight_main_highlighter_highlight_list()
                         else
                           if _zsh_highlight_main_highlighter_check_path $arg 1; then
                             style=$REPLY
+                          elif _zsh_highlight_main_highlighter_check_partial_path $arg 1; then
+                            style=$REPLY
                           else
                             style=unknown-token
                           fi
@@ -1203,9 +1206,33 @@ _zsh_highlight_main_highlighter_highlight_path_separators()
 # Check if $1 is a path.
 # If yes, return 0 and in $REPLY the style to use.
 # Else, return non-zero (and the contents of $REPLY is undefined).
+_zsh_highlight_main_highlighter_check_path()
+{
+  setopt localoptions nonomatch
+  _zsh_highlight_main_highlighter_expand_path "$1"
+  local expanded_path="$REPLY" tmp_path
+  integer in_command_position=$2
+
+  if (( in_command_position )); then
+    # ### Currently, this value is never returned: either it's overwritten
+    # ### below, or the return code is non-zero
+    REPLY=arg0
+  else
+    REPLY=path
+  fi
+
+  [[ -z $expanded_path ]] && return 1
+  [[ -e $expanded_path ]] && return 0
+
+  return 1
+}
+
+# Check if $1 is a partial path.
+# If yes, return 0 and in $REPLY the style to use.
+# Else, return non-zero (and the contents of $REPLY is undefined).
 #
 # $2 should be non-zero iff we're in command position.
-_zsh_highlight_main_highlighter_check_path()
+_zsh_highlight_main_highlighter_check_partial_path()
 {
   _zsh_highlight_main_highlighter_expand_path "$1"
   local expanded_path="$REPLY" tmp_path
@@ -1447,6 +1474,10 @@ _zsh_highlight_main_highlighter_highlight_argument()
       fi
     # This function is currently never called for the command word, so $2 is hard-coded as 0.
     elif _zsh_highlight_main_highlighter_check_path $arg[$1,-1] 0; then
+      base_style=$REPLY
+      _zsh_highlight_main_highlighter_highlight_path_separators $base_style
+      highlights+=($reply)
+    elif _zsh_highlight_main_highlighter_check_partial_path $arg[$1,-1] 0; then
       base_style=$REPLY
       _zsh_highlight_main_highlighter_highlight_path_separators $base_style
       highlights+=($reply)

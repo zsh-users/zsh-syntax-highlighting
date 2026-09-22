@@ -29,6 +29,7 @@ This highlighter defines the following styles:
 * `hashed-command` - hashed commands
 * `autodirectory` - a directory name in command position when the `AUTO_CD` option is set
 * `path` - existing filenames
+* `partial-path` - partial paths (prefixes of existing files)
 * `path_pathseparator` - path separators in filenames (`/`); if unset, `path` is used (default)
 * `path_prefix` - prefixes of existing filenames
 * `path_prefix_pathseparator` - path separators in prefixes of existing filenames (`/`); if unset, `path_prefix` is used (default)
