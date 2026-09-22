@@ -27,28 +27,23 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-unsetopt extendedglob
+setopt extendedglob
 
-BUFFER=': foo* bar? *baz qux\? a[0-9] a[0 <5-10> <a-c> (a|b) x#'
+BUFFER=': x~y *~y x# x## x###'
 
 expected_region_highlight=(
   "1 1 builtin" # :
-  "3 6 default" # foo*
-  "6 6 globbing" # *
-  "8 11 default" # bar?
-  "11 11 globbing" # ?
-  "13 16 default" # *baz
-  "13 13 globbing" # *
-  "18 22 default" # qux\?
-  "24 29 default" # a[0-9]
-  "25 29 globbing" # a[0-9]
-  "31 33 default" # a[0
-  "35 40 default" # <5-10>
-  "35 40 globbing" # <5-10>
-  "42 42 redirection" # <
-  "43 45 default" # a-c
-  "46 46 redirection" # >
-  "48 52 default" # (a|b)
-  "48 52 globbing" # (a|b)
-  "54 55 default" # x#
+  "3 5 default" # x~y
+  "7 9 default" # *~y
+  "7 7 globbing" # *
+# "8 8 globbing" # ~  # ~ should itself be marked as globbing if either a or b in a~b contain globs
+  "11 12 default" # x#
+  "12 12 globbing" # #
+  "14 16 default" # x##
+  "15 15 globbing" # #
+  "16 16 globbing" # #
+  "18 21 default" # x###
+  "19 19 globbing" # #
+  "20 20 globbing" # #
+  "21 21 globbing" # #
 )
