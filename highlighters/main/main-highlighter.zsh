@@ -1427,7 +1427,10 @@ _zsh_highlight_main_highlighter_highlight_argument()
       *)
         if $highlight_glob &&
            [[ $zsyh_user_options[multios] == on || $in_redirection -eq 0 ]] &&
-           [[ ${arg[$i]} =~ ^[*?] || ${arg:$i-1} =~ ^\<[0-9]*-[0-9]*\> ]]; then
+           [[ ${arg[$i]} =~ ^[*?] || ${arg:$i-1} =~ ^\<[0-9]*-[0-9]*\> ]] &&
+           # ${name:?...} and ${name:*...} aren't globbing; the '?'/'*' there is
+           # a parameter-expansion operator, not a glob metacharacter (issue #806).
+           [[ $arg[i-1] != ':' || $arg[1,i-2] != *'${'[^{}]# ]]; then
           highlights+=($(( start_pos + i - 1 )) $(( start_pos + i + $#MATCH - 1)) globbing)
           (( i += $#MATCH - 1 ))
           path_eligible=0
