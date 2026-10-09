@@ -34,9 +34,9 @@ else
   touch kappa.exe
   chmod +x kappa.exe
   cd kappa
-  
+
   BUFFER='$PWD.exe; ${PWD}.exe'
-  
+
   expected_region_highlight=(
     "1 8 unknown-token" # $PWD.exe - not eval'd; issue #328
     "9 9 commandseparator" # ;

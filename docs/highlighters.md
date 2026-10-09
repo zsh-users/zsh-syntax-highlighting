@@ -113,7 +113,7 @@ To create your own `acme` highlighter:
 
 * Name your own functions and global variables `_zsh_highlight_acme_*`.
 
-    - In zsh-syntax-highlighting 0.4.0 and earlier, the entrypoints 
+    - In zsh-syntax-highlighting 0.4.0 and earlier, the entrypoints
         `_zsh_highlight_highlighter_acme_predicate` and
         `_zsh_highlight_highlighter_acme_paint`
         were named
