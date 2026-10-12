@@ -59,6 +59,9 @@
 : ${ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]:=fg=cyan}
 : ${ZSH_HIGHLIGHT_STYLES[assign]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[redirection]:=fg=yellow}
+: ${ZSH_HIGHLIGHT_STYLES[here-document]:=fg=yellow}
+: ${ZSH_HIGHLIGHT_STYLES[here-document-quoted]:=fg=yellow}
+: ${ZSH_HIGHLIGHT_STYLES[here-document-delimiter]:=fg=yellow}
 : ${ZSH_HIGHLIGHT_STYLES[comment]:=fg=black,bold}
 : ${ZSH_HIGHLIGHT_STYLES[named-fd]:=none}
 : ${ZSH_HIGHLIGHT_STYLES[numeric-fd]:=none}
@@ -493,6 +496,143 @@ _zsh_highlight_main_highlighter__try_expand_parameter()
   }
 }
 
+# Mask here-document bodies before passing the buffer to ${(z)}.  The zsh
+# lexer used by that expansion does not retain here-document state and would
+# otherwise parse body lines as commands.  Keep newlines and character positions
+# unchanged so the normal highlighter can continue to calculate regions.
+#
+# Sets REPLY to the masked buffer and appends here-document regions directly
+# to list_highlights.
+_zsh_highlight_main_highlighter__mask_here_documents()
+{
+  local input=$1 output='' rest=$1 line masked_line token delimiter unquoted_delimiter
+  local quoted style candidate header_buffer='' quote_state='' ch prev
+  local -a tokens line_tokens delimiters strip_tabs styles pending_delimiters pending_strip_tabs pending_styles
+  integer line_start=0 line_length has_newline i trailing_backslashes line_continues j escaped
+
+  while [[ -n $rest ]]; do
+    if [[ $rest == *$'\n'* ]]; then
+      line=${rest%%$'\n'*}
+      rest=${rest#*$'\n'}
+      has_newline=1
+    else
+      line=$rest
+      rest=''
+      has_newline=0
+    fi
+    line_length=$#line
+    masked_line=$line
+
+    if (( $#delimiters )); then
+      candidate=$line
+      (( strip_tabs[1] )) && candidate=${candidate##$'\t'#}
+      style=$styles[1]
+
+      if [[ $candidate == $delimiters[1] ]]; then
+        (( line_length )) && _zsh_highlight_main_add_region_highlight \
+          $line_start $(( line_start + line_length )) here-document-delimiter
+        shift delimiters strip_tabs styles
+      else
+        (( line_length )) && _zsh_highlight_main_add_region_highlight \
+          $line_start $(( line_start + line_length )) $style
+      fi
+      masked_line=${(l:line_length:: :)}
+    else
+      header_buffer+=$line
+      (( has_newline )) && header_buffer+=$'\n'
+
+      # Track quotes across physical lines.  Tokenizing each line separately
+      # would mistake << inside a multiline string for a redirection.
+      escaped=0
+      prev=''
+      for (( j = 1; j <= line_length; ++j )); do
+        ch=$line[j]
+        if (( escaped )); then
+          escaped=0
+          prev=$ch
+          continue
+        fi
+        case $quote_state in
+          (single) [[ $ch == "'" ]] && quote_state='' ;;
+          (ansi)   [[ $ch == $'\\' ]] && escaped=1 || { [[ $ch == "'" ]] && quote_state=''; } ;;
+          (double) [[ $ch == $'\\' ]] && escaped=1 || { [[ $ch == '"' ]] && quote_state=''; } ;;
+          (backtick) [[ $ch == $'\\' ]] && escaped=1 || { [[ $ch == '`' ]] && quote_state=''; } ;;
+          (*)
+            if [[ $zsyh_user_options[interactivecomments] == on && $ch == '#' &&
+                  ( j == 1 || $prev == [[:space:]\;\|\&\(\)] ) ]]; then
+              break
+            elif [[ $ch == "'" ]]; then
+              [[ $prev == '$' ]] && quote_state=ansi || quote_state=single
+            elif [[ $ch == '"' ]]; then
+              quote_state=double
+            elif [[ $ch == '`' ]]; then
+              quote_state=backtick
+            elif [[ $ch == $'\\' ]]; then
+              escaped=1
+            fi
+            ;;
+        esac
+        prev=$ch
+      done
+
+      # Here-document bodies start only after the complete command line.  A
+      # backslash-newline or a trailing pipeline/list operator continues the
+      # command header on the following physical line.
+      [[ -n $quote_state ]] && line_continues=1 || line_continues=0
+      if [[ $line == *$'\\' ]]; then
+        trailing_backslashes=${#${line##*[^\\]}}
+        (( trailing_backslashes % 2 )) && line_continues=1
+      fi
+
+      if [[ $zsyh_user_options[interactivecomments] == on ]]; then
+        line_tokens=(${(zZ+c+)line})
+        tokens=(${(zZ+c+)header_buffer})
+      else
+        line_tokens=(${(z)line})
+        tokens=(${(z)header_buffer})
+      fi
+      if (( $#line_tokens )); then
+        [[ $line_tokens[-1] == ('|'|'|&'|'||'|'&&') ]] && line_continues=1
+      fi
+
+      if (( ! line_continues )); then
+        pending_delimiters=()
+        pending_strip_tabs=()
+        pending_styles=()
+        for (( i = 1; i < $#tokens; ++i )); do
+          token=$tokens[i]
+          if [[ $token =~ '^[0-9]*<<-?$' ]]; then
+            delimiter=$tokens[i+1]
+            unquoted_delimiter=${(Q)delimiter}
+            [[ $delimiter != $unquoted_delimiter ]]
+            quoted=$?
+            pending_delimiters+=($unquoted_delimiter)
+            [[ $token == *'<<-' ]] && pending_strip_tabs+=(1) || pending_strip_tabs+=(0)
+            (( quoted == 0 )) && pending_styles+=(here-document-quoted) || pending_styles+=(here-document)
+            (( ++i ))
+          fi
+        done
+        if (( $#pending_delimiters )); then
+          delimiters+=($pending_delimiters)
+          strip_tabs+=($pending_strip_tabs)
+          styles+=($pending_styles)
+        fi
+        header_buffer=''
+      fi
+    fi
+
+    output+=$masked_line
+    if (( has_newline )); then
+      output+=$'\n'
+      (( line_start += line_length + 1 ))
+    else
+      (( line_start += line_length ))
+    fi
+  done
+
+  REPLY=$output
+}
+
 # $1 is the offset of $4 from the parent buffer. Added to the returned highlights.
 # $2 is the initial braces_stack (for a closing paren).
 # $3 is 1 if $4 contains the end of $BUFFER, else 0.
@@ -585,6 +725,10 @@ _zsh_highlight_main_highlighter_highlight_list()
   local this_word next_word=':start::start_of_pipeline:'
   integer in_redirection
   # Processing buffer
+  if [[ $buf == *'<<'* ]]; then
+    _zsh_highlight_main_highlighter__mask_here_documents "$buf"
+    buf=$REPLY
+  fi
   local proc_buf="$buf"
   local -a args
   if [[ $zsyh_user_options[interactivecomments] == on ]]; then

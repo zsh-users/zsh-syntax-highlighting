@@ -60,6 +60,9 @@ This highlighter defines the following styles:
 * `back-dollar-quoted-argument` -  backslash escape sequences inside dollar-quoted arguments (`\x` in `$'\x48'`)
 * `assign` - parameter assignments (`x=foo` and `x=( )`)
 * `redirection` - redirection operators (`<`, `>`, etc)
+* `here-document` - contents of an unquoted here-document
+* `here-document-quoted` - contents of a here-document whose delimiter is quoted
+* `here-document-delimiter` - the closing delimiter of a here-document
 * `comment` - comments, when `setopt INTERACTIVE_COMMENTS` is in effect (`echo # foo`)
 * `comment` - elided parameters in command position (`$x ls` when `$x` is unset or empty)
 * `named-fd` - named file descriptor (the `fd` in `echo foo {fd}>&2`)
