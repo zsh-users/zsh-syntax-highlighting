@@ -67,6 +67,11 @@ This highlighter defines the following styles:
 * `arg0` - a command word other than one of those enumerated above (other than a command, precommand, alias, function, or shell builtin command).
 * `default` - everything else
 
+Additionally, styles starting with `*.` may be used to style `path` and
+`redirection` argument matches with a more specific style. For example,
+defining the `*.png` style will apply to any `path` or `redirection` target
+ending with `.png`.
+
 To override one of those styles, change its entry in `ZSH_HIGHLIGHT_STYLES`,
 for example in `~/.zshrc`:
 

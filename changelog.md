@@ -3,7 +3,12 @@
 
 - Highlight `&>` `>&|` `>&!` `&>|` and `&>!` as redirection.
   [#942]
+- Highlight redirection targets as paths if possible [#982].
 
+## Highlight paths with matching patterns
+
+When matchers start with `*.`, the are treated as globs to further refine thee
+highlighting of paths [#982].
 
 # Changes in 0.8.0
 
