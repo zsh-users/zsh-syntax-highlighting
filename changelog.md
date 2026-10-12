@@ -4,6 +4,11 @@
 - Highlight `&>` `>&|` `>&!` `&>|` and `&>!` as redirection.
   [#942]
 
+- Fixed: aliases were restored via a plain (non-`builtin`) call to `alias`,
+  so if the user had overridden/aliased `alias` itself, restoration could
+  fail silently.
+  [#972]
+
 
 # Changes in 0.8.0
 
