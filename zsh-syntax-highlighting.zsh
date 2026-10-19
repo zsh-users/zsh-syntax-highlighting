@@ -426,6 +426,8 @@ then
   }
   _zsh_highlight_bind_widgets(){}
   if [[ -o zle ]]; then
+    # add-zle-hook-widget requires the zsh/zle module to be loaded already.
+    zmodload zsh/zle
     add-zle-hook-widget zle-line-pre-redraw _zsh_highlight__zle-line-pre-redraw
     add-zle-hook-widget zle-line-finish _zsh_highlight__zle-line-finish
   fi
