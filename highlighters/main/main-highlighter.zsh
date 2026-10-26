@@ -1251,7 +1251,7 @@ _zsh_highlight_main_highlighter_check_path()
   done
 
   if (( in_command_position )); then
-    if [[ -x $expanded_path ]]; then
+    if [[ -x $expanded_path && ( $expanded_path == */* || -d $expanded_path ) ]]; then
       if (( autocd )); then
         if [[ -d $expanded_path ]]; then
           REPLY=autodirectory
