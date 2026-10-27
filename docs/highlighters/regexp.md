@@ -51,14 +51,11 @@ Note, however, that PCRE and POSIX ERE have a large common subset:
 for instance, the regular expressions `[abc]`, `a*`, and `(a|b)` have the same
 meaning in both flavours.
 
-The syntax for values is the same as the syntax of "types of highlighting" of
-the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`
-manual page][zshzle-Character-Highlighting].
+For style configuration syntax, see [Highlighter-independent settings](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md#highlighter-independent-settings).
 
 See also: [regular expressions tutorial][perlretut], zsh regexp operator `=~`
 in [the `zshmisc(1)` manual page][zshmisc-Conditional-Expressions]
 
-[zshzle-Character-Highlighting]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
 [perlretut]: https://perldoc.perl.org/perlretut
 [zshmisc-Conditional-Expressions]: https://zsh.sourceforge.io/Doc/Release/Conditional-Expressions.html#Conditional-Expressions
 [MAN_ZSH_REGEX]: https://zsh.sourceforge.io/Doc/Release/Zsh-Modules.html#The-zsh_002fregex-Module

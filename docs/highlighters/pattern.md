@@ -3,7 +3,6 @@ zsh-syntax-highlighting / highlighters / pattern
 
 This is the `pattern` highlighter, that highlights user-defined patterns.
 
-
 ### How to tweak it
 
 To use this highlighter, associate patterns with styles in the
@@ -17,8 +16,5 @@ typeset -A ZSH_HIGHLIGHT_PATTERNS
 ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 ```
 
-The syntax for values is the same as the syntax of "types of highlighting" of
-the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`
-manual page][zshzle-Character-Highlighting].
+For style configuration syntax, see [Highlighter-independent settings](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md#highlighter-independent-settings).
 
-[zshzle-Character-Highlighting]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting

@@ -11,7 +11,6 @@ This is the `main` highlighter, that highlights:
 
 This highlighter is active by default.
 
-
 ### How to tweak it
 
 This highlighter defines the following styles:
@@ -67,8 +66,8 @@ This highlighter defines the following styles:
 * `arg0` - a command word other than one of those enumerated above (other than a command, precommand, alias, function, or shell builtin command).
 * `default` - everything else
 
-To override one of those styles, change its entry in `ZSH_HIGHLIGHT_STYLES`,
-for example in `~/.zshrc`:
+For style configuration syntax, see [Highlighter-independent settings](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/docs/highlighters.md#highlighter-independent-settings).
+
 
 ```zsh
 # Declare the variable
@@ -84,9 +83,7 @@ ZSH_HIGHLIGHT_STYLES[path]='fg=cyan'
 ZSH_HIGHLIGHT_STYLES[globbing]='none'
 ```
 
-The syntax for values is the same as the syntax of "types of highlighting" of
-the zsh builtin `$zle_highlight` array, which is documented in [the `zshzle(1)`
-manual page][zshzle-Character-Highlighting].
+
 
 #### Parameters
 
@@ -118,4 +115,3 @@ style is not defined, then the style `arg0` will be used instead.
 
 [zshmisc-Simple-Commands-And-Pipelines]: https://zsh.sourceforge.io/Doc/Release/Shell-Grammar.html#Simple-Commands-_0026-Pipelines
 
-[zshzle-Character-Highlighting]: https://zsh.sourceforge.io/Doc/Release/Zsh-Line-Editor.html#Character-Highlighting
