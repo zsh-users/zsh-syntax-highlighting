@@ -34,4 +34,5 @@ expected_region_highlight=(
   '1 4 builtin' # echo
   '6 18 default "issue #705"' # foo\\\nbar"baz"
   '14 18 double-quoted-argument "issue #705"' # "baz"
+  # TODO: when fixing this, see if we can highlight the backslash-newline sequence as a comment.
 )
