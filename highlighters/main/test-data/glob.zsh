@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------------------------
-# Copyright (c) 2015 zsh-syntax-highlighting contributors
+# Copyright (c) 2020 zsh-syntax-highlighting contributors
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -27,7 +27,9 @@
 # vim: ft=zsh sw=2 ts=2 et
 # -------------------------------------------------------------------------------------------------
 
-BUFFER=': foo* bar? *baz qux\?'
+unsetopt extendedglob
+
+BUFFER=': foo* bar? *baz qux\? a[0-9] a[0 <5-10> <a-c> (a|b) x#'
 
 expected_region_highlight=(
   "1 1 builtin" # :
@@ -38,4 +40,15 @@ expected_region_highlight=(
   "13 16 default" # *baz
   "13 13 globbing" # *
   "18 22 default" # qux\?
+  "24 29 default" # a[0-9]
+  "25 29 globbing" # a[0-9]
+  "31 33 default" # a[0
+  "35 40 default" # <5-10>
+  "35 40 globbing" # <5-10>
+  "42 42 redirection" # <
+  "43 45 default" # a-c
+  "46 46 redirection" # >
+  "48 52 default" # (a|b)
+  "48 52 globbing" # (a|b)
+  "54 55 default" # x#
 )
