@@ -1289,9 +1289,17 @@ _zsh_highlight_main_highlighter_check_path()
   if (( has_end && (len == end_pos) )) &&
      (( ! $#in_alias )) &&
      [[ $WIDGET != zle-line-finish ]]; then
-    # TODO: When we've dropped support for pre-5.0.6 zsh, use the *(Y1) glob qualifier here.
     local -a tmp
-    if (( in_command_position )); then
+    if is-at-least 5.0.6; then
+      if (( in_command_position )); then
+        # We include directories even when autocd is enabled, because those
+        # directories might contain executable files: e.g., BUFFER="/bi" en route
+        # to typing "/bin/sh".
+        tmp=( ${expanded_path}*(N-*Y1) ${expanded_path}*(N-/Y1) )
+      else
+        tmp=( ${expanded_path}*(NY1) )
+      fi
+    elif (( in_command_position )); then
       # We include directories even when autocd is enabled, because those
       # directories might contain executable files: e.g., BUFFER="/bi" en route
       # to typing "/bin/sh".
